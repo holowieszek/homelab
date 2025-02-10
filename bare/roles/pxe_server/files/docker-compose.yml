@@ -1,0 +1,21 @@
+services:
+  dnsmasq:
+    build: ./dnsmasq
+    volumes:
+      - ./data/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./data/grub.cfg:/tftp/grub/grub.cfg
+      - ./data/os/EFI/boot/grubx64.efi:/tftp/grubx64.efi
+      - ./data/os/casper/initrd:/tftp/initrd
+      - ./data/os/casper/vmlinuz:/tftp/vmlinuz
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+
+  http:
+    build: ./http
+    volumes:
+      - ./data/iso:/usr/share/nginx/html/iso
+      - ./data/init-config/:/usr/share/nginx/html/init-config
+    # network_mode: host
+    ports:
+      - "8080:80"

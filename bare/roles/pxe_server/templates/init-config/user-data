@@ -1,0 +1,20 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  # Enable SSH and enforce key-based authentication only
+  ssh:
+    install-server: true
+    allow-pw: false
+
+  late-commands:
+    - curtin in-target -- systemctl enable ssh
+    - curtin in-target -- systemctl start ssh
+
+  user-data:
+    users:
+      - name: ubuntu
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+        ssh_authorized_keys:
+          - "{{ ssh_public_key }}"

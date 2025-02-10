@@ -1,0 +1,55 @@
+- name: Get Docker info
+  docker_host_info: {}
+  register: docker_info_result
+
+- name: Download boot image
+  ansible.builtin.get_url:
+    force: false
+    url: "{{ iso_uri }}"
+    dest: "{{ role_path }}/files/data/iso/{{ iso_uri | basename }}"
+    # checksum: "{{ iso_checksum }}"
+    mode: 0644
+  register: iso
+
+- name: Extract boot image
+  ansible.builtin.command:
+    cmd: "xorriso -osirrox on -indev {{ iso.dest }} -extract / {{ role_path }}/files/data/os"
+    creates: "{{ role_path }}/files/data/os/md5sum.txt"
+
+- name: Delete grubx64.efi
+  ansible.builtin.file:
+    path: "{{ role_path }}/files/data/os/EFI/boot/grubx64.efi"
+    state: absent
+  become: yes
+
+- name: Download grubnetx64.efi
+  ansible.builtin.get_url:
+    force: false
+    url: "http://archive.ubuntu.com/ubuntu/dists/jammy/main/uefi/grub2-amd64/current/grubnetx64.efi"
+    dest: "{{ role_path }}/files/data/os/EFI/boot/grubx64.efi"
+    mode: 0644
+  become: yes
+
+- name: Generate GRUB
+  ansible.builtin.template:
+    src: grub.cfg
+    dest: "{{ role_path }}/files/data/grub.cfg"
+    mode: 0644
+
+- name: Generate dnsmasq config
+  ansible.builtin.template:
+    src: dnsmasq.conf
+    dest: "{{ role_path }}/files/data/dnsmasq.conf"
+    mode: 0644
+
+- name: Generate cloud init config
+  ansible.builtin.template:
+    src: init-config/user-data
+    dest: "{{ role_path }}/files/data/init-config/user-data"
+    mode: 0644
+
+- name: Start the ephemeral PXE server
+  community.docker.docker_compose_v2:
+    project_src: "{{ role_path }}/files"
+    state: present
+    build: always
