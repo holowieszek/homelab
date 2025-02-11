@@ -12,6 +12,7 @@ autoinstall:
 
   late-commands:
     - echo $(openssl rand -hex 3) > /target/etc/hostname
+    - lvextend -l +100%FREE -r /dev/mapper/ubuntu--vg-ubuntu--lv
     - curtin in-target -- systemctl enable ssh
     - curtin in-target -- systemctl start ssh
 
