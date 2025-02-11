@@ -2,12 +2,16 @@
 autoinstall:
   version: 1
 
+  updates: all
+  preserve_hostname: true
+  
   # Enable SSH and enforce key-based authentication only
   ssh:
     install-server: true
     allow-pw: false
 
   late-commands:
+    - echo $(openssl rand -hex 3) > /target/etc/hostname
     - curtin in-target -- systemctl enable ssh
     - curtin in-target -- systemctl start ssh
 
