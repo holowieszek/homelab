@@ -2,7 +2,11 @@ bare:
   children:
     masters:
       hosts:
-        bare0: { mac: 'EC:8E:B5:77:15:59' }
+        bare0:
+          ansible_host: 192.168.88.166
+          mac: EC:8E:B5:77:15:59
     workers:
       hosts:
-        bare1: { mac: 'C8:D3:FF:A5:DA:6D' }
+        bare1:
+          ansible_host: 192.168.88.79
+          mac: C8:D3:FF:A5:DA:6D

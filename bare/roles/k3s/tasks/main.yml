@@ -1,0 +1,41 @@
+- name: Download K3S installer
+  ansible.builtin.command:
+    cmd: "curl -fsSL https://get.k3s.io -o /tmp/k3s-installer.sh"
+  # when: "'masters' in group_names"
+
+- name: Ensure K3S installer is executable
+  ansible.builtin.file:
+    path: /tmp/k3s-installer.sh
+    mode: 0755
+  # when: "'masters' in group_names"
+
+- name: Install K3S Server
+  shell: /tmp/k3s-installer.sh
+  when: "'masters' in group_names"
+
+- name: Read K3S Server token
+  ansible.builtin.slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: k3s_token_base64
+  become: true
+  when: "'masters' in group_names"
+
+- name: Store K3S Server token
+  ansible.builtin.set_fact:
+    node_token: "{{ k3s_token_base64['content'] | b64decode | trim }}"
+  when: "'masters' in group_names"
+  # delegate_to: workers
+
+- name: Debug token value
+  ansible.builtin.debug:
+    msg: "Node token is: {{ hostvars['bare0']['node_token'] }}"
+  when: "'workers' in group_names"
+  
+- name: Install K3S Agent
+  ansible.builtin.shell:
+    cmd: "/tmp/k3s-installer.sh"
+  environment:
+    K3S_URL: "https://192.168.88.166:6443"
+    K3S_TOKEN: "{{ hostvars['bare0']['node_token'] }}"
+  # shell: K3S_URL=https://192.168.88.166:6443 K3S_TOKEN={{ hostvars['bare0']['node_token'] }} /tmp/k3s-installer.sh
+  when: "'workers' in group_names"

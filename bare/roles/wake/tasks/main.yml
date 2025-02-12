@@ -2,3 +2,7 @@
   community.general.wakeonlan:
     mac: "{{ mac }}"
   delegate_to: localhost
+
+- name: Wait
+  ansible.builtin.wait_for_connection:
+    timeout: 600
