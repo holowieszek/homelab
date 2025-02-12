@@ -1,0 +1,4 @@
+- name: Provison K3S cluster
+  hosts: bare
+  roles:
+    - k3s

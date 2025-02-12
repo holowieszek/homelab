@@ -1,3 +1,5 @@
+ansible_user: ubuntu
+ansible_ssh_private_key_file: "~/.ssh/test"
 ssh_public_key: "{{ lookup('file', '~/.ssh/test.pub') }}"
 iso_uri: "https://ftp.icm.edu.pl/pub/Linux/ubuntu-releases/24.04.1/ubuntu-24.04.1-live-server-amd64.iso"
 iso_checksum: "sha256:e240e4b801f7bb68c20d1356b60968ad0c33a41d00d828e74ceb3364a0317be9"
