@@ -1,0 +1,9 @@
+- name: Bootstrapping the cluster
+  hosts: localhost
+  tasks:
+    - name: Create ArgoCD namespace
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: argocd
+        state: present
