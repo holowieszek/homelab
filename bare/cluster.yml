@@ -2,3 +2,8 @@
   hosts: bare
   roles:
     - k3s
+
+- name: Install dependencies
+  hosts: masters
+  roles:
+    - dependencies
