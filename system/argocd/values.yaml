@@ -4,6 +4,9 @@ argo-cd:
       server.insecure: true
       server.basehref: /argocd
 
+    cm:
+      timeout.reconciliation: 60s
+      
     repositories:
       test-repo:
         url: &repoURL https://github.com/holowieszek/homelab
