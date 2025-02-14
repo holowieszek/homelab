@@ -7,3 +7,23 @@
         kind: Namespace
         name: argocd
         state: present
+
+    - name: Create ArgoCD manifests
+      kubernetes.core.helm_template:
+        chart_ref: ./argocd
+        include_crds: true
+        release_name: argocd
+        release_namespace: argocd
+        dependency_update: true
+        values_files:
+          - "argocd/values.yaml"
+      register: argocd_manifests
+
+    - name: Apply ArgoCD manifests
+      kubernetes.core.k8s:
+        resource_definition: "{{ argocd_manifests.stdout }}"
+        apply: true
+        # state: absent
+        # delete_all: true
+        server_side_apply:
+          field_manager: argocd-controller
