@@ -3,6 +3,6 @@
     mac: "{{ mac }}"
   delegate_to: localhost
 
-# - name: Wait
-#   ansible.builtin.wait_for_connection:
-#     timeout: 600
+- name: Wait
+  ansible.builtin.wait_for_connection:
+    timeout: 1800
