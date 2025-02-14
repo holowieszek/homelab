@@ -10,7 +10,8 @@ app-template:
     main:
       ports:
         http:
-          port: 3000
+          port: 80
+          targetPort: 3000
           protocol: HTTP
   persistence:
     config:
