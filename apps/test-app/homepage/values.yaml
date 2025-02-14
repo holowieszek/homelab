@@ -1,0 +1,55 @@
+app-template:
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: ghcr.io/gethomepage/homepage
+            tag: v0.10.9
+  service:
+    main:
+      ports:
+        http:
+          port: 3000
+          protocol: HTTP
+  persistence:
+    config:
+      enabled: true
+      type: configMap
+      name: homepage-config
+      globalMounts:
+        - path: /app/config/settings.yaml
+          subPath: settings.yaml
+        - path: /app/config/widgets.yaml
+          subPath: widgets.yaml
+        - path: /app/config/services.yaml
+          subPath: services.yaml
+        - path: /app/config/bookmarks.yaml
+          subPath: bookmarks.yaml
+  configMaps:
+    config:
+      enabled: true
+      data:
+        settings.yaml: |
+          cardBlur: md
+          theme: dark
+          headerStyle: boxed
+          hideVersion: true
+        widgets.yaml: |
+          - search:
+              provider: google
+              target: _blank
+        services.yaml: |
+          - Development:
+            - ArgoCD:
+                href: https://argocd.khuedoan.com
+                description: Continuous deployment
+                icon: argocd.svg
+        bookmarks.yaml: |
+          - Homelab:
+            - Documentation:
+              - href: https://internal.homelab
+                icon: google-docs.svg
+            - Public homelab repository:
+              - href: https://github.com/holowieszek/homelab
+                icon: github.svg
