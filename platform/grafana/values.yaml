@@ -6,6 +6,6 @@ grafana:
     datasources:
       enabled: true
       searchNamespace: monitoring
-  # grafana.ini:
-  #   server:
-  #     root_url: https://internal.homelab/grafana
+  grafana.ini:
+    server:
+      root_url: https://internal.homelab/grafana
