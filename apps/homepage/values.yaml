@@ -12,18 +12,6 @@ app-template:
         http:
           port: 3000
           protocol: HTTP
-  ingress:
-    main:
-      annotations:
-        kubernetes.io/ingress.class: "traefik"
-      hosts:
-        - host: internal.homelab
-          paths:
-            - path: /
-              pathType: Prefix
-              service:
-                name: main
-                port: http
   persistence:
     config:
       enabled: true
