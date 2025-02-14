@@ -27,7 +27,7 @@
   ansible.builtin.shell:
     cmd: "/tmp/k3s-installer.sh"
   environment:
-    K3S_URL: "https://192.168.88.166:6443"
+    K3S_URL: "https://{{ control_plane_endpoint }}:6443"
     K3S_TOKEN: "{{ hostvars['bare0']['node_token'] }}"
   when: "'workers' in group_names"
 
@@ -40,7 +40,7 @@
 
 - name: Write K3S config file
   ansible.builtin.copy:
-    content: "{{ k3sconfig_base64.content | b64decode | replace('127.0.0.1', '192.168.88.166') }}"
+    content: "{{ k3sconfig_base64.content | b64decode | replace('127.0.0.1', control_plane_endpoint) }}"
     dest: "{{ playbook_dir }}/k3s.yaml"
     mode: 0600
   delegate_to: localhost
