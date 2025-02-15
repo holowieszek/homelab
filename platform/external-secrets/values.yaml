@@ -33,8 +33,7 @@ external-secrets:
       refreshInterval: 1h
       secretStoreRef:
         name: secretstore-sample
-        kind: SecretStore
-        namespace: external-secrets
+        kind: ClusterSecretStore
       target:
         name: test-secret
         creationPolicy: Owner
