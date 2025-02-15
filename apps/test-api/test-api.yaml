@@ -93,3 +93,23 @@ spec:
       remoteRef:
         key: k3s/test
         property: random_key
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: test-api-secret-2
+  namespace: test-api
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: secretstore-sample
+    kind: ClusterSecretStore
+    # namespace: external-secrets
+  target:
+    name: test-api-secret-2
+    creationPolicy: Owner
+  data:
+    - secretKey: random_key
+      remoteRef:
+        key: k3s/test
+        property: random_key

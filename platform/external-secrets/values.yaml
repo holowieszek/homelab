@@ -23,23 +23,23 @@ external-secrets:
       conditions:
         - namespaces:
           - "test-api"
-          - "external-secrets"
+          # - "external-secrets"
 
-  - apiVersion: external-secrets.io/v1beta1
-    kind: ExternalSecret
-    metadata:
-      name: test-secret
-      namespace: external-secrets
-    spec:
-      refreshInterval: 1h
-      secretStoreRef:
-        name: secretstore-sample
-        kind: ClusterSecretStore
-      target:
-        name: test-secret
-        creationPolicy: Owner
-      data:
-        - secretKey: random_key
-          remoteRef:
-            key: k3s/test
-            property: random_key
+  # - apiVersion: external-secrets.io/v1beta1
+  #   kind: ExternalSecret
+  #   metadata:
+  #     name: test-secret
+  #     namespace: external-secrets
+  #   spec:
+  #     refreshInterval: 1h
+  #     secretStoreRef:
+  #       name: secretstore-sample
+  #       kind: ClusterSecretStore
+  #     target:
+  #       name: test-secret
+  #       creationPolicy: Owner
+  #     data:
+  #       - secretKey: random_key
+  #         remoteRef:
+  #           key: k3s/test
+  #           property: random_key
