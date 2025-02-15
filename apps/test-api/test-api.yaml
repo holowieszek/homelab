@@ -72,7 +72,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: test-api-secret
-              key: LOG_LEVEL
+              key: random_key
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -89,7 +89,7 @@ spec:
     name: test-api-secret
     creationPolicy: Owner
   data:
-    - secretKey: LOG_LEVEL
+    - secretKey: random_key
       remoteRef:
         key: k3s/test
-        property: LOG_LEVEL
+        property: random_key
