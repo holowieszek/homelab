@@ -73,11 +73,11 @@ spec:
             secretKeyRef:
               name: test-api-secret
               key: random_key
-        - name: TEST_ENV_VAR_2
+        - name: LOG_LEVEl
           valueFrom:
             secretKeyRef:
-              name: test-api-secret-2
-              key: random_key
+              name: test-api-another-secret
+              key: LOG_LEVEL
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -85,11 +85,10 @@ metadata:
   name: test-api-secret
   namespace: test-api
 spec:
-  refreshInterval: 1h
+  refreshInterval: 10m
   secretStoreRef:
     name: secretstore-sample
     kind: ClusterSecretStore
-    # namespace: external-secrets
   target:
     name: test-api-secret
     creationPolicy: Owner
@@ -105,16 +104,15 @@ metadata:
   name: test-api-secret-2
   namespace: test-api
 spec:
-  refreshInterval: 1h
+  refreshInterval: 10m
   secretStoreRef:
     name: secretstore-sample
     kind: ClusterSecretStore
-    # namespace: external-secrets
   target:
-    name: test-api-secret-2
+    name: test-api-another-secret
     creationPolicy: Owner
   data:
-    - secretKey: random_key
+    - secretKey: LOG_LEVEL
       remoteRef:
-        key: k3s/test
-        property: random_key
+        key: k3s/test-another-test
+        property: LOG_LEVEL
