@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-api
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: test-api-prefix
+  namespace: test-api
+spec:
+  stripPrefix:
+    prefixes:
+      - /test-api
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-api
+  namespace: test-api
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.middlewares: test-api-test-api-prefix@kubernetescrd
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /test-api
+        pathType: Prefix
+        backend:
+          service:
+            name: test-api
+            port:
+              number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-api
+  namespace: test-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    app: test-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-api-nginx
+  namespace: test-api
+spec:
+  selector:
+    matchLabels:
+      app: test-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test-api
+    spec:
+      containers:
+      - name: quick-test-node-api
+        image: ghcr.io/holowieszek/quick-test-node-api:main
+        ports:
+        - containerPort: 3000
