@@ -8,6 +8,27 @@
         name: argocd
         state: present
 
+    - name: Create External Secrets namespace
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: external-secrets
+        state: present
+
+    - name: Create AWS secret
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          data:
+            access-key: "{{ (lookup('file', 'files/secrets-manager-secret.yaml')|from_yaml).access_key }}"
+            secret-access-key: "{{ (lookup('file', 'files/secrets-manager-secret.yaml')|from_yaml).secret_access_key }}"
+          kind: Secret
+          metadata:
+            name: awssm-secret
+            namespace: external-secrets
+          type: Opaque
+
     - name: Create ArgoCD manifests
       kubernetes.core.helm_template:
         chart_ref: ./argocd
