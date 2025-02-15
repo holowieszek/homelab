@@ -23,6 +23,7 @@ external-secrets:
       conditions:
         - namespaces:
           - "test-api"
+          - "external-secrets"
 
   - apiVersion: external-secrets.io/v1beta1
     kind: ExternalSecret
