@@ -73,6 +73,11 @@ spec:
             secretKeyRef:
               name: test-api-secret
               key: random_key
+        - name: TEST_ENV_VAR_2
+          valueFrom:
+            secretKeyRef:
+              name: test-api-secret-2
+              key: random_key
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
