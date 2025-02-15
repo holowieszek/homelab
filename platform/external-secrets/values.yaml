@@ -15,9 +15,11 @@ external-secrets:
               accessKeyIDSecretRef:
                 name: awssm-secret
                 key: access-key
+                namespace: external-secrets
               secretAccessKeySecretRef:
                 name: awssm-secret
                 key: secret-access-key
+                namespace: external-secrets
 
   - apiVersion: external-secrets.io/v1beta1
     kind: ExternalSecret
