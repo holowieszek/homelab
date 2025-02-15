@@ -77,7 +77,8 @@ spec:
   refreshInterval: 1h
   secretStoreRef:
     name: secretstore-sample
-    kind: SecretStore
+    kind: ClusterSecretStore
+    # namespace: external-secrets
   target:
     name: test-api-secret
     creationPolicy: Owner
