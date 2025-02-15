@@ -67,3 +67,22 @@ spec:
         image: ghcr.io/holowieszek/quick-test-node-api:main
         ports:
         - containerPort: 3000
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: test-api-secret
+  namespace: test-api
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: secretstore-sample
+    kind: SecretStore
+  target:
+    name: test-api-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: random_key
+      remoteRef:
+        key: k3s/test
+        property: random_key
