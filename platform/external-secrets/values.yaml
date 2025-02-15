@@ -34,6 +34,7 @@ external-secrets:
       secretStoreRef:
         name: secretstore-sample
         kind: SecretStore
+        namespace: external-secrets
       target:
         name: test-secret
         creationPolicy: Owner
