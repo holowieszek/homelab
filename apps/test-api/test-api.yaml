@@ -67,6 +67,12 @@ spec:
         image: ghcr.io/holowieszek/quick-test-node-api:main
         ports:
         - containerPort: 3000
+        env:
+        - name: TEST_ENV_VAR
+          valueFrom:
+            secretKeyRef:
+              name: test-api-secret
+              key: LOG_LEVEL
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -83,7 +89,7 @@ spec:
     name: test-api-secret
     creationPolicy: Owner
   data:
-    - secretKey: random_key
+    - secretKey: LOG_LEVEL
       remoteRef:
         key: k3s/test
-        property: random_key
+        property: LOG_LEVEL
