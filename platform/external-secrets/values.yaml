@@ -4,6 +4,7 @@ external-secrets:
     kind: SecretStore
     metadata:
       name: secretstore-sample
+      namespace: external-secrets
     spec:
       provider:
         aws:
@@ -22,7 +23,7 @@ external-secrets:
     kind: ExternalSecret
     metadata:
       name: test-secret
-      namespace: default
+      namespace: external-secrets
     spec:
       refreshInterval: 1h
       secretStoreRef:
