@@ -20,9 +20,9 @@ external-secrets:
                 name: awssm-secret
                 key: secret-access-key
                 namespace: external-secrets
-    conditions:
-      - namespaces:
-        - "test-api"
+      conditions:
+        - namespaces:
+          - "test-api"
 
   - apiVersion: external-secrets.io/v1beta1
     kind: ExternalSecret
