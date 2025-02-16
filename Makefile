@@ -1,5 +1,7 @@
 .PHONY: *
 
+default: bare system
+
 bare:
 	make -C bare
 
