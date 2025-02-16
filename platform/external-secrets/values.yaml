@@ -25,23 +25,56 @@ external-secrets:
           - "test-api"
           - "argocd"
           - "grafana"
-          # - "external-secrets"
-
-  # - apiVersion: external-secrets.io/v1beta1
-  #   kind: ExternalSecret
-  #   metadata:
-  #     name: test-secret
-  #     namespace: external-secrets
-  #   spec:
-  #     refreshInterval: 1h
-  #     secretStoreRef:
-  #       name: secretstore-sample
-  #       kind: ClusterSecretStore
-  #     target:
-  #       name: test-secret
-  #       creationPolicy: Owner
-  #     data:
-  #       - secretKey: random_key
-  #         remoteRef:
-  #           key: k3s/test
-  #           property: random_key
+  - apiVersion: external-secrets.io/v1alpha1
+    kind: PushSecret
+    metadata:
+      name: argocd-secrets-push
+      namespace: argocd
+    spec:
+      updatePolicy: Replace
+      deletionPolicy: None
+      refreshInterval: 1m
+      secretStoreRefs:
+        - name: secretstore-sample
+          kind: ClusterSecretStore
+      selector:
+        secret:
+          name: argocd-initial-admin-secret
+      data:
+        - match:
+            secretKey: password
+            remoteRef:
+              remoteKey: k3s/homelab/credentials
+              property: argocd_password
+          metadata:
+            secretPushFormat: string
+  - apiVersion: external-secrets.io/v1alpha1
+    kind: PushSecret
+    metadata:
+      name: grafana-secrets-push
+      namespace: grafana
+    spec:
+      updatePolicy: Replace
+      deletionPolicy: None
+      refreshInterval: 1m
+      secretStoreRefs:
+        - name: secretstore-sample
+          kind: ClusterSecretStore
+      selector:
+        secret:
+          name: grafana
+      data:
+        - match:
+            secretKey: admin-user
+            remoteRef:
+              remoteKey: k3s/homelab/credentials
+              property: grafana_user
+          metadata:
+            secretPushFormat: string
+        - match:
+            secretKey: admin-password
+            remoteRef:
+              remoteKey: k3s/homelab/credentials
+              property: grafana_password
+          metadata:
+            secretPushFormat: string
