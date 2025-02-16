@@ -95,6 +95,9 @@ spec:
   data:
     - secretKey: random_key
       remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: none
         key: k3s/test
         property: random_key
 ---
@@ -114,5 +117,8 @@ spec:
   data:
     - secretKey: LOG_LEVEL
       remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: none
         key: k3s/test-another-test
         property: LOG_LEVEL
