@@ -5,12 +5,12 @@ metadata:
   namespace: homepage
   annotations:
     kubernetes.io/ingress.class: "traefik"
-    # traefik.ingress.kubernetes.io/router.middlewares: homepage-homepage-prefix@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: homepage-homepage-prefix@kubernetescrd
 spec:
   rules:
   - http:
       paths:
-      - path: /
+      - path: /homepage
         pathType: Prefix
         backend:
           service:
