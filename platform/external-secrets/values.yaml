@@ -31,7 +31,7 @@ external-secrets:
       name: argocd-secrets-push
       namespace: argocd
     spec:
-      updatePolicy: IfNotExists
+      updatePolicy: Replace
       deletionPolicy: None
       refreshInterval: 1m
       secretStoreRefs:
@@ -55,7 +55,7 @@ external-secrets:
       name: grafana-secrets-push
       namespace: grafana
     spec:
-      updatePolicy: IfNotExists
+      updatePolicy: Replace
       deletionPolicy: None
       refreshInterval: 1m
       secretStoreRefs:
