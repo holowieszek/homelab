@@ -1,0 +1,7 @@
+set timeout=5
+set default=0
+
+menuentry "Install Ubuntu Server with Autoinstall" {
+    linux /vmlinuz url={{ pxe_http_server }}/iso/ubuntu-24.04.1-live-server-amd64.iso autoinstall cloud-config-url=/dev/null "ds=nocloud-net;s={{ pxe_http_server }}/init-config" ip=dhcp
+    initrd /initrd
+}

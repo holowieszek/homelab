@@ -1,0 +1,27 @@
+#Disable DNS Server
+port=0
+
+#Enable DHCP logging
+log-dhcp
+
+# We're DHCP configuring on this range
+dhcp-range=192.168.88.10,192.168.88.240,255.255.255.0,12h
+dhcp-option=3,192.168.88.1
+
+# Match Arch Types efi x86 and x64
+dhcp-match=set:efi-x86_64,option:client-arch,7
+dhcp-match=set:efi-x86_64,option:client-arch,9
+
+# Set the Boot file based on the tag from above
+dhcp-boot=tag:efi-x86_64,grubx64.efi
+
+#Flag forces "simple and safe" behavior
+dhcp-no-override
+
+#Provide network boot option called "Network Boot"
+
+#Turn tftp ON
+enable-tftp
+
+#Set tftp root
+tftp-root=/tftp
