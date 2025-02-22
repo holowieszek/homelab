@@ -13,3 +13,6 @@ bare:
         bare1:
           ansible_host: 192.168.88.79
           mac: C8:D3:FF:A5:DA:6D
+        bare2:
+          ansible_host: 192.168.88.200
+          mac: FC:3F:DB:0C:B7:87
