@@ -1,4 +1,6 @@
 grafana:
+  admin:
+    existingSecret: "grafana"
   sidecar:
     dashboards:
       enabled: true
