@@ -1,8 +1,10 @@
 argo-cd:
+  global:
+    domain: argocd.internal.homelab
   configs:
     params:
       server.insecure: true
-      server.basehref: /argocd
+      # server.basehref: /
 
     cm:
       timeout.reconciliation: 60s

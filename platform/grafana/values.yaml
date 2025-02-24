@@ -10,7 +10,7 @@ grafana:
       searchNamespace: monitoring
   grafana.ini:
     server:
-      root_url: https://internal.homelab/grafana
+      root_url: https://grafana.internal.homelab
   dashboards:
     default:
       k3s:
