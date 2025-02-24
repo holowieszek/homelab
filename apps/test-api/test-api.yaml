@@ -23,6 +23,7 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
     # traefik.ingress.kubernetes.io/router.middlewares: test-api-test-api-prefix@kubernetescrd
 spec:
+  ingressClassName: "traefik"
   rules:
   - host: test.internal.homelab
     http:
