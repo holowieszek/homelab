@@ -43,7 +43,7 @@ app-template:
         services.yaml: |
           - Development:
             - ArgoCD:
-                href: https://internal.homelab/argocd
+                href: https://argocd.internal.homelab
                 description: Continuous deployment
                 icon: argocd.svg
         bookmarks.yaml: |
