@@ -5,12 +5,14 @@ metadata:
   namespace: argocd
   annotations:
     kubernetes.io/ingress.class: "traefik"
-    traefik.ingress.kubernetes.io/router.middlewares: argocd-argocd-prefix@kubernetescrd
+    # traefik.ingress.kubernetes.io/router.middlewares: argocd-argocd-prefix@kubernetescrd
 spec:
+  ingressClassName: traefik
   rules:
-  - http:
+  - host: argocd.internal.homelab
+    http:
       paths:
-      - path: /argocd
+      - path: /
         pathType: Prefix
         backend:
           service:

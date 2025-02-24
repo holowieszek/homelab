@@ -5,12 +5,14 @@ metadata:
   namespace: grafana
   annotations:
     kubernetes.io/ingress.class: "traefik"
-    traefik.ingress.kubernetes.io/router.middlewares: grafana-grafana-prefix@kubernetescrd
+    # traefik.ingress.kubernetes.io/router.middlewares: grafana-grafana-prefix@kubernetescrd
 spec:
+  ingressClassName: traefik
   rules:
-  - http:
+  - host: grafana.internal.homelab
+    http:
       paths:
-      - path: /grafana
+      - path: /
         pathType: Prefix
         backend:
           service:

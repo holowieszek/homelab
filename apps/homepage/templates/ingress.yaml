@@ -7,8 +7,10 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
     # traefik.ingress.kubernetes.io/router.middlewares: homepage-homepage-prefix@kubernetescrd
 spec:
+  ingressClassName: traefik
   rules:
-  - http:
+  - host: internal.homelab
+    http:
       paths:
       - path: /
         pathType: Prefix
