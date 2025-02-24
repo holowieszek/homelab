@@ -12,9 +12,9 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "traefik"
 spec:
-  ingressClassName: "traefik"
+  ingressClassName: traefik
   rules:
-  - host: test.internal.homelab
+  - host: test-api.internal.homelab
     http:
       paths:
       - path: /
