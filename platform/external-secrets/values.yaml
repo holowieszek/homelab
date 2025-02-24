@@ -33,7 +33,7 @@ external-secrets:
     spec:
       updatePolicy: Replace
       deletionPolicy: None
-      refreshInterval: 1m
+      refreshInterval: 10m
       secretStoreRefs:
         - name: secretstore-sample
           kind: ClusterSecretStore
@@ -49,35 +49,3 @@ external-secrets:
               property: argocd_password
           metadata:
             secretPushFormat: string
-  # - apiVersion: external-secrets.io/v1alpha1
-  #   kind: PushSecret
-  #   metadata:
-  #     name: grafana-secrets-push
-  #     namespace: grafana
-  #   spec:
-  #     updatePolicy: Replace
-  #     deletionPolicy: None
-  #     refreshInterval: 1m
-  #     secretStoreRefs:
-  #       - name: secretstore-sample
-  #         kind: ClusterSecretStore
-  #     selector:
-  #       secret:
-  #         name: grafana
-  #     data:
-  #       - conversionStrategy: None 
-  #         match:
-  #           secretKey: admin-user
-  #           remoteRef:
-  #             remoteKey: k3s/homelab/credentials
-  #             property: grafana_user
-  #         metadata:
-  #           secretPushFormat: string
-  #       - conversionStrategy: None 
-  #         match:
-  #           secretKey: admin-password
-  #           remoteRef:
-  #             remoteKey: k3s/homelab/credentials
-  #             property: grafana_password
-  #         metadata:
-  #           secretPushFormat: string
