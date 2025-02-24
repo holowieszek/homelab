@@ -1,6 +1,7 @@
 grafana:
   admin:
     existingSecret: "grafana"
+    
   sidecar:
     dashboards:
       enabled: true
@@ -8,9 +9,24 @@ grafana:
     datasources:
       enabled: true
       searchNamespace: monitoring
+
   grafana.ini:
     server:
       root_url: https://grafana.internal.homelab
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: 'default'
+          type: file
+          disableDeletion: true
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+
   dashboards:
     default:
       k3s:
