@@ -37,6 +37,11 @@ app-template:
           headerStyle: boxed
           hideVersion: true
         widgets.yaml: |
+          - resources:
+              cpu: true
+              memory: true
+              disk: /
+
           - search:
               provider: google
               target: _blank
