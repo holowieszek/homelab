@@ -35,6 +35,8 @@ app-template:
     config:
       enabled: true
       data:
+        kubernetes:
+          mode: cluster
         settings.yaml: |
           cardBlur: md
           theme: dark
