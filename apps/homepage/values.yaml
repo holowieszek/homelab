@@ -1,83 +1,156 @@
-app-template:
-  controllers:
-    main:
-      containers:
-        main:
-          image:
-            repository: ghcr.io/gethomepage/homepage
-            tag: v0.10.9
-  service:
-    main:
-      ports:
-        http:
-          port: 80
-          targetPort: 3000
-          protocol: HTTP
-  serviceAccount:
-    create: true
-    name: homepage
-  enableRbac: true
-  persistence:
-    config:
-      enabled: true
-      type: configMap
-      name: homepage-config
-      globalMounts:
-        - path: /app/config/settings.yaml
-          subPath: settings.yaml
-        - path: /app/config/widgets.yaml
-          subPath: widgets.yaml
-        - path: /app/config/services.yaml
-          subPath: services.yaml
-        - path: /app/config/bookmarks.yaml
-          subPath: bookmarks.yaml
-  configMaps:
-    config:
-      enabled: true
-      data:
-        kubernetes:
-          mode: cluster
-        settings.yaml: |
-          cardBlur: md
-          theme: dark
-          headerStyle: boxed
-          hideVersion: true
-        widgets.yaml: |
-          - kubernetes:
-              cluster:
-                # Shows cluster-wide statistics
-                show: true
-                # Shows the aggregate CPU stats
-                cpu: true
-                # Shows the aggregate memory stats
-                memory: true
-                # Shows a custom label
-                showLabel: true
-                label: "cluster"
-              nodes:
-                # Shows node-specific statistics
-                show: true
-                # Shows the CPU for each node
-                cpu: true
-                # Shows the memory for each node
-                memory: true
-                # Shows the label, which is always the node name
-                showLabel: true
+# app-template:
+#   controllers:
+#     main:
+#       containers:
+#         main:
+#           image:
+#             repository: ghcr.io/gethomepage/homepage
+#             tag: v0.10.9
+#   service:
+#     main:
+#       ports:
+#         http:
+#           port: 80
+#           targetPort: 3000
+#           protocol: HTTP
+#   serviceAccount:
+#     create: true
+#     name: homepage
+#   enableRbac: true
+#   persistence:
+#     config:
+#       enabled: true
+#       type: configMap
+#       name: homepage-config
+#       globalMounts:
+#         - path: /app/config/settings.yaml
+#           subPath: settings.yaml
+#         - path: /app/config/widgets.yaml
+#           subPath: widgets.yaml
+#         - path: /app/config/services.yaml
+#           subPath: services.yaml
+#         - path: /app/config/bookmarks.yaml
+#           subPath: bookmarks.yaml
+#   configMaps:
+#     config:
+#       enabled: true
+#       data:
+#         kubernetes:
+#           mode: cluster
+#         settings.yaml: |
+#           cardBlur: md
+#           theme: dark
+#           headerStyle: boxed
+#           hideVersion: true
+#         widgets.yaml: |
+#           - kubernetes:
+#               cluster:
+#                 # Shows cluster-wide statistics
+#                 show: true
+#                 # Shows the aggregate CPU stats
+#                 cpu: true
+#                 # Shows the aggregate memory stats
+#                 memory: true
+#                 # Shows a custom label
+#                 showLabel: true
+#                 label: "cluster"
+#               nodes:
+#                 # Shows node-specific statistics
+#                 show: true
+#                 # Shows the CPU for each node
+#                 cpu: true
+#                 # Shows the memory for each node
+#                 memory: true
+#                 # Shows the label, which is always the node name
+#                 showLabel: true
 
-          - search:
-              provider: google
-              target: _blank
-        services.yaml: |
-          - Development:
-            - ArgoCD:
-                href: https://argocd.internal.mateuszholowieszko.com
-                description: Continuous deployment
-                icon: argocd.svg
-        bookmarks.yaml: |
-          - Homelab:
-            - Documentation:
-              - href: https://internal.mateuszholowieszko.com
-                icon: google-docs.svg
-            - Public homelab repository:
-              - href: https://github.com/holowieszek/homelab
-                icon: github.svg
+#           - search:
+#               provider: google
+#               target: _blank
+#         services.yaml: |
+#           - Development:
+#             - ArgoCD:
+#                 href: https://argocd.internal.mateuszholowieszko.com
+#                 description: Continuous deployment
+#                 icon: argocd.svg
+#         bookmarks.yaml: |
+#           - Homelab:
+#             - Documentation:
+#               - href: https://internal.mateuszholowieszko.com
+#                 icon: google-docs.svg
+#             - Public homelab repository:
+#               - href: https://github.com/holowieszek/homelab
+#                 icon: github.svg
+
+
+config:
+  bookmarks:
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/
+  services:
+    - My First Group:
+        - My First Service:
+            href: http://localhost/
+            description: Homepage is awesome
+
+    - My Second Group:
+        - My Second Service:
+            href: http://localhost/
+            description: Homepage is the best
+
+    - My Third Group:
+        - My Third Service:
+            href: http://localhost/
+            description: Homepage is 😎
+  widgets:
+    # show the kubernetes widget, with the cluster summary and individual nodes
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+  kubernetes:
+    mode: cluster
+  settings:
+
+# The service account is necessary to allow discovery of other services
+serviceAccount:
+  create: true
+  name: homepage
+
+# This enables the service account to access the necessary resources
+enableRbac: true
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      gethomepage.dev/enabled: true
+      gethomepage.dev/name: Homepage
+      gethomepage.dev/description: Dynamically Detected Homepage
+      gethomepage.dev/group: Dynamic
+      gethomepage.dev/icon: homepage.png
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/ingress.class: traefik
+    hosts:
+      - host: internal.mateuszholowieszko.com
+        paths:
+          - path: /
+            pathType: Prefix
+
+    tls:
+      - hosts:
+          - internal.mateuszholowieszko.com
+        secretName: internal-mateuszholowieszko-com-tls
