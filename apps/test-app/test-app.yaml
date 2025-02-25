@@ -24,11 +24,12 @@ metadata:
   name: test-app
   namespace: test-app
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: "traefik"
 spec:
   ingressClassName: traefik
   rules:
-  - host: test-app.internal.homelab
+  - host: test-app.internal.mateuszholowieszko.com
     http:
       paths:
       - path: /
@@ -38,6 +39,10 @@ spec:
             name: test-app
             port:
               number: 80
+  tls:
+  - hosts:
+      - test-app.internal.mateuszholowieszko.com
+    secretName: test-app-internal-mateuszholowieszko-com-tls
 ---
 apiVersion: v1
 kind: Service

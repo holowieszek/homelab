@@ -4,11 +4,12 @@ metadata:
   name: grafana-ingress
   namespace: grafana
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: "traefik"
 spec:
   ingressClassName: traefik
   rules:
-  - host: grafana.internal.homelab
+  - host: grafana.internal.mateuszholowieszko.com
     http:
       paths:
       - path: /
@@ -18,3 +19,7 @@ spec:
             name: grafana
             port:
               number: 80
+  tls:
+  - hosts:
+      - grafana.internal.mateuszholowieszko.com
+    secretName: grafana-internal-mateuszholowieszko-com-tls

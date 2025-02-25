@@ -43,13 +43,13 @@ app-template:
         services.yaml: |
           - Development:
             - ArgoCD:
-                href: https://argocd.internal.homelab
+                href: https://argocd.internal.mateuszholowieszko.com
                 description: Continuous deployment
                 icon: argocd.svg
         bookmarks.yaml: |
           - Homelab:
             - Documentation:
-              - href: https://internal.homelab
+              - href: https://internal.mateuszholowieszko.com
                 icon: google-docs.svg
             - Public homelab repository:
               - href: https://github.com/holowieszek/homelab
