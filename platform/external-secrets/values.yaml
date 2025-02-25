@@ -23,8 +23,6 @@ external-secrets:
       conditions:
         - namespaces:
           - "cert-manager"
-          - "homepage"
-          - "default"
           - "test-api"
           - "argocd"
           - "grafana"
