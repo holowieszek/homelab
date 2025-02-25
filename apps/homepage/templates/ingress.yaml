@@ -4,6 +4,7 @@ metadata:
   name: homepage-ingress
   namespace: homepage
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: "traefik"
 spec:
   ingressClassName: traefik
