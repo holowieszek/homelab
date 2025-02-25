@@ -4,11 +4,12 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: "traefik"
 spec:
   ingressClassName: traefik
   rules:
-  - host: argocd.internal.homelab
+  - host: argocd.internal.mateuszholowieszko.com
     http:
       paths:
       - path: /
@@ -18,3 +19,7 @@ spec:
             name: argocd-server
             port:
               number: 80
+  tls:
+  - hosts:
+      - argocd.internal.mateuszholowieszko.com
+    secretName: argocd-internal-mateuszholowieszko-com-tls
