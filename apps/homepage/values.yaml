@@ -13,6 +13,10 @@ app-template:
           port: 80
           targetPort: 3000
           protocol: HTTP
+  serviceAccount:
+    create: true
+    name: homepage
+  enableRbac: true
   persistence:
     config:
       enabled: true
