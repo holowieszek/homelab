@@ -22,7 +22,7 @@ external-secrets:
                 namespace: external-secrets
       conditions:
         - namespaces:
-          - "kube-system"
+          - "cert-manager"
           - "homepage"
           - "default"
           - "test-api"
