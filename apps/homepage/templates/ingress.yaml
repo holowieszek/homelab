@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: internal.homelab
+  - host: internal.mateuszholowieszko.com
     http:
       paths:
       - path: /
@@ -18,3 +18,7 @@ spec:
             name: homepage
             port:
               number: 80
+  tls:
+  - hosts:
+      - internal.mateuszholowieszko.com
+    secretName: internal-mateuszholowieszko-com-tls
