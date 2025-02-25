@@ -14,7 +14,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: test-api.internal.homelab
+  - host: test-api.internal.mateuszholowieszko.com
     http:
       paths:
       - path: /
