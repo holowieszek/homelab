@@ -24,6 +24,10 @@ spec:
             name: test-api
             port:
               number: 80
+  tls:
+  - hosts:
+      - test-api.internal.mateuszholowieszko.com
+    secretName: test-api.internal-mateuszholowieszko-com-tls
 ---
 apiVersion: v1
 kind: Service
