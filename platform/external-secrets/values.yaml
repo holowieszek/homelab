@@ -22,6 +22,7 @@ external-secrets:
                 namespace: external-secrets
       conditions:
         - namespaces:
+          - "default"
           - "test-api"
           - "argocd"
           - "grafana"
