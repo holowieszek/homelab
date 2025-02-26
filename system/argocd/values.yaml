@@ -6,7 +6,7 @@ argo-cd:
       server.insecure: true
 
     cm:
-      timeout.reconciliation: 60s
+      timeout.reconciliation: 5m
       
     repositories:
       test-repo:
