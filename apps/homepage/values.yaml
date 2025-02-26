@@ -2,15 +2,14 @@ homepage:
   config:
     bookmarks:
       - Homelab:
-        - Repository:
-            - href: https://github.com/holowieszek
-              icon: github.svg
-              
-        - Infrastructure:
+          - Repository:
+              - href: https://github.com/holowieszek/
+                icon: github.svg
+
+      - Infrastructure:
           - AWS:
-            - href: https://holowieszkom.awsapps.com/start
-              icon: aws.svg
-              
+              - href: https://holowieszkom.awsapps.com/start/
+                icon: aws.svg
     services: 
       - Monitoring:
           - Grafana:
@@ -22,6 +21,7 @@ homepage:
           - ArgoCD:
               href: https://argocd.internal.mateuszholowieszko.com/
               description: Continuous deployment
+              icon: argo-cd.svg
 
       - My Third Group:
           - My Third Service:
