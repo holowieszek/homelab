@@ -2,6 +2,6 @@ apiVersion: v2
 name: homepage3
 version: 0.0.0
 dependencies:
-  - name: jameswynn/homepage
-    version: ">=0.1.0"
+  - name: homepage
+    version: "latest"
     repository: https://jameswynn.github.io/helm-charts
