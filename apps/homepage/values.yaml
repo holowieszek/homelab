@@ -60,6 +60,7 @@ homepage:
         gethomepage.dev/group: "Dynamic"
         gethomepage.dev/icon: "homepage.png"
         kubernetes.io/ingress.class: "traefik"
+        cert-manager.io/cluster-issuer: letsencrypt-prod
       hosts:
         - host: homepage.internal.mateuszholowieszko.com
           paths:
