@@ -58,6 +58,7 @@ ingress:
       gethomepage.dev/description: "Dynamically Detected Homepage"
       gethomepage.dev/group: "Dynamic"
       gethomepage.dev/icon: "homepage.png"
+      kubernetes.io/ingress.class: "traefik"
     hosts:
       - host: homepage2.internal.mateuszholowieszko.com
         paths:
