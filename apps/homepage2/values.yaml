@@ -61,7 +61,7 @@ homepage:
         gethomepage.dev/icon: "homepage.png"
         kubernetes.io/ingress.class: "traefik"
       hosts:
-        - host: homepage2.internal.mateuszholowieszko.com
+        - host: homepage3.internal.mateuszholowieszko.com
           paths:
             - path: /
               pathType: Prefix
