@@ -1,20 +1,27 @@
 homepage:
   config:
     bookmarks:
-      - Developer:
-          - Github:
-              - abbr: GH
-                href: https://github.com/
-    services:
-      - My First Group:
-          - My First Service:
-              href: http://localhost/
-              description: Homepage is awesome
+      - Homelab:
+        - Repository:
+            - href: https://github.com/holowieszek
+              icon: github.svg
+              
+        - Infrastructure:
+          - AWS:
+            - href: https://holowieszkom.awsapps.com/start
+              icon: aws.svg
+              
+    services: 
+      - Monitoring:
+          - Grafana:
+              href: https://grafana.internal.mateuszholowieszko.com/
+              description: Dashboards
+              icon: grafana.svg
 
-      - My Second Group:
-          - My Second Service:
-              href: http://localhost/
-              description: Homepage is the best
+      - CI/CD :
+          - ArgoCD:
+              href: https://argocd.internal.mateuszholowieszko.com/
+              description: Continuous deployment
 
       - My Third Group:
           - My Third Service:
