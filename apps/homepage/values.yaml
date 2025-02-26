@@ -65,3 +65,7 @@ homepage:
           paths:
             - path: /
               pathType: Prefix
+      tls:
+        - hosts:
+            - homepage.internal.mateuszholowieszko.com
+          secretName: homepage-internal-mateuszholowieszko-com-tls
