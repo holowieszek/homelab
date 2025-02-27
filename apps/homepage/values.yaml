@@ -4,12 +4,20 @@ homepage:
       - Homelab:
           - Repository:
               - href: https://github.com/holowieszek/homelab
-                icon: github.svg
+                icon: github-light.svg
 
       - Infrastructure:
           - AWS:
               - href: https://holowieszkom.awsapps.com/start/
-                icon: aws.svg
+                icon: aws-light.svg
+
+          - Router:
+              - href: http://router-01.internal/
+                icon: mikrotik-light.svg
+
+          - Switch:
+              - href: http://switch-01.internal/
+                icon: netgear-light.svg
     services: 
       - Monitoring:
           - Grafana:
