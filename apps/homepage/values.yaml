@@ -3,7 +3,7 @@ homepage:
     bookmarks:
       - Homelab:
           - Repository:
-              - href: https://github.com/holowieszek/
+              - href: https://github.com/holowieszek/homelab
                 icon: github.svg
 
       - Infrastructure:
