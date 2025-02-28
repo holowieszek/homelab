@@ -26,6 +26,7 @@ argocd-apps:
               - path: apps/*
               - path: system/*
               - path: platform/*
+              - path: databases/*
       template:
         metadata:
           name: '{{path.basename}}'
