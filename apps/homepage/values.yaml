@@ -31,10 +31,11 @@ homepage:
               description: Continuous deployment
               icon: argo-cd.svg
 
-      - My Third Group:
-          - My Third Service:
-              href: http://localhost/
-              description: Homepage is 😎
+      - Applications:
+          - pgadmin:
+              href: https://pgadmin.internal.mateuszholowieszko.com/
+              description: pgadmin dashboard
+              icon: pgadmin.svg
     widgets:
       - kubernetes:
           cluster:
