@@ -1,0 +1,35 @@
+app-template:
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: docker.io/dpage/pgadmion4
+            tag: latest
+          env:
+            PGADMIN_DEFAULT_EMAIL: test@example.com
+            PGADMIN_DEFAULT_PASSWORD: testpassword
+  service:
+    main:
+      ports:
+        http:
+          port: 80
+          protocol: HTTP
+  ingress:
+    main:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        kubernetes.io/ingress.class: "traefik"
+      hosts:
+        - host: pgadmin.internal.mateuszholowieszko.com
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                name: main
+                port: http
+      tls:
+        - hosts:
+            - pgadmin.internal.mateuszholowieszko.com
