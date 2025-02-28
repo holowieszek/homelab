@@ -33,3 +33,4 @@ app-template:
       tls:
         - hosts:
             - pgadmin.internal.mateuszholowieszko.com
+          secretName: pgadmin-internal-mateuszholowieszko-com-tls
