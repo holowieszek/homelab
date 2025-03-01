@@ -9,6 +9,8 @@ app-template:
           env:
             PUID: 1000
             PGID: 1000
+            SPEEDTEST_SCHEDULE: 0 * * * *
+            SPEEDTEST_SERVERS: 40572
             APP_KEY: base64:SZZOmWkqN1V5zmQjsJ5aUkHFcwF7fFceu+X6RhkbGbg= # temp, regenerate and move to eso later
             DB_CONNECTION: pgsql # temp, regenerate and move to eso later
             DB_HOST: cluster-example-rw.default # temp, regenerate and move to eso later
