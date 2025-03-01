@@ -33,7 +33,7 @@ homepage:
               icon: speedtest-tracker.png
               widget:
                 type: speedtest
-                url: https://speedtest.internal.mateuszholowieszko.com
+                url: http://speedtest.internal.mateuszholowieszko.com
                 # bitratePrecision: 0
                 fields: ["download", "upload", "ping"]
                 # type: customapi
