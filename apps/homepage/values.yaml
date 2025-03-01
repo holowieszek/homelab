@@ -1,4 +1,7 @@
 homepage:
+  env:
+    LOG_LEVEL: debug
+    
   config:
     bookmarks:
       - Homelab:
