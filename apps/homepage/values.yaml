@@ -26,10 +26,13 @@ homepage:
               icon: grafana.svg
 
           - Speedtest:
-              type: speedtest
-              url: https://speedtest.internal.mateuszholowieszko.com/
-              bitratePrecision: 0
-              fields: ["download", "upload", "ping"]
+              href: https://speedtest.internal.mateuszholowieszko.com/
+              icon: speedtest-tracker.png
+              widget:
+                type: speedtest
+                url: https://speedtest.internal.mateuszholowieszko.com/
+                bitratePrecision: 0
+                fields: ["download", "upload", "ping"]
 
       - CI/CD :
           - ArgoCD:
