@@ -34,7 +34,7 @@ homepage:
                 # bitratePrecision: 0
                 # fields: ["download", "upload", "ping"]
                 type: customapi
-                url: https://speedtest.internal.mateuszholowieszko.com/api/speedtest/latest
+                url: https://speedtest.internal.mateuszholowieszko.com
                 mappings:
                   - field: 
                       data: download
