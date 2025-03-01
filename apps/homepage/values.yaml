@@ -25,6 +25,11 @@ homepage:
               description: Dashboards
               icon: grafana.svg
 
+          - Speedtest:
+              href: https://speedtest.internal.mateuszholowieszko.com/
+              description: Speedtest
+              icon: speedtest-tracker.svg
+
       - CI/CD :
           - ArgoCD:
               href: https://argocd.internal.mateuszholowieszko.com/
