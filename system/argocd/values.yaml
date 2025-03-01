@@ -7,7 +7,7 @@ argo-cd:
 
     cm:
       timeout.reconciliation: 5m
-      ignoreResourceUpdatesEnabled: true
+      resource.ignoreResourceUpdatesEnabled: true
       
     repositories:
       test-repo:
