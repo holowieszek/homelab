@@ -4,7 +4,8 @@ argo-cd:
   configs:
     params:
       server.insecure: true
-
+      controller.diff.server.side: true
+      
     cm:
       timeout.reconciliation: 5m
       resource.ignoreResourceUpdatesEnabled: true
