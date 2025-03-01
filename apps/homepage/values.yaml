@@ -29,26 +29,26 @@ homepage:
               href: https://speedtest.internal.mateuszholowieszko.com/
               icon: speedtest-tracker.png
               widget:
-                # type: speedtest
-                # url: https://speedtest.internal.mateuszholowieszko.com/api/speedtest/latest
-                # bitratePrecision: 0
-                # fields: ["download", "upload", "ping"]
-                type: customapi
+                type: speedtest
                 url: https://speedtest.internal.mateuszholowieszko.com
-                mappings:
-                  - field: 
-                      data: download
-                    label: Download
-                    suffix: Mbps
-                  - field:
-                      data: upload
-                    label: Upload
-                    suffix: Mbps
-                  - field:
-                      data: ping
-                    label: Ping
-                    format: float
-                    suffix: ms
+                # bitratePrecision: 0
+                fields: ["download", "upload", "ping"]
+                # type: customapi
+                # url: https://speedtest.internal.mateuszholowieszko.com
+                # mappings:
+                #   - field: 
+                #       data: download
+                #     label: Download
+                #     suffix: Mbps
+                #   - field:
+                #       data: upload
+                #     label: Upload
+                #     suffix: Mbps
+                #   - field:
+                #       data: ping
+                #     label: Ping
+                #     format: float
+                #     suffix: ms
 
       - CI/CD :
           - ArgoCD:
