@@ -71,7 +71,7 @@ spec:
       s3Credentials:
         accessKeyId:
           name: awssm-secret
-          key: access-key
+          key: access-key-id
         secretAccessKey:
           name: awssm-secret
           key: secret-access-key
