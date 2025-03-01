@@ -24,6 +24,7 @@ external-secrets:
         - namespaces:
           - "cert-manager"
           - "test-api"
+          - "speedtest"
           - "argocd"
           - "grafana"
   - apiVersion: external-secrets.io/v1alpha1
