@@ -28,7 +28,8 @@ homepage:
           - Speedtest:
               type: speedtest
               url: https://speedtest.internal.mateuszholowieszko.com/
-              bitratePrecision: 3
+              bitratePrecision: 0
+              fields: ["download", "upload", "ping"]
 
       - CI/CD :
           - ArgoCD:
