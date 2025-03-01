@@ -8,6 +8,9 @@ argo-cd:
     cm:
       timeout.reconciliation: 5m
       resource.ignoreResourceUpdatesEnabled: true
+      resource.customizations.ignoreResourceUpdates.all: |
+        jsonPointers:
+          - /status
       
     repositories:
       test-repo:
