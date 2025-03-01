@@ -1,0 +1,42 @@
+app-template:
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: lscr.io/linuxserver/speedtest-tracker
+            tag: latest
+          env:
+            PUID: 1000
+            PGID: 1000
+            APP_KEY: base64:SZZOmWkqN1V5zmQjsJ5aUkHFcwF7fFceu+X6RhkbGbg= # temp, regenerate and move to eso later
+            DB_CONNECTION: pgsql # temp, regenerate and move to eso later
+            DB_HOST: cluster-example-rw.default # temp, regenerate and move to eso later
+            DB_DATABASE: app # temp, regenerate and move to eso later
+            DB_USERNAME: app # temp, regenerate and move to eso later
+            DB_PASSWORD: 3I6HxHa4sAGXzxXgSVMoRuM7cK1hbbQTMYFjjPZyBWUg2DC0t2q1CBmtjX8wGztS # temp, regenerate and move to eso later
+  service:
+    main:
+      ports:
+        http:
+          port: 80
+          protocol: HTTP
+  ingress:
+    main:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        kubernetes.io/ingress.class: "traefik"
+      hosts:
+        - host: speedtest.internal.mateuszholowieszko.com
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                name: main
+                port: http
+      tls:
+        - hosts:
+            - speedtest.internal.mateuszholowieszko.com
+          secretName: speedtest-internal-mateuszholowieszko-com-tls
