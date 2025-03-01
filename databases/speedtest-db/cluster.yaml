@@ -8,4 +8,4 @@ spec:
   storage:
     size: 1Gi
   monitoring:
-    enablePodMonitoring: true
+    enablePodMonitor: true
