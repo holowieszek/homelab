@@ -22,18 +22,18 @@ app-template:
             ADMIN_EMAIL:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest-db-app 
-                  key: dbname
+                  name: speedtest
+                  key: admin-email
             ADMIN_PASSWORD:
               valueFrom:
                 secretKeyRef:
                   name: speedtest
-                  key: admin-email
+                  key: admin-password
             DB_DATABASE:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest
-                  key: admin-password
+                  name: speedtest-db-app
+                  key: dbname
             DB_USERNAME:
               valueFrom:
                 secretKeyRef:
