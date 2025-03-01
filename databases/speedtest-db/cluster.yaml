@@ -1,3 +1,54 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: awssm-secret
+  namespace: speedtest
+spec:
+  refreshInterval: 10m
+  secretStoreRef:
+    name: secretstore-sample
+    kind: ClusterSecretStore
+  target:
+    name: awssm-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: access-key-id
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        key: k3s/homelab/globalsecrets
+        property: access_key_id
+    - secretKey: secret-access-key
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        key: k3s/homelab/globalsecrets
+        property: secret_access_key
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: cluster-backup
+  namespace: speedtest
+spec:
+  refreshInterval: 10m
+  secretStoreRef:
+    name: secretstore-sample
+    kind: ClusterSecretStore
+  target:
+    name: cluster-backup
+    creationPolicy: Owner
+  data:
+    - secretKey: destination-path
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        key: k3s/homelab/globalsecrets
+        property: database_backup_destination
+---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -9,3 +60,17 @@ spec:
     size: 1Gi
   monitoring:
     enablePodMonitor: true
+  backup:
+    barmanObjectStore:
+      destinationPath:
+        valueFrom:
+          secretKeyRef:
+            name: cluster-backup
+            key: destination-path
+      s3Credentials:
+        accessKeyId:
+          name: awssm-secret
+          key: access-key
+        secretAccessKey:
+          name: awssm-secret
+          key: secret-access-key
