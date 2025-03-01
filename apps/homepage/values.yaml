@@ -26,9 +26,9 @@ homepage:
               icon: grafana.svg
 
           - Speedtest:
-              href: https://speedtest.internal.mateuszholowieszko.com/
-              description: Speedtest
-              icon: speedtest-tracker.svg
+              type: speedtest
+              url: https://speedtest.internal.mateuszholowieszko.com/
+              bitratePrecision: 3
 
       - CI/CD :
           - ArgoCD:
