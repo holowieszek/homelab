@@ -13,11 +13,23 @@ app-template:
             SPEEDTEST_SERVERS: 40572
             APP_KEY: base64:SZZOmWkqN1V5zmQjsJ5aUkHFcwF7fFceu+X6RhkbGbg= # temp, regenerate and move to eso later
             DB_CONNECTION: pgsql # temp, regenerate and move to eso later
-            DB_HOST: cluster-example-rw.default # temp, regenerate and move to eso later
+            DB_HOST: speedtest-db-rw.speedtest # temp, regenerate and move to eso later
             DB_PORT: 5432
-            DB_DATABASE: app # temp, regenerate and move to eso later
-            DB_USERNAME: app # temp, regenerate and move to eso later
-            DB_PASSWORD: 3I6HxHa4sAGXzxXgSVMoRuM7cK1hbbQTMYFjjPZyBWUg2DC0t2q1CBmtjX8wGztS # temp, regenerate and move to eso later
+            DB_DATABASE:
+              valueFrom:
+                secretKeyRef:
+                  name: speedtest-db-app 
+                  key: dbname
+            DB_USERNAME:
+              valueFrom:
+                secretKeyRef:
+                  name: speedtest-db-app 
+                  key: user
+            DB_PASSWORD:
+              valueFrom:
+                secretKeyRef:
+                  name: speedtest-db-app 
+                  key: password
   service:
     main:
       ports:
