@@ -17,7 +17,7 @@ app-template:
                   name: speedtest
                   key: app-key
             DB_CONNECTION: pgsql
-            DB_HOST: speedtest-db-v3-rw.speedtest
+            DB_HOST: speedtest-db-rw.speedtest
             DB_PORT: 5432
             ADMIN_EMAIL:
               valueFrom:
@@ -32,17 +32,17 @@ app-template:
             DB_DATABASE:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest-db-v3-app
+                  name: speedtest-db-app
                   key: dbname
             DB_USERNAME:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest-db-v3-app 
+                  name: speedtest-db-app 
                   key: user
             DB_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest-db-v3-app 
+                  name: speedtest-db-app 
                   key: password
   service:
     main:

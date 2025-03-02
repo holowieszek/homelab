@@ -30,7 +30,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: speedtest-db-v1
+  name: speedtest-db
   namespace: speedtest
 spec:
   instances: 3
@@ -43,43 +43,43 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  bootstrap:
-    recovery:
-      source: speedtest
-      database: speedtest
+  # bootstrap:
+  #   recovery:
+  #     source: speedtest
+  #     database: speedtest
 
-  externalClusters:
-    - name: speedtest
-      barmanObjectStore:
-        destinationPath: s3://homelab-db-backup-prod/speedtest
-        # restore v2
-        serverName: speedtest-db-v0
-        s3Credentials:
-          accessKeyId:
-            name: awssm-secret
-            key: access-key-id
-          secretAccessKey:
-            name: awssm-secret
-            key: secret-access-key
-        # data:
-        #   compression: gzip
-        # wal:
-        #   compression: gzip
+  # externalClusters:
+  #   - name: speedtest
+  #     barmanObjectStore:
+  #       destinationPath: s3://homelab-db-backup-prod/speedtest
+  #       # restore v2
+  #       serverName: speedtest-db-v0
+  #       s3Credentials:
+  #         accessKeyId:
+  #           name: awssm-secret
+  #           key: access-key-id
+  #         secretAccessKey:
+  #           name: awssm-secret
+  #           key: secret-access-key
+  #       # data:
+  #       #   compression: gzip
+  #       # wal:
+  #       #   compression: gzip
 
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://homelab-db-backup-prod/speedtest
-      s3Credentials:
-        accessKeyId:
-          name: awssm-secret
-          key: access-key-id
-        secretAccessKey:
-          name: awssm-secret
-          key: secret-access-key
-      data:
-        compression: gzip
-      wal:
-        compression: gzip
+  # backup:
+  #   barmanObjectStore:
+  #     destinationPath: s3://homelab-db-backup-prod/speedtest
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: awssm-secret
+  #         key: access-key-id
+  #       secretAccessKey:
+  #         name: awssm-secret
+  #         key: secret-access-key
+  #     data:
+  #       compression: gzip
+  #     wal:
+  #       compression: gzip
 # ---
 # apiVersion: postgresql.cnpg.io/v1
 # kind: ScheduledBackup
