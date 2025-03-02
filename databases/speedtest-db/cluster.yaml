@@ -77,6 +77,10 @@ spec:
           secretAccessKey:
             name: awssm-secret
             key: secret-access-key
+        data:
+          compression: gzip
+        wal:
+          compression: gzip
 
   backup:
     barmanObjectStore:
