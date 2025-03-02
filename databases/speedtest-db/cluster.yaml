@@ -80,3 +80,15 @@ spec:
         compression: gzip
       wal:
         compression: gzip
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: speedtest-db
+  namespace: speedtest
+spec:
+  immediate: true
+  schedule: "* * * * *"
+  backupOwnerReference: cluster
+  cluster:
+    name: speedtest-db-v1
