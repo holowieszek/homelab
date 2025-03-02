@@ -68,7 +68,7 @@ spec:
   externalClusters:
     - name: speedtest-db
       barmanObjectStore:
-        destinationPath: s3://homelab-db-backup-prod/speedtest-db
+        destinationPath: s3://homelab-db-backup-prod/speedtest
         # serverName: speedtest-db-recovered
         s3Credentials:
           accessKeyId:
