@@ -69,7 +69,7 @@ spec:
     - name: clusterBackup
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
-        serverName: speedtest-db
+        serverName: speedtest-db-v0
         s3Credentials:
           accessKeyId:
             name: awssm-secret
