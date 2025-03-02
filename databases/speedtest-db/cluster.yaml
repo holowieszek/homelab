@@ -68,7 +68,7 @@ spec:
   bootstrap:
     recovery:
       source: speedtest-db-v2
-      database: speedtest-db
+      database: speedtest-db-v2
 
   externalClusters:
     - name: speedtest-db-v2
