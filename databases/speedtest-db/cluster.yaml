@@ -56,6 +56,10 @@ metadata:
   namespace: speedtest
 spec:
   instances: 3
+  resources:
+    requests:
+      memory: 100Mi
+      
   storage:
     size: 1Gi
   monitoring:
