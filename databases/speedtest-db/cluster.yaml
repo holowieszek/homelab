@@ -69,7 +69,7 @@ spec:
     - name: speedtest
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
-        serverName: speedtest-db-recovered
+        # serverName: speedtest-db-recovered
         s3Credentials:
           accessKeyId:
             name: awssm-secret
