@@ -26,33 +26,11 @@ spec:
         metadataPolicy: None
         key: k3s/homelab/globalsecrets
         property: secret_access_key
-# ---
-# apiVersion: external-secrets.io/v1beta1
-# kind: ExternalSecret
-# metadata:
-#   name: cluster-backup
-#   namespace: speedtest
-# spec:
-#   refreshInterval: 10m
-#   secretStoreRef:
-#     name: secretstore-sample
-#     kind: ClusterSecretStore
-#   target:
-#     name: cluster-backup
-#     creationPolicy: Owner
-#   data:
-#     - secretKey: destination-path
-#       remoteRef:
-#         conversionStrategy: Default
-#         decodingStrategy: None
-#         metadataPolicy: None
-#         key: k3s/homelab/globalsecrets
-#         property: database_backup_destination
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: speedtest-db
+  name: speedtest-db-v1
   namespace: speedtest
 spec:
   instances: 3
@@ -67,15 +45,15 @@ spec:
 
   bootstrap:
     recovery:
-      source: speedtest-db
-      database: speedtest-db
+      source: clusterBackup
+      database: speedtest
 
   externalClusters:
-    - name: speedtest-db
+    - name: clusterBackup
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
         # restore v2
-        serverName: speedtest-db
+        serverName: speedtest-db-v0
         s3Credentials:
           accessKeyId:
             name: awssm-secret
@@ -83,10 +61,10 @@ spec:
           secretAccessKey:
             name: awssm-secret
             key: secret-access-key
-        data:
-          compression: gzip
-        wal:
-          compression: gzip
+        # data:
+        #   compression: gzip
+        # wal:
+        #   compression: gzip
 
   backup:
     barmanObjectStore:
