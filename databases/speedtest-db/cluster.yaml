@@ -59,7 +59,7 @@ spec:
   resources:
     requests:
       memory: 100Mi
-      
+
   storage:
     size: 1Gi
   monitoring:
@@ -74,7 +74,7 @@ spec:
     - name: speedtest-db
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
-        serverName: speedtest-db-v0
+        # serverName: speedtest-db-v0
         s3Credentials:
           accessKeyId:
             name: awssm-secret
