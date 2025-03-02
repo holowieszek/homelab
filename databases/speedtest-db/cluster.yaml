@@ -52,7 +52,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: speedtest-db-v3
+  name: speedtest-db
   namespace: speedtest
 spec:
   instances: 3
@@ -67,15 +67,15 @@ spec:
 
   bootstrap:
     recovery:
-      source: speedtest-db-v2
-      database: speedtest-db-v2
+      source: speedtest-db
+      database: speedtest-db
 
   externalClusters:
-    - name: speedtest-db-v2
+    - name: speedtest-db
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
         # restore v2
-        serverName: speedtest-db-v2
+        serverName: speedtest-db
         s3Credentials:
           accessKeyId:
             name: awssm-secret
@@ -88,17 +88,17 @@ spec:
         wal:
           compression: gzip
 
-  # backup:
-  #   barmanObjectStore:
-  #     destinationPath: s3://homelab-db-backup-prod/speedtest
-  #     s3Credentials:
-  #       accessKeyId:
-  #         name: awssm-secret
-  #         key: access-key-id
-  #       secretAccessKey:
-  #         name: awssm-secret
-  #         key: secret-access-key
-  #     data:
-  #       compression: gzip
-  #     wal:
-  #       compression: gzip
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://homelab-db-backup-prod/speedtest
+      s3Credentials:
+        accessKeyId:
+          name: awssm-secret
+          key: access-key-id
+        secretAccessKey:
+          name: awssm-secret
+          key: secret-access-key
+      data:
+        compression: gzip
+      wal:
+        compression: gzip
