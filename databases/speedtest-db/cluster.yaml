@@ -61,15 +61,15 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  bootstrap:
-    recovery:
-      source: clusterBackup
+  # bootstrap:
+  #   recovery:
+  #     source: clusterBackup
 
   externalClusters:
     - name: clusterBackup
       barmanObjectStore:
-        destinationPath: s3://homelab-db-backup-prod/speedtest2
-        serverName: speedtest-db
+        destinationPath: s3://homelab-db-backup-prod/speedtest
+        serverName: speedtest-db-recovered
         s3Credentials:
           accessKeyId:
             name: awssm-secret
