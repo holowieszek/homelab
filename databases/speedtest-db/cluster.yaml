@@ -52,7 +52,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: speedtest-db-v2
+  name: speedtest-db-v3
   namespace: speedtest
 spec:
   instances: 3
@@ -65,39 +65,40 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  # bootstrap:
-  #   recovery:
-  #     source: speedtest-db 
-  #     database: speedtest-db
+  bootstrap:
+    recovery:
+      source: speedtest-db 
+      database: speedtest-db
 
-  # externalClusters:
-  #   - name: speedtest-db
-  #     barmanObjectStore:
-  #       destinationPath: s3://homelab-db-backup-prod/speedtest
-  #       serverName: speedtest-db
-  #       s3Credentials:
-  #         accessKeyId:
-  #           name: awssm-secret
-  #           key: access-key-id
-  #         secretAccessKey:
-  #           name: awssm-secret
-  #           key: secret-access-key
-  #       data:
-  #         compression: gzip
-  #       wal:
-  #         compression: gzip
+  externalClusters:
+    - name: speedtest-db
+      barmanObjectStore:
+        destinationPath: s3://homelab-db-backup-prod/speedtest
+        # restore v2
+        serverName: speedtest-db-v2
+        s3Credentials:
+          accessKeyId:
+            name: awssm-secret
+            key: access-key-id
+          secretAccessKey:
+            name: awssm-secret
+            key: secret-access-key
+        data:
+          compression: gzip
+        wal:
+          compression: gzip
 
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://homelab-db-backup-prod/speedtest
-      s3Credentials:
-        accessKeyId:
-          name: awssm-secret
-          key: access-key-id
-        secretAccessKey:
-          name: awssm-secret
-          key: secret-access-key
-      data:
-        compression: gzip
-      wal:
-        compression: gzip
+  # backup:
+  #   barmanObjectStore:
+  #     destinationPath: s3://homelab-db-backup-prod/speedtest
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: awssm-secret
+  #         key: access-key-id
+  #       secretAccessKey:
+  #         name: awssm-secret
+  #         key: secret-access-key
+  #     data:
+  #       compression: gzip
+  #     wal:
+  #       compression: gzip
