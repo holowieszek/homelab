@@ -63,11 +63,11 @@ spec:
 
   bootstrap:
     recovery:
-      source: speedtest 
+      source: speedtest-db 
       database: speedtest-db
 
   externalClusters:
-    - name: speedtest
+    - name: speedtest-db
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
         serverName: speedtest-db-v0
