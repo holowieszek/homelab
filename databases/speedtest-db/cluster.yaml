@@ -75,3 +75,5 @@ spec:
         secretAccessKey:
           name: awssm-secret
           key: secret-access-key
+      wal:
+        compression: gzip
