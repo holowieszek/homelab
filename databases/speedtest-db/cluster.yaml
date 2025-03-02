@@ -52,7 +52,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: speedtest-db
+  name: speedtest-db-v2
   namespace: speedtest
 spec:
   instances: 3
@@ -74,7 +74,7 @@ spec:
     - name: speedtest-db
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
-        serverName: speedtest-db-v0
+        serverName: speedtest-db
         s3Credentials:
           accessKeyId:
             name: awssm-secret
