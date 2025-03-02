@@ -68,8 +68,8 @@ spec:
   externalClusters:
     - name: clusterBackup
       barmanObjectStore:
-        destinationPath: s3://homelab-db-backup-prod/speedtest
-        serverName: speedtest-db-v0
+        destinationPath: s3://homelab-db-backup-prod/speedtest2
+        serverName: speedtest-db
         s3Credentials:
           accessKeyId:
             name: awssm-secret
@@ -93,5 +93,7 @@ spec:
         secretAccessKey:
           name: awssm-secret
           key: secret-access-key
+      data:
+        compression: gzip
       wal:
         compression: gzip
