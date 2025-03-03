@@ -43,34 +43,10 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-
-
-  # bootstrap:
-  #   recovery:
-  #     source: speedtest
-  #     database: speedtest-db
-
-  # externalClusters:
-  #   - name: speedtest
-  #     barmanObjectStore:
-  #       destinationPath: s3://homelab-db-backup-prod/speedtest
-  #       # serverName: speedtest-db-v0
-  #       s3Credentials:
-  #         accessKeyId:
-  #           name: awssm-secret
-  #           key: access-key-id
-  #         secretAccessKey:
-  #           name: awssm-secret
-  #           key: secret-access-key
-  #       data:
-  #         compression: gzip
-  #       wal:
-  #         compression: gzip
-
   backup:
     barmanObjectStore: &barmanObjectStore
       destinationPath: s3://homelab-db-backup-prod/speedtest
-      serverName: &currentCluster speedtest-backup-v3
+      serverName: &currentCluster speedtest-backup-v1
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -83,25 +59,25 @@ spec:
       wal:
         compression: gzip
 
-  bootstrap:
-    recovery:
-      backup:
-        name: &previousCluster speedtest-backup-v2
+  # bootstrap:
+  #   recovery:
+  #     backup:
+  #       name: &previousCluster speedtest-backup-v0
 
   externalClusters:
     - name: *previousCluster
       barmanObjectStore:
         <<: *barmanObjectStore
         serverName: *previousCluster
-# ---
-# apiVersion: postgresql.cnpg.io/v1
-# kind: ScheduledBackup
-# metadata:
-#   name: speedtest-db
-#   namespace: speedtest
-# spec:
-#   immediate: true
-#   schedule: "* * * * *"
-#   backupOwnerReference: cluster
-#   cluster:
-#     name: speedtest-db-v1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: speedtest-db-v1
+  namespace: speedtest
+spec:
+  immediate: true
+  schedule: "0 * * * *"
+  backupOwnerReference: cluster
+  cluster:
+    name: speedtest-db-v1
