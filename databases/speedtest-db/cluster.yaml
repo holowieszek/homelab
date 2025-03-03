@@ -46,7 +46,7 @@ spec:
   bootstrap:
     recovery:
       backup:
-        name: speedtest-db
+        name: speedtest-db-backup
   # externalClusters:
   #   - name: speedtest
   #     barmanObjectStore:
