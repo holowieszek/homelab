@@ -3,3 +3,11 @@ kube-prometheus-stack:
     enabled: false
     forceDeployDatasources: true
     forceDeployDashboards: true
+  
+  prometheus:
+    prometheusSpec:
+      # Discover all PodMonitors, Probes, PrometheusRules and ServiceMonitors
+      podMonitorSelectorNilUsesHelmValues: false
+      probeSelectorNilUsesHelmValues: false
+      ruleSelectorNilUsesHelmValues: false
+      serviceMonitorSelectorNilUsesHelmValues: false
