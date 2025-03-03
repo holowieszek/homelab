@@ -48,9 +48,10 @@ spec:
   #     backup:
   #       name: speedtest-db-backup
 
-  # bootstrap:
-  #   recovery:
-  #     source: speedtest
+  bootstrap:
+    recovery:
+      source: speedtest-backup
+      database: speedtest
 
   externalClusters:
     - name: speedtest-backup
