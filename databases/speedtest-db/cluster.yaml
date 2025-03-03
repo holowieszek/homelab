@@ -43,11 +43,6 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  # bootstrap:
-  #   recovery:
-  #     backup:
-  #       name: speedtest-db-backup
-
   bootstrap:
     recovery:
       source: clusterBackup
