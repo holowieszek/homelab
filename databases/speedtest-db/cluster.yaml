@@ -86,7 +86,7 @@ spec:
   bootstrap:
     recovery:
       backup:
-        name: &previousCluster backup-v1
+        name: &previousCluster speedtest-db-backup
 
   externalClusters:
     - name: *previousCluster
