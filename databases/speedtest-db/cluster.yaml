@@ -77,7 +77,7 @@ metadata:
   namespace: speedtest
 spec:
   immediate: true
-  schedule: "0 * * * *"
+  schedule: "*/10 * * * *"
   backupOwnerReference: cluster
   cluster:
     name: speedtest-db-v1
