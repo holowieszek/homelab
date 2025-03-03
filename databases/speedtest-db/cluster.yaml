@@ -43,10 +43,11 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  bootstrap:
-    recovery:
-      source: clusterBackup
-      
+  # bootstrap:
+  #   recovery:
+  #     source: clusterBackup
+  #     database: speedtest
+
   externalClusters:
     - name: clusterBackup
       barmanObjectStore:
