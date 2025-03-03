@@ -33,7 +33,8 @@ metadata:
   name: speedtest-db
   namespace: speedtest
 spec:
-  instances: 1
+  instances: 3
+  
   resources:
     requests:
       memory: 100Mi
