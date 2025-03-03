@@ -65,20 +65,20 @@ spec:
         wal:
           compression: gzip
 
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://homelab-db-backup-prod/speedtest
-      s3Credentials:
-        accessKeyId:
-          name: awssm-secret
-          key: access-key-id
-        secretAccessKey:
-          name: awssm-secret
-          key: secret-access-key
-      data:
-        compression: gzip
-      wal:
-        compression: gzip
+  # backup:
+  #   barmanObjectStore:
+  #     destinationPath: s3://homelab-db-backup-prod/speedtest
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: awssm-secret
+  #         key: access-key-id
+  #       secretAccessKey:
+  #         name: awssm-secret
+  #         key: secret-access-key
+  #     data:
+  #       compression: gzip
+  #     wal:
+  #       compression: gzip
 # ---
 # apiVersion: postgresql.cnpg.io/v1
 # kind: ScheduledBackup
