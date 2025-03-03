@@ -49,7 +49,7 @@ spec:
   #       name: speedtest-db-backup
 
   externalClusters:
-    - name: speedtest
+    - name: clusterBackup
       barmanObjectStore:
         destinationPath: s3://homelab-db-backup-prod/speedtest
         serverName: speedtest-db-v0
