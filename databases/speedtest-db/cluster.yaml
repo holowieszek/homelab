@@ -70,7 +70,7 @@ spec:
   backup:
     barmanObjectStore: &barmanObjectStore
       destinationPath: s3://homelab-db-backup-prod/speedtest
-      serverName: &currentCluster speedtest-backup-v2
+      serverName: &currentCluster speedtest-backup-v3
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -86,7 +86,7 @@ spec:
   bootstrap:
     recovery:
       backup:
-        name: &previousCluster speedtest-backup-v1
+        name: &previousCluster speedtest-backup-v2
 
   externalClusters:
     - name: *previousCluster
