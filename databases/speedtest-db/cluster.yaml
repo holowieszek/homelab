@@ -45,25 +45,23 @@ spec:
 
   bootstrap:
     recovery:
-      source: speedtest
-      database: speedtest
-
-  externalClusters:
-    - name: speedtest
-      barmanObjectStore:
-        destinationPath: s3://homelab-db-backup-prod/speedtest
-        # serverName: speedtest-db-v0
-        s3Credentials:
-          accessKeyId:
-            name: awssm-secret
-            key: access-key-id
-          secretAccessKey:
-            name: awssm-secret
-            key: secret-access-key
-        data:
-          compression: gzip
-        wal:
-          compression: gzip
+      name: speedtest-db
+  # externalClusters:
+  #   - name: speedtest
+  #     barmanObjectStore:
+  #       destinationPath: s3://homelab-db-backup-prod/speedtest
+  #       # serverName: speedtest-db-v0
+  #       s3Credentials:
+  #         accessKeyId:
+  #           name: awssm-secret
+  #           key: access-key-id
+  #         secretAccessKey:
+  #           name: awssm-secret
+  #           key: secret-access-key
+  #       data:
+  #         compression: gzip
+  #       wal:
+  #         compression: gzip
 
   # backup:
   #   barmanObjectStore:
