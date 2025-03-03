@@ -43,10 +43,10 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  # bootstrap:
-  #   recovery:
-  #     backup:
-  #       name: speedtest-db-backup
+  bootstrap:
+    recovery:
+      backup:
+        name: speedtest-db-backup
   # externalClusters:
   #   - name: speedtest
   #     barmanObjectStore:
