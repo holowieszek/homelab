@@ -73,7 +73,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: speedtest-db-backup-v2
+  name: speedtest-db-backup-v1
   namespace: speedtest
 spec:
   immediate: true
