@@ -47,7 +47,7 @@ spec:
   backup:
     barmanObjectStore: &barmanObjectStore
       destinationPath: s3://homelab-db-backup-prod/speedtest
-      serverName: &currentCluster speedtest-db-backup-v2
+      serverName: &currentCluster speedtest-db-backup-v3
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -63,7 +63,7 @@ spec:
   bootstrap:
     recovery:
       backup:
-        name: &previousCluster speedtest-db-backup-v1
+        name: &previousCluster speedtest-db-backup-v2
 
   externalClusters:
     - name: *previousCluster
@@ -74,7 +74,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: speedtest-db-backup-v2
+  name: speedtest-db-backup-v3
   namespace: speedtest
 spec:
   immediate: true
