@@ -60,17 +60,20 @@ spec:
       wal:
         compression: gzip
 
+  # bootstrap:
+  #   recovery:
+  #     backup:
+  #       name: &previousCluster speedtest-db-backup-v2
+
   bootstrap:
     recovery:
-      backup:
-        name: &previousCluster speedtest-db-backup-v2
+      source: &previousCluster speedtest-db-backup-v2
 
   externalClusters:
     - name: *previousCluster
       barmanObjectStore:
         <<: *barmanObjectStore
-        # serverName: *previousCluster
-        serverName: speedtest-db-backup-v2
+        serverName: *previousCluster
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
