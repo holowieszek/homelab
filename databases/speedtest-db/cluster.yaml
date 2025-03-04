@@ -69,7 +69,8 @@ spec:
     - name: *previousCluster
       barmanObjectStore:
         <<: *barmanObjectStore
-        serverName: *previousCluster
+        # serverName: *previousCluster
+        serverName: speedtest-db-backup-v2
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
