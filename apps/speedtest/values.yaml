@@ -14,7 +14,7 @@ app-template:
             APP_KEY:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest
+                  name: speedtest-app-config
                   key: app-key
             DB_CONNECTION: pgsql
             DB_HOST: speedtest-db-rw.speedtest
@@ -22,12 +22,12 @@ app-template:
             ADMIN_EMAIL:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest
+                  name: speedtest-app-config
                   key: admin-email
             ADMIN_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest
+                  name: speedtest-app-config
                   key: admin-password
             DB_DATABASE:
               valueFrom:
