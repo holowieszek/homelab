@@ -86,3 +86,52 @@ spec:
   # backupOwnerReference: cluster
   cluster:
     name: speedtest-db
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: speedtest-db-app-push
+  namespace: speedtest
+spec:
+  updatePolicy: Replace
+  deletionPolicy: None
+  refreshInterval: 1h
+  secretStoreRefs:
+    - name: secretstore-sample
+      kind: ClusterSecretStore
+  selector:
+    secret:
+      name: speedtest-db-app
+  data:
+    - conversionStrategy: None 
+      match:
+        secretKey: password
+        remoteRef:
+          remoteKey: homelab/databases/speedtest-db/credentials
+          property: password
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None 
+      match:
+        secretKey: username
+        remoteRef:
+          remoteKey: homelab/databases/speedtest-db/credentials
+          property: username
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None 
+      match:
+        secretKey: dbname
+        remoteRef:
+          remoteKey: homelab/databases/speedtest-db/credentials
+          property: dbname
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None 
+      match:
+        secretKey: jdbc-uri
+        remoteRef:
+          remoteKey: homelab/databases/speedtest-db/credentials
+          property: jdbc-uri
+      metadata:
+        secretPushFormat: string
