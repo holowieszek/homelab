@@ -32,17 +32,17 @@ app-template:
             DB_DATABASE:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest-db-app
+                  name: speedtest-db-config
                   key: dbname
             DB_USERNAME:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest-db-app 
-                  key: user
+                  name: speedtest-db-config 
+                  key: username
             DB_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: speedtest-db-app 
+                  name: speedtest-db-config 
                   key: password
   service:
     main:
