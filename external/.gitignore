@@ -1,2 +1,4 @@
+.terraform
+
 config/backend/*.tfbackend
 config/environment/*.tfvars
