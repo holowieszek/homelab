@@ -7,7 +7,7 @@ module "speedtest_db_secrets" {
 module "speedtest_app_secrets" {
   source      = "./modules/secrets-manager/v1"
   secret_name = replace(format("%s-applications-speedtest-credentials", module.default_label.id), "-", "/")
-  description = "Homelabs Speedtest credentials"
+  description = "Homelab Speedtest credentials"
 }
 
 module "cert_manager_app_secrets" {
