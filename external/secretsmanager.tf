@@ -1,7 +1,7 @@
 module "speedtest_db_secrets" {
   source      = "./modules/secrets-manager/v1"
   secret_name = replace(format("%s-databases-speedtest-credentials", module.default_label.id), "-", "/")
-  description = "Homelab Speedtest PostgreSQL database credentials"
+  description = "Homelab Speedtest PostgreSQL database credentials (push)"
 }
 
 module "speedtest_app_secrets" {
