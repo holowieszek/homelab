@@ -1,12 +1,12 @@
 module "default_label" {
-  source = "cloudposse/label/null"
+  source  = "cloudposse/label/null"
   version = "0.25.0"
 
-  name = var.project_name
+  name        = var.project_name
   environment = var.environment
 
-  label_order = ["name", "environment"]
-  delimiter = "-"
+  label_order      = ["name", "environment"]
+  delimiter        = "-"
   label_value_case = "lower"
 
   tags = {

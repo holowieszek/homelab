@@ -47,11 +47,11 @@ variable "restrict_public_buckets" {
 
 variable "logging_target_bucket" {
   description = "The name of the bucket where access logs will be stored"
-  default = ""
+  default     = ""
   type        = string
 }
 variable "logging_target_bucket_prefix" {
   description = "The prefix for the bucket where access logs will be stored"
-  default = ""
+  default     = ""
   type        = string
 }

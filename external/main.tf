@@ -1,15 +1,15 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
-      version    = "~> 5.0"
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
   }
 
   backend "s3" {
-    bucket = ""
-    key = ""
-    region = ""
+    bucket         = ""
+    key            = ""
+    region         = ""
     dynamodb_table = ""
   }
 }
