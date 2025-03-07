@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      aws    = "~> 5.0"
+      version    = "~> 5.0"
     }
   }
 
@@ -15,7 +15,7 @@ terraform {
 }
 
 provider "aws" {
-  region = ""
+  region = var.region
 
   default_tags {
     tags = module.default_label.tags
