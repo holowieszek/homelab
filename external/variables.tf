@@ -18,3 +18,8 @@ variable "environment" {
   type        = string
   description = "Environment label that is added to resources"
 }
+
+variable "hosted_zone_domain_name" {
+  type        = string
+  description = "The domain name to create the Route53 zone for"
+}
