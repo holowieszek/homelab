@@ -79,9 +79,8 @@ data "aws_iam_policy_document" "service_account_policy" {
       "route53:ChangeResourceRecordSets",
       "route53:ListResourceRecordSets"
     ]
-    // This is a wildcard for all hosted zones, need to be more specific
     resources = [
-      "arn:aws:route53:::hostedzone/*"
+      format("arn:aws:route53:::hostedzone/%s", module.primary_hosted_zone.zone_id)
     ]
   }
 }
