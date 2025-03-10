@@ -1,34 +1,34 @@
-# apiVersion: external-secrets.io/v1beta1
-# kind: ExternalSecret
-# metadata:
-#   name: awssm-secret
-#   namespace: speedtest
-# spec:
-#   refreshInterval: 10m
-#   secretStoreRef:
-#     name: secretstore-sample
-#     kind: ClusterSecretStore
-#   target:
-#     name: awssm-secret
-#     creationPolicy: Owner
-#   data:
-#     - secretKey: access-key-id
-#       remoteRef:
-#         conversionStrategy: Default
-#         decodingStrategy: None
-#         metadataPolicy: None
-#         # key: k3s/homelab/globalsecrets
-#         key: homelab/prod/global/config
-#         property: access_key_id
-#     - secretKey: secret-access-key
-#       remoteRef:
-#         conversionStrategy: Default
-#         decodingStrategy: None
-#         metadataPolicy: None
-#         # key: k3s/homelab/globalsecrets
-#         key: homelab/prod/global/config
-#         property: secret_access_key
-# ---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: awssm-secret
+  namespace: speedtest
+spec:
+  refreshInterval: 10m
+  secretStoreRef:
+    name: secretstore-sample
+    kind: ClusterSecretStore
+  target:
+    name: awssm-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: access-key-id
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        # key: k3s/homelab/globalsecrets
+        key: homelab/prod/global/config
+        property: access_key_id
+    - secretKey: secret-access-key
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        # key: k3s/homelab/globalsecrets
+        key: homelab/prod/global/config
+        property: secret_access_key
+---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -46,31 +46,31 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  # backup:
-  #   barmanObjectStore: &barmanObjectStore
-  #     destinationPath: s3://homelab-prod-database-backups/speedtest
-  #     serverName: &currentCluster speedtest-db-backup-v4
-  #     s3Credentials:
-  #       accessKeyId:
-  #         name: awssm-secret
-  #         key: access-key-id
-  #       secretAccessKey:
-  #         name: awssm-secret
-  #         key: secret-access-key
-  #     data:
-  #       compression: gzip
-  #     wal:
-  #       compression: gzip
+  backup:
+    barmanObjectStore: &barmanObjectStore
+      destinationPath: s3://homelab-prod-database-backups/speedtest
+      serverName: &currentCluster speedtest-db-backup-v4
+      s3Credentials:
+        accessKeyId:
+          name: awssm-secret
+          key: access-key-id
+        secretAccessKey:
+          name: awssm-secret
+          key: secret-access-key
+      data:
+        compression: gzip
+      wal:
+        compression: gzip
 
-  # bootstrap:
-  #   recovery:
-  #     source: &previousCluster speedtest-db-backup-v3
+  bootstrap:
+    recovery:
+      source: &previousCluster speedtest-db-backup-v3
 
-  # externalClusters:
-  #   - name: *previousCluster
-  #     barmanObjectStore:
-  #       <<: *barmanObjectStore
-  #       serverName: *previousCluster
+  externalClusters:
+    - name: *previousCluster
+      barmanObjectStore:
+        <<: *barmanObjectStore
+        serverName: *previousCluster
 # ---
 # apiVersion: postgresql.cnpg.io/v1
 # kind: ScheduledBackup
@@ -83,55 +83,55 @@ spec:
 #   # backupOwnerReference: cluster
 #   cluster:
 #     name: speedtest-db
-# ---
-# apiVersion: external-secrets.io/v1alpha1
-# kind: PushSecret
-# metadata:
-#   name: speedtest-db-app-push
-#   namespace: speedtest
-# spec:
-#   updatePolicy: Replace
-#   deletionPolicy: None
-#   refreshInterval: 1h
-#   secretStoreRefs:
-#     - name: secretstore-sample
-#       kind: ClusterSecretStore
-#   selector:
-#     secret:
-#       name: speedtest-db-app
-#   data:
-#     - conversionStrategy: None
-#       match:
-#         secretKey: password
-#         remoteRef:
-#           # remoteKey: homelab/databases/speedtest-db/credentials
-#           remoteKey: homelab/prod/databases/speedtest/credentials
-#           property: password
-#       metadata:
-#         secretPushFormat: string
-#     - conversionStrategy: None
-#       match:
-#         secretKey: username
-#         remoteRef:
-#           # remoteKey: homelab/databases/speedtest-db/credentials
-#           remoteKey: homelab/prod/databases/speedtest/credentials
-#           property: username
-#       metadata:
-#         secretPushFormat: string
-#     - conversionStrategy: None
-#       match:
-#         secretKey: dbname
-#         remoteRef:
-#           # remoteKey: homelab/databases/speedtest-db/credentials
-#           remoteKey: homelab/prod/databases/speedtest/credentials
-#           property: dbname
-#       metadata:
-#         secretPushFormat: string
-#     - conversionStrategy: None
-#       match:
-#         secretKey: jdbc-uri
-#         remoteRef:
-#           remoteKey: homelab/prod/databases/speedtest/credentials
-#           property: jdbc-uri
-#       metadata:
-#         secretPushFormat: string
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: speedtest-db-app-push
+  namespace: speedtest
+spec:
+  updatePolicy: Replace
+  deletionPolicy: None
+  refreshInterval: 1h
+  secretStoreRefs:
+    - name: secretstore-sample
+      kind: ClusterSecretStore
+  selector:
+    secret:
+      name: speedtest-db-app
+  data:
+    - conversionStrategy: None
+      match:
+        secretKey: password
+        remoteRef:
+          # remoteKey: homelab/databases/speedtest-db/credentials
+          remoteKey: homelab/prod/databases/speedtest/credentials
+          property: password
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: username
+        remoteRef:
+          # remoteKey: homelab/databases/speedtest-db/credentials
+          remoteKey: homelab/prod/databases/speedtest/credentials
+          property: username
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: dbname
+        remoteRef:
+          # remoteKey: homelab/databases/speedtest-db/credentials
+          remoteKey: homelab/prod/databases/speedtest/credentials
+          property: dbname
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: jdbc-uri
+        remoteRef:
+          remoteKey: homelab/prod/databases/speedtest/credentials
+          property: jdbc-uri
+      metadata:
+        secretPushFormat: string
