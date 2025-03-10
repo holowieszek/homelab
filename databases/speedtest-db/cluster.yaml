@@ -71,18 +71,18 @@ spec:
       barmanObjectStore:
         <<: *barmanObjectStore
         serverName: *previousCluster
-# ---
-# apiVersion: postgresql.cnpg.io/v1
-# kind: ScheduledBackup
-# metadata:
-#   name: speedtest-db-backup-v4
-#   namespace: speedtest
-# spec:
-#   immediate: true
-#   schedule: "0 0 */6 * * *"
-#   # backupOwnerReference: cluster
-#   cluster:
-#     name: speedtest-db
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: speedtest-db-backup-v4
+  namespace: speedtest
+spec:
+  immediate: true
+  schedule: "0 0 */6 * * *"
+  # backupOwnerReference: cluster
+  cluster:
+    name: speedtest-db
 ---
 apiVersion: external-secrets.io/v1alpha1
 kind: PushSecret
