@@ -48,7 +48,7 @@ spec:
 
   backup:
     barmanObjectStore: &barmanObjectStore
-      destinationPath: s3://homelab-db-backup-prod/speedtest
+      destinationPath: s3://homelab-prod-database-backups/speedtest
       serverName: &currentCluster speedtest-db-backup-v4
       s3Credentials:
         accessKeyId:
