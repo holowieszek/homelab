@@ -17,14 +17,16 @@ spec:
         conversionStrategy: Default
         decodingStrategy: None
         metadataPolicy: None
-        key: k3s/homelab/globalsecrets
+        # key: k3s/homelab/globalsecrets
+        key: homelab/prod/global/config
         property: access_key_id
     - secretKey: secret-access-key
       remoteRef:
         conversionStrategy: Default
         decodingStrategy: None
         metadataPolicy: None
-        key: k3s/homelab/globalsecrets
+        # key: k3s/homelab/globalsecrets
+        key: homelab/prod/global/config
         property: secret_access_key
 ---
 apiVersion: postgresql.cnpg.io/v1
@@ -34,7 +36,7 @@ metadata:
   namespace: speedtest
 spec:
   instances: 3
-  
+
   resources:
     requests:
       memory: 100Mi
@@ -103,31 +105,34 @@ spec:
     secret:
       name: speedtest-db-app
   data:
-    - conversionStrategy: None 
+    - conversionStrategy: None
       match:
         secretKey: password
         remoteRef:
-          remoteKey: homelab/databases/speedtest-db/credentials
+          # remoteKey: homelab/databases/speedtest-db/credentials
+          remoteKey: homelab/prod/databases/speedtest/credentials
           property: password
       metadata:
         secretPushFormat: string
-    - conversionStrategy: None 
+    - conversionStrategy: None
       match:
         secretKey: username
         remoteRef:
-          remoteKey: homelab/databases/speedtest-db/credentials
+          # remoteKey: homelab/databases/speedtest-db/credentials
+          remoteKey: homelab/prod/databases/speedtest/credentials
           property: username
       metadata:
         secretPushFormat: string
-    - conversionStrategy: None 
+    - conversionStrategy: None
       match:
         secretKey: dbname
         remoteRef:
-          remoteKey: homelab/databases/speedtest-db/credentials
+          # remoteKey: homelab/databases/speedtest-db/credentials
+          remoteKey: homelab/prod/databases/speedtest/credentials
           property: dbname
       metadata:
         secretPushFormat: string
-    - conversionStrategy: None 
+    - conversionStrategy: None
       match:
         secretKey: jdbc-uri
         remoteRef:
