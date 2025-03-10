@@ -39,7 +39,7 @@ spec:
 
   resources:
     requests:
-      memory: 100Mi
+      memory: 256Mi
 
   storage:
     size: 1Gi
