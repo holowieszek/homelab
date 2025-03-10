@@ -136,7 +136,7 @@ spec:
       match:
         secretKey: jdbc-uri
         remoteRef:
-          remoteKey: homelab/databases/speedtest-db/credentials
+          remoteKey: homelab/prod/databases/speedtest/credentials
           property: jdbc-uri
       metadata:
         secretPushFormat: string
