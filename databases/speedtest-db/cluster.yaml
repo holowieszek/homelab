@@ -46,21 +46,21 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  # backup:
-  #   barmanObjectStore: &barmanObjectStore
-  #     destinationPath: s3://homelab-prod-database-backups/speedtest
-  #     serverName: &currentCluster speedtest-db-backup-v4
-  #     s3Credentials:
-  #       accessKeyId:
-  #         name: awssm-secret
-  #         key: access-key-id
-  #       secretAccessKey:
-  #         name: awssm-secret
-  #         key: secret-access-key
-  #     data:
-  #       compression: gzip
-  #     wal:
-  #       compression: gzip
+  backup:
+    barmanObjectStore: &barmanObjectStore
+      destinationPath: s3://homelab-prod-database-backups/speedtest
+      serverName: &currentCluster speedtest-db-backup-v4
+      s3Credentials:
+        accessKeyId:
+          name: awssm-secret
+          key: access-key-id
+        secretAccessKey:
+          name: awssm-secret
+          key: secret-access-key
+      data:
+        compression: gzip
+      wal:
+        compression: gzip
 
   bootstrap:
     recovery:
