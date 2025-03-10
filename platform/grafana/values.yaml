@@ -1,7 +1,7 @@
 grafana:
   admin:
     existingSecret: "grafana"
-    
+
   sidecar:
     dashboards:
       enabled: true
@@ -18,9 +18,9 @@ grafana:
     dashboardproviders.yaml:
       apiVersion: 1
       providers:
-        - name: 'default'
+        - name: "default"
           orgId: 1
-          folder: 'default'
+          folder: "default"
           type: file
           disableDeletion: true
           editable: true
@@ -32,4 +32,9 @@ grafana:
       k3s:
         gnetId: 15282
         revision: 1
+        datasource: Prometheus
+
+      cloudnative-pg:
+        gnetId: 20417
+        revision: 3
         datasource: Prometheus
