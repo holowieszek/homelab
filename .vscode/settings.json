@@ -1,0 +1,9 @@
+{
+    "[terraform]": {
+        // High CPU, Memory and Temperature fix
+        // Terraform Language Server is slow and laggy on the RPI 3B+, it's better to disable auto format and run terraform/tofu fmt on your own
+        // https://github.com/hashicorp/vscode-terraform/issues/1557
+        // https://github.com/hashicorp/terraform-ls/issues/487
+        "editor.formatOnSave": false
+    },
+}

@@ -1,0 +1,5 @@
+.terraform
+tfplan
+
+config/backend/*.tfbackend
+config/environment/*.tfvars
