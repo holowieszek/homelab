@@ -38,3 +38,8 @@ grafana:
         gnetId: 20417
         revision: 3
         datasource: Prometheus
+
+      cert-manager:
+        gnetId: 20340
+        revision: 1
+        datasource: Prometheus
