@@ -1,7 +1,7 @@
 # module "speedtest_db_secrets" {
 #   source      = "./modules/secrets-manager/v1"
 #   secret_name = replace(format("%s-databases-speedtest-credentials", module.default_label.id), "-", "/")
-#   description = "Homelab Speedtest PostgreSQL database credentials"
+#   description = "Homelab Speedtest PostgreSQL database credentials (push)"
 # }
 
 module "speedtest_app_secrets" {
@@ -16,11 +16,11 @@ module "cert_manager_app_secrets" {
   description = "Homelab Cert-Manager credentials"
 }
 
-module "argocd_app_secrets" {
-  source      = "./modules/secrets-manager/v1"
-  secret_name = replace(format("%s-applications-argocd-credentials", module.default_label.id), "-", "/")
-  description = "Homelab ArgoCD credentials (push)"
-}
+# module "argocd_app_secrets" {
+#   source      = "./modules/secrets-manager/v1"
+#   secret_name = replace(format("%s-applications-argocd-credentials", module.default_label.id), "-", "/")
+#   description = "Homelab ArgoCD credentials (push)"
+# }
 
 module "grafana_app_secrets" {
   source      = "./modules/secrets-manager/v1"
