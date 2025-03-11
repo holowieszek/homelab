@@ -41,7 +41,7 @@ homepage:
                 fields: ["download", "upload", "ping"]
 
           - Pihole:
-              href: http://192.168.88.230
+              href: http://pi.hole/admin
               icon: pi-hole.svg
               widget:
                 type: pihole
@@ -50,7 +50,7 @@ homepage:
                 key: "{{HOMEPAGE_VAR_PIHOLE_API_KEY}}"
 
           - Mikrotik:
-              href: http://192.168.88.1
+              href: http://router-01.internal/
               icon: mikrotik-light.svg
               widget:
                 type: mikrotik
