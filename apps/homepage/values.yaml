@@ -47,7 +47,7 @@ homepage:
                 type: pihole
                 url: http://pi.hole/admin
                 version: 6
-                key: { { PIHOLE_PASSWORD } }
+                key: "{{ PIHOLE_PASSWORD }}"
       - CI/CD:
           - ArgoCD:
               href: https://argocd.internal.mateuszholowieszko.com/
