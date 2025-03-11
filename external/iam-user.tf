@@ -48,7 +48,8 @@ data "aws_iam_policy_document" "service_account_policy" {
       "s3:ListBucket"
     ]
     resources = [
-      module.database_backups.bucket_arn
+      module.database_backups.bucket_arn,
+      module.volume_backups.bucket_arn
     ]
   }
 
@@ -59,7 +60,8 @@ data "aws_iam_policy_document" "service_account_policy" {
       "s3:DeleteObject",
     ]
     resources = [
-      format("%s/*", module.database_backups.bucket_arn)
+      format("%s/*", module.database_backups.bucket_arn),
+      format("%s/*", module.volume_backups.bucket_arn)
     ]
   }
 
