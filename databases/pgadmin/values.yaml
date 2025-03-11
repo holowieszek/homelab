@@ -1,4 +1,4 @@
-app-template:
+pgadmin:
   controllers:
     main:
       containers:
@@ -9,12 +9,14 @@ app-template:
           env:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
+
   service:
     main:
       ports:
         http:
           port: 80
           protocol: HTTP
+
   ingress:
     main:
       enabled: true
@@ -34,11 +36,13 @@ app-template:
         - hosts:
             - pgadmin.internal.mateuszholowieszko.com
           secretName: pgadmin-internal-mateuszholowieszko-com-tls
+
   podSecurityContext:
     runAsUser: 5050
     runAsGroup: 5050
     fsGroup: 5050
     fsGroupChangePolicy: OnRootMismatch
+
   persistence:
     config:
       enabled: true
@@ -46,12 +50,3 @@ app-template:
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-    # data:
-    #   storageClass: longhorn
-    #   accessMode: ReadWriteOnce
-    #   size: 2Gi
-    #   advancedMounts:
-    #     main:
-    #       main:
-    #         - path: /var/lib/pgadmin
-    #           subPath: pgadmin
