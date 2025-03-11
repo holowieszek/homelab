@@ -20,6 +20,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.pihole_app_secrets.secret_arn,
       module.mikrotik_app_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
+      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 
       // resources not managed by terraform
