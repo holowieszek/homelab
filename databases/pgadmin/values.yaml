@@ -35,17 +35,23 @@ app-template:
             - pgadmin.internal.mateuszholowieszko.com
           secretName: pgadmin-internal-mateuszholowieszko-com-tls
   podSecurityContext:
-    runAsUser: 0
-    runAsGroup: 0
-    fsGroup: 0
+    runAsUser: 5050
+    runAsGroup: 5050
+    fsGroup: 5050
     fsGroupChangePolicy: OnRootMismatch
   persistence:
-    data:
-      storageClass: longhorn
+    config:
+      enabled: true
+      type: pvc
       accessMode: ReadWriteOnce
-      size: 2Gi
-      advancedMounts:
-        main:
-          main:
-            - path: /var/lib/pgadmin
-              subPath: pgadmin
+      storageClass: longhorn
+      size: 1Gi
+    # data:
+    #   storageClass: longhorn
+    #   accessMode: ReadWriteOnce
+    #   size: 2Gi
+    #   advancedMounts:
+    #     main:
+    #       main:
+    #         - path: /var/lib/pgadmin
+    #           subPath: pgadmin
