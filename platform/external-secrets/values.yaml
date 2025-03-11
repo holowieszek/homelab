@@ -27,6 +27,7 @@ external-secrets:
               - "speedtest"
               - "argocd"
               - "grafana"
+              - "homepage"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
