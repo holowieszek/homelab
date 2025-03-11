@@ -42,7 +42,7 @@ app-template:
   persistence:
     config:
       enabled: true
-      type: pvc
+      type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
