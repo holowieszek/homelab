@@ -1,7 +1,11 @@
 homepage:
   env:
     LOG_LEVEL: debug
-    
+
+  envFrom:
+    - secretRef:
+        name: homepage-app-config
+
   config:
     bookmarks:
       - Homelab:
@@ -21,7 +25,7 @@ homepage:
           - Switch:
               - href: http://switch-01.internal/
                 icon: netgear-light.svg
-    services: 
+    services:
       - Monitoring:
           - Grafana:
               href: https://grafana.internal.mateuszholowieszko.com/
@@ -34,26 +38,17 @@ homepage:
               widget:
                 type: speedtest
                 url: http://speedtest.internal.mateuszholowieszko.com
-                # bitratePrecision: 0
                 fields: ["download", "upload", "ping"]
-                # type: customapi
-                # url: https://speedtest.internal.mateuszholowieszko.com
-                # mappings:
-                #   - field: 
-                #       data: download
-                #     label: Download
-                #     suffix: Mbps
-                #   - field:
-                #       data: upload
-                #     label: Upload
-                #     suffix: Mbps
-                #   - field:
-                #       data: ping
-                #     label: Ping
-                #     format: float
-                #     suffix: ms
 
-      - CI/CD :
+          - Pihole:
+              href: http://pi.hole/admin
+              icon: pi-hole.svg
+              widget:
+                type: pihole
+                url: http://pi.hole/admin
+                version: 6
+                key:
+      - CI/CD:
           - ArgoCD:
               href: https://argocd.internal.mateuszholowieszko.com/
               description: Continuous deployment
