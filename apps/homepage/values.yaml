@@ -50,11 +50,11 @@ homepage:
                 key: "{{HOMEPAGE_VAR_PIHOLE_API_KEY}}"
 
           - Mikrotik:
-              href: http://router-01.internal
+              href: http://192.168.88.1
               icon: mikrotik-light.svg
               widget:
                 type: mikrotik
-                url: http://router-01.internal
+                url: http://192.168.88.1
                 username: "{{HOMEPAGE_VAR_MIKROTIK_USERNAME}}"
                 password: "{{HOMEPAGE_VAR_MIKROTIK_PASSWORD}}"
 
