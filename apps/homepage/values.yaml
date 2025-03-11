@@ -47,7 +47,7 @@ homepage:
                 type: pihole
                 url: http://192.168.88.230
                 version: 5
-                key: "{{HOMEPAGE_VAR_PIHOLE_PASSWORD}}"
+                key: "{{HOMEPAGE_VAR_PIHOLE_API_KEY}}"
       - CI/CD:
           - ArgoCD:
               href: https://argocd.internal.mateuszholowieszko.com/
