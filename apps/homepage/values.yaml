@@ -41,11 +41,11 @@ homepage:
                 fields: ["download", "upload", "ping"]
 
           - Pihole:
-              href: http://192.168.88.230
+              href: http://192.168.88.230/admin
               icon: pi-hole.svg
               widget:
                 type: pihole
-                url: http://192.168.88.230
+                url: http://192.168.88.230/admin
                 version: 6
                 key: "{{ HOMEPAGE_VAR_PIHOLE_PASSWORD }}"
       - CI/CD:
