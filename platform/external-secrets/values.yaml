@@ -29,6 +29,7 @@ external-secrets:
               - "grafana"
               - "homepage"
               - "linkding"
+              - "longhorn"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
