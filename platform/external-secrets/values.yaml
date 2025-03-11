@@ -28,6 +28,7 @@ external-secrets:
               - "argocd"
               - "grafana"
               - "homepage"
+              - "linkding"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
