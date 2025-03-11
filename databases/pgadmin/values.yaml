@@ -36,6 +36,7 @@ app-template:
           secretName: pgadmin-internal-mateuszholowieszko-com-tls
   persistence:
     data:
+      storageClass: longhorn
       accessMode: ReadWriteOnce
       size: 2Gi
       advancedMounts:
