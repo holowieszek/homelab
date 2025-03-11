@@ -35,9 +35,9 @@ app-template:
             - pgadmin.internal.mateuszholowieszko.com
           secretName: pgadmin-internal-mateuszholowieszko-com-tls
   podSecurityContext:
-    runAsUser: 5050
-    runAsGroup: 5050
-    fsGroup: 5050
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
     fsGroupChangePolicy: OnRootMismatch
   persistence:
     data:
