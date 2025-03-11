@@ -1,4 +1,4 @@
-pgadmin:
+app-template:
   controllers:
     main:
       containers:
