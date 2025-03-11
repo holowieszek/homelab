@@ -10,16 +10,16 @@ app-template:
             LD_DB_ENGINE: postgres
             LD_DB_HOST: linkding-db-rw.linkding
             LD_DB_PORT: 5432
-            # ADMIN_EMAIL:
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: linkding-app-config
-            #       key: admin-email
-            # ADMIN_PASSWORD:
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: linkding-app-config
-            #       key: admin-password
+            LD_SUPERUSER_NAME:
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-app-config
+                  key: admin-user
+            LD_SUPERUSER_PASSWORD:
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-app-config
+                  key: admin-password
             LD_DB_DATABASE:
               valueFrom:
                 secretKeyRef:

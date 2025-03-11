@@ -40,6 +40,12 @@ module "mikrotik_app_secrets" {
   description = "Homelab Mikrotik credentials"
 }
 
+module "linkding_app_secrets" {
+  source      = "./modules/secrets-manager/v1"
+  secret_name = replace(format("%s-applications-linkding-credentials", module.default_label.id), "-", "/")
+  description = "Homelab Linkding credentials"
+}
+
 module "global_config_secrets" {
   source      = "./modules/secrets-manager/v1"
   secret_name = replace(format("%s-global-config", module.default_label.id), "-", "/")
