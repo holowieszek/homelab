@@ -69,6 +69,11 @@ homepage:
               href: https://pgadmin.internal.mateuszholowieszko.com/
               description: pgadmin dashboard
               icon: pgadmin.svg
+
+          - Linkding:
+              href: https://linkding.internal.mateuszholowieszko.com/
+              description: Bookmarks
+              icon: linkding.svg
     widgets:
       - kubernetes:
           cluster:
