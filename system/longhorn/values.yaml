@@ -1,7 +1,8 @@
 longhorn:
   defaultSettings:
-    backupTarget: s3://homelab-prod-volume-backups
-    backupTargetCredentialSecret: longhorn-backup-credentials
+    defaultBackupStore:
+      backupTarget: s3://homelab-prod-volume-backups
+      backupTargetCredentialSecret: longhorn-backup-credentials
 
   longhornUI:
     replicas: 1
