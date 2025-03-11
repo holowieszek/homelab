@@ -17,6 +17,8 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.grafana_app_secrets.secret_arn,
       module.cert_manager_app_secrets.secret_arn,
       module.speedtest_app_secrets.secret_arn,
+      module.pihole_app_secrets.secret_arn,
+      module.mikrotik_app_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 

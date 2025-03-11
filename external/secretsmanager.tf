@@ -28,6 +28,18 @@ module "grafana_app_secrets" {
   description = "Homelab Grafana credentials"
 }
 
+module "pihole_app_secrets" {
+  source      = "./modules/secrets-manager/v1"
+  secret_name = replace(format("%s-applications-pihole-credentials", module.default_label.id), "-", "/")
+  description = "Homelab Pihole credentials"
+}
+
+module "mikrotik_app_secrets" {
+  source      = "./modules/secrets-manager/v1"
+  secret_name = replace(format("%s-applications-mikrotik-credentials", module.default_label.id), "-", "/")
+  description = "Homelab Mikrotik credentials"
+}
+
 module "global_config_secrets" {
   source      = "./modules/secrets-manager/v1"
   secret_name = replace(format("%s-global-config", module.default_label.id), "-", "/")
