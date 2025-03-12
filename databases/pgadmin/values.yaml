@@ -23,6 +23,7 @@ app-template:
           volumeMounts:
             - name: data
               mountPath: /var/lib/pgadmin
+              subPath: pgadmin
 
   service:
     main:
@@ -68,3 +69,4 @@ app-template:
         main:
           main:
             - path: /var/lib/pgadmin
+              subPath: pgadmin
