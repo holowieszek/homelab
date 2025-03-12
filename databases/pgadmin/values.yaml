@@ -10,19 +10,18 @@ app-template:
           env:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
-          user: "$UID:$GID"
           securityContext:
             runAsUser: 5050
             runAsGroup: 5050
-      initContainers:
-        - name: pgadmin-data-permission-fix
-          image:
-            repository: busybox
-            tag: latest
-          command: ["/bin/chown", "-R", "5050:5050", "/var/lib/pgadmin"]
-          volumeMounts:
-            - name: pgadminstorage
-              mountPath: /var/lib/pgadmin
+      # initContainers:
+      #   - name: pgadmin-data-permission-fix
+      #     image:
+      #       repository: busybox
+      #       tag: latest
+      #     command: ["/bin/chown", "-R", "5050:5050", "/var/lib/pgadmin"]
+      #     volumeMounts:
+      #       - name: pgadminstorage
+      #         mountPath: /var/lib/pgadmin
 
   service:
     main:
@@ -58,17 +57,17 @@ app-template:
   #   fsGroupChangePolicy: OnRootMismatch
 
   persistence:
-    config:
+    /var/lib/pgadmin:
       enabled: true
       type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-      advancedMounts:
-        main:
-          main:
-            - path: /var/lib/pgadmin
-              subPath: pgadmin
+      # advancedMounts:
+      #   main:
+      #     main:
+      #       - path: /var/lib/pgadmin
+      #         subPath: pgadmin
 
     # data:
     #   accessMode: ReadWriteOnce
