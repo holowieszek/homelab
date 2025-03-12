@@ -1,5 +1,6 @@
 app-template:
   controllers:
+    enabled: false
     main:
       replicas: 1
       pod:
@@ -51,13 +52,14 @@ app-template:
   # fsGroupChangePolicy: OnRootMismatch
 
   persistence:
+    enabled: false
     data:
       enabled: true
       type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-      existingClaim: pgadmin-data-restore
+      # existingClaim: pgadmin-data-restore
       globalMounts:
         - path: /var/lib/pgadmin
       # advancedMounts:
