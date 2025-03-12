@@ -1,7 +1,7 @@
 app-template:
   controllers:
     main:
-      replicas: 0
+      replicas: 1
       containers:
         main:
           image:
@@ -57,17 +57,17 @@ app-template:
   #   fsGroupChangePolicy: OnRootMismatch
 
   persistence:
-    /var/lib/pgadmin:
+    data:
       enabled: true
       type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-      # advancedMounts:
-      #   main:
-      #     main:
-      #       - path: /var/lib/pgadmin
-      #         subPath: pgadmin
+      advancedMounts:
+        main:
+          main:
+            - path: /var/lib/pgadmin
+              # subPath: pgadmin
 
     # data:
     #   accessMode: ReadWriteOnce
