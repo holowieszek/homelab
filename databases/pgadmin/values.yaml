@@ -1,6 +1,7 @@
 app-template:
   controllers:
     main:
+      replicas: 2
       containers:
         main:
           image:
