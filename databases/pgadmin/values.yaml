@@ -10,6 +10,9 @@ app-template:
           env:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
+          securityContext:
+            runAsUser: 5050
+            runAsGroup: 5050
 
   service:
     main:
@@ -38,11 +41,11 @@ app-template:
             - pgadmin.internal.mateuszholowieszko.com
           secretName: pgadmin-internal-mateuszholowieszko-com-tls
 
-  podSecurityContext:
-    runAsUser: 5050
-    runAsGroup: 5050
-    fsGroup: 5050
-    fsGroupChangePolicy: OnRootMismatch
+  # podSecurityContext:
+  #   runAsUser: 5050
+  #   runAsGroup: 5050
+  #   fsGroup: 5050
+  #   fsGroupChangePolicy: OnRootMismatch
 
   persistence:
     config:
