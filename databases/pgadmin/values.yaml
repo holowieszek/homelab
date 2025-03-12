@@ -11,6 +11,7 @@ app-template:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
           securityContext:
+            allowPrivilegeEscalation: true
             runAsUser: 0
             runAsGroup: 0
       # initContainers:
@@ -51,6 +52,7 @@ app-template:
           secretName: pgadmin-internal-mateuszholowieszko-com-tls
 
   podSecurityContext:
+    allowPrivilegeEscalation: true
     runAsUser: 0
     runAsGroup: 0
     fsGroup: 0
