@@ -12,7 +12,9 @@ app-template:
             PGADMIN_DEFAULT_PASSWORD: testpassword
       initContainers:
         - name: init-chown
-          image: busybox:latest
+          image:
+            repository: docker.io/library/busybox
+            tag: latest
           command: ["sh", "-c", "chown -R 5050:5050 /var/lib/pgadmin"]
           volumeMounts:
             - name: data
