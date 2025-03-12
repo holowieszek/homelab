@@ -2,7 +2,7 @@ app-template:
   controllers:
     main:
       enabled: true
-      replicas: 1
+      replicas: 0
       pod:
         securityContext:
           runAsUser: 5050
