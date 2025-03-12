@@ -51,10 +51,16 @@ app-template:
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-    data:
-      accessMode: ReadWriteOnce
       advancedMounts:
         main:
           main:
             - path: /var/lib/pgadmin
               subPath: pgadmin
+
+    # data:
+    #   accessMode: ReadWriteOnce
+    #   advancedMounts:
+    #     main:
+    #       main:
+    #         - path: /var/lib/pgadmin
+    #           subPath: pgadmin
