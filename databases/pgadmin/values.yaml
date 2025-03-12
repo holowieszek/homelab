@@ -14,16 +14,16 @@ app-template:
         runAsUser: 5050
         runAsGroup: 5050
         fsGroup: 5050
-      initContainers:
-        init-chown:
-          image:
-            repository: docker.io/library/busybox
-            tag: latest
-          command: ["sh", "-c", "chown -R 5050:5050 /var/lib/pgadmin"]
-          volumeMounts:
-            - name: data
-              mountPath: /var/lib/pgadmin
-              subPath: pgadmin
+      # initContainers:
+      #   init-chown:
+      #     image:
+      #       repository: docker.io/library/busybox
+      #       tag: latest
+      #     command: ["sh", "-c", "chown -R 5050:5050 /var/lib/pgadmin"]
+      #     volumeMounts:
+      #       - name: data
+      #         mountPath: /var/lib/pgadmin
+      #         subPath: pgadmin
 
   service:
     main:
