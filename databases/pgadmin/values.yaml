@@ -10,9 +10,17 @@ app-template:
           env:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
+          user: "$UID:$GID"
           securityContext:
-            runAsUser: 0
-            runAsGroup: 0
+            runAsUser: 5050
+            runAsGroup: 5050
+      initContainers:
+        - name: pgadmin-data-permission-fix
+          image: busybox
+          command: ["/bin/chown", "-R", "5050:5050", "/var/lib/pgadmin"]
+          volumeMounts:
+            - name: pgadminstorage
+              mountPath: /var/lib/pgadmin
 
   service:
     main:
