@@ -3,6 +3,10 @@ longhorn:
     backupTarget: s3://homelab-prod-volume-backups@eu-central-1/testing/
     backupTargetCredentialSecret: longhorn-backup-credentials
 
+  persistence:
+    defaultClass: true
+    reclaimPolicy: Retain
+
   longhornUI:
     replicas: 1
 
