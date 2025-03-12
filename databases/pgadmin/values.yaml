@@ -24,7 +24,12 @@ app-template:
           image:
             repository: docker.io/library/busybox
             tag: latest
-          command: ["sh", "-c", "chown -R 5050:5050 /var/lib/pgadmin"]
+          command:
+            [
+              "sh",
+              "-c",
+              "mkdir -p /var/lib/pgadmin && chown -R 5050:5050 /var/lib/pgadmin",
+            ]
           volumeMounts:
             - name: data
               mountPath: /var/lib/pgadmin
