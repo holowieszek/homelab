@@ -74,7 +74,7 @@ app-template:
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-      existingClaim: pgadmin-data
+      # existingClaim: pgadmin-data
       # advancedMounts:
       #   main:
       #     main:
