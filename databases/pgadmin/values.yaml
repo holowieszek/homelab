@@ -11,7 +11,7 @@ app-template:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
       initContainers:
-        - name: init-chown
+        init-chown:
           image:
             repository: docker.io/library/busybox
             tag: latest
