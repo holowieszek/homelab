@@ -10,10 +10,10 @@ app-template:
           env:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
-          # volumeMounts:
-          #   - name: data
-          #     mountPath: /var/lib/pgadmin
-          #     subPath: pgadmin
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/pgadmin
+              subPath: pgadmin
       # securityContext:
       #   runAsUser: 5050
       #   runAsGroup: 5050
