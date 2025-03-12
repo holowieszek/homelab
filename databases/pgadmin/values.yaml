@@ -2,6 +2,12 @@ app-template:
   controllers:
     main:
       replicas: 1
+      pod:
+        securityContext:
+          runAsUser: 5050
+          runAsGroup: 5050
+          fsGroup: 5050
+          fsGroupChangePolicy: OnRootMismatch
       containers:
         main:
           image:
@@ -10,29 +16,6 @@ app-template:
           env:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
-          volumeMounts:
-            - name: data
-              mountPath: /var/lib/pgadmin
-      # securityContext:
-      #   runAsUser: 5050
-      #   runAsGroup: 5050
-      #   fsGroup: 5050
-      #   fsGroupChangePolicy: OnRootMismatch
-      # initContainers:
-      #   init-chown:
-      #     image:
-      #       repository: docker.io/library/busybox
-      #       tag: latest
-      #     command:
-      #       [
-      #         "sh",
-      #         "-c",
-      #         "mkdir -p /var/lib/pgadmin && chown -R 5050:5050 /var/lib/pgadmin",
-      #       ]
-      #     volumeMounts:
-      #       - name: data
-      #         mountPath: /var/lib/pgadmin
-      #         subPath: pgadmin
 
   service:
     main:
@@ -61,11 +44,11 @@ app-template:
             - pgadmin.internal.mateuszholowieszko.com
           secretName: pgadmin-internal-mateuszholowieszko-com-tls
 
-  podSecurityContext:
-    runAsUser: 5050
-    runAsGroup: 5050
-    fsGroup: 5050
-    # fsGroupChangePolicy: OnRootMismatch
+  # podSecurityContext:
+  #   runAsUser: 5050
+  #   runAsGroup: 5050
+  #   fsGroup: 5050
+  # fsGroupChangePolicy: OnRootMismatch
 
   persistence:
     data:
@@ -74,7 +57,9 @@ app-template:
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-      existingClaim: pgadmin-data-backup-restore
+      # existingClaim: pgadmin-data
+      globalMounts:
+        - path: /var/lib/pgadmin
       # advancedMounts:
       #   main:
       #     main:
