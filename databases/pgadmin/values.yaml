@@ -2,7 +2,7 @@ app-template:
   controllers:
     main:
       enabled: true
-      replicas: 0
+      replicas: 1
       pod:
         securityContext:
           runAsUser: 5050
@@ -54,12 +54,11 @@ app-template:
   persistence:
     data:
       enabled: true
-      # enabled: false
       type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-      # existingClaim: pgadmin-data-restore
+      existingClaim: pgadmin-data-2
       globalMounts:
         - path: /var/lib/pgadmin
       # advancedMounts:
