@@ -1,7 +1,7 @@
 app-template:
   controllers:
-    enabled: false
     main:
+      enabled: false
       replicas: 1
       pod:
         securityContext:
