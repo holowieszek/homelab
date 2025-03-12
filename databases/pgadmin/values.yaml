@@ -10,6 +10,13 @@ app-template:
           env:
             PGADMIN_DEFAULT_EMAIL: test@example.com
             PGADMIN_DEFAULT_PASSWORD: testpassword
+      initContainers:
+        - name: init-chown
+          image: busybox
+          command: ["sh", "-c", "chown -R 5050:5050 /var/lib/pgadmin"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/pgadmin
 
   service:
     main:
