@@ -6,6 +6,6 @@ spec:
   cron: "0 */6 * * *"
   task: snapshot
   retain: 4
-  concurreny: 5
+  concurrency: 5
   labels:
     interval: 6h
