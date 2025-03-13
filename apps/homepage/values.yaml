@@ -74,6 +74,12 @@ homepage:
               href: https://linkding.internal.mateuszholowieszko.com/
               description: Bookmarks
               icon: linkding.svg
+
+          - Longhorn:
+              href: https://longhorn.internal.mateuszholowieszko.com/
+              description: Block storage management
+              icon: longhorn.svg
+
     widgets:
       - kubernetes:
           cluster:
