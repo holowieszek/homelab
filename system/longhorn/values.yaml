@@ -6,9 +6,9 @@ longhorn:
   persistence:
     defaultClass: true
     reclaimPolicy: Retain
-    recurringJobSelector:
-      enable: true
-      jobList: '[{"name": "snapshot-default", "isGroup": false}]'
+    # recurringJobSelector:
+    #   enable: true
+    #   jobList: '[{"name": "snapshot-default", "isGroup": false}]'
 
   longhornUI:
     replicas: 1
