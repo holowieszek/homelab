@@ -1,133 +1,128 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kingsmith
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: kingsmith-nginx
-  namespace: kingsmith
-spec:
-  selector:
-    matchLabels:
-      app: kingsmith
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: kingsmith
-    spec:
-      containers:
-        - name: kingsmith-middleware
-          image: $(DOCKER_IMAGE_URL)
-          env:
-            - name: DOCKER_IMAGE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: kingsmith-secret
-                  key: DOCKER_IMAGE_URL
-            - name: KINGSMITH_API_URL
-              valueFrom:
-                secretKeyRef:
-                  name: kingsmith-secret
-                  key: KINGSMITH_API_URL
-            - name: KINGSMITH_USER_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: kingsmith-secret
-                  key: KINGSMITH_USER_EMAIL
-            - name: KINGSMITH_USER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: kingsmith-secret
-                  key: KINGSMITH_USER_PASSWORD
-            - name: KINGSMITH_DEVICE_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: kingsmith-secret
-                  key: KINGSMITH_DEVICE_TOKEN
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: kingsmith-secret
-                  key: DB_USER
-            - name: DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: kingsmith-secret
-                  key: DB_PASS
-            - name: DB_HOST
-              value: kingsmith-db-rw.kingsmith
----
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-  name: kingsmith-secret
-  namespace: kingsmith
-spec:
-  refreshInterval: 10m
-  secretStoreRef:
-    name: secretstore-sample
-    kind: ClusterSecretStore
-  target:
-    name: kingsmith-secret
-    creationPolicy: Owner
-  data:
-    - secretKey: KINGSMITH_API_URL
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/applications/kingsmith/credentials
-        property: KINGSMITH_API_URL
-    - secretKey: KINGSMITH_USER_EMAIL
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/applications/kingsmith/credentials
-        property: KINGSMITH_USER_EMAIL
-    - secretKey: KINGSMITH_USER_PASSWORD
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/applications/kingsmith/credentials
-        property: KINGSMITH_USER_PASSWORD
-    - secretKey: DOCKER_IMAGE_URL
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/applications/kingsmith/credentials
-        property: DOCKER_IMAGE_URL
-    - secretKey: KINGSMITH_DEVICE_TOKEN
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/applications/kingsmith/credentials
-        property: KINGSMITH_DEVICE_TOKEN
-    - secretKey: DB_USER
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/databases/kingsmith/credentials
-        property: username
-    - secretKey: DB_PASS
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/databases/kingsmith/credentials
-        property: password
-    - secretKey: DB_NAME
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        metadataPolicy: None
-        key: homelab/prod/databases/kingsmith/credentials
-        property: dbname
+# ---
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: kingsmith
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: kingsmith-nginx
+#   namespace: kingsmith
+# spec:
+#   selector:
+#     matchLabels:
+#       app: kingsmith
+#   replicas: 3
+#   template:
+#     metadata:
+#       labels:
+#         app: kingsmith
+#     spec:
+#       containers:
+#         - name: kingsmith-middleware
+#           image: $(DOCKER_IMAGE_URL)
+#           env:
+#             - name: KINGSMITH_API_URL
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: kingsmith-secret
+#                   key: KINGSMITH_API_URL
+#             - name: KINGSMITH_USER_EMAIL
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: kingsmith-secret
+#                   key: KINGSMITH_USER_EMAIL
+#             - name: KINGSMITH_USER_PASSWORD
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: kingsmith-secret
+#                   key: KINGSMITH_USER_PASSWORD
+#             - name: KINGSMITH_DEVICE_TOKEN
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: kingsmith-secret
+#                   key: KINGSMITH_DEVICE_TOKEN
+#             - name: DB_USER
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: kingsmith-secret
+#                   key: DB_USER
+#             - name: DB_PASS
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: kingsmith-secret
+#                   key: DB_PASS
+#             - name: DB_HOST
+#               value: kingsmith-db-rw.kingsmith
+# ---
+# apiVersion: external-secrets.io/v1beta1
+# kind: ExternalSecret
+# metadata:
+#   name: kingsmith-secret
+#   namespace: kingsmith
+# spec:
+#   refreshInterval: 10m
+#   secretStoreRef:
+#     name: secretstore-sample
+#     kind: ClusterSecretStore
+#   target:
+#     name: kingsmith-secret
+#     creationPolicy: Owner
+#   data:
+#     - secretKey: KINGSMITH_API_URL
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/applications/kingsmith/credentials
+#         property: KINGSMITH_API_URL
+#     - secretKey: KINGSMITH_USER_EMAIL
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/applications/kingsmith/credentials
+#         property: KINGSMITH_USER_EMAIL
+#     - secretKey: KINGSMITH_USER_PASSWORD
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/applications/kingsmith/credentials
+#         property: KINGSMITH_USER_PASSWORD
+#     - secretKey: DOCKER_IMAGE_URL
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/applications/kingsmith/credentials
+#         property: DOCKER_IMAGE_URL
+#     - secretKey: KINGSMITH_DEVICE_TOKEN
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/applications/kingsmith/credentials
+#         property: KINGSMITH_DEVICE_TOKEN
+#     - secretKey: DB_USER
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/databases/kingsmith/credentials
+#         property: username
+#     - secretKey: DB_PASS
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/databases/kingsmith/credentials
+#         property: password
+#     - secretKey: DB_NAME
+#       remoteRef:
+#         conversionStrategy: Default
+#         decodingStrategy: None
+#         metadataPolicy: None
+#         key: homelab/prod/databases/kingsmith/credentials
+#         property: dbname
