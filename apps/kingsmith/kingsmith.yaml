@@ -21,12 +21,13 @@ spec:
     spec:
       containers:
         - name: kingsmith-middleware
-          image:
-            valueFrom:
-              secretKeyRef:
-                name: kingsmith-secret
-                key: DOCKER_IMAGE_URL
+          image: $(DOCKER_IMAGE_URL)
           env:
+            - name: DOCKER_IMAGE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: kingsmith-secret
+                  key: DOCKER_IMAGE_URL
             - name: KINGSMITH_API_URL
               valueFrom:
                 secretKeyRef:
