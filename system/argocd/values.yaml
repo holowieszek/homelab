@@ -15,9 +15,10 @@ argo-cd:
 
     repositories:
       homelab-public:
-        url: &repoURL https://github.com/holowieszek/homelab
+        url: &publicRepositoryURL https://github.com/holowieszek/homelab
         name: homelab
         type: git
+      homelab-private:
 
 argocd-apps:
   applicationsets:
@@ -25,8 +26,8 @@ argocd-apps:
       namespace: argocd
       generators:
         - git:
-            repoURL: *repoURL
-            revision: &revision main
+            repoURL: *publicRepositoryURL
+            revision: &publicRepositoryRevision main
             directories:
               - path: apps/*
               - path: system/*
@@ -41,9 +42,9 @@ argocd-apps:
             namespace: "{{path.basename}}"
           project: default
           source:
-            repoURL: *repoURL
+            repoURL: *publicRepositoryURL
             path: "{{path}}"
-            targetRevision: *revision
+            targetRevision: *publicRepositoryRevision
           syncPolicy:
             automated:
               prune: true
