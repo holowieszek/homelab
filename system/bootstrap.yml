@@ -37,6 +37,24 @@
             namespace: external-secrets
           type: Opaque
 
+    - name: Create ExternalSecrets manifests
+      kubernetes.core.helm_template:
+        chart_ref: ./external-secrets
+        include_crds: true
+        release_name: external-secrets
+        release_namespace: external-secrets
+        dependency_update: true
+        values_files:
+          - "external-secrets/values.yaml"
+      register: external_secrets_manifests
+
+    - name: Apply ExternalSecrets manifests
+      kubernetes.core.k8s:
+        resource_definition: "{{ external_secrets_manifests.stdout }}"
+        apply: true
+        server_side_apply:
+          field_manager: external-secrets-controller
+
     - name: Create ArgoCD manifests
       kubernetes.core.helm_template:
         chart_ref: ./argocd
