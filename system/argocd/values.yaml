@@ -20,6 +20,8 @@ argo-cd:
         type: git
       homelab-private:
         url: &privateRepositoryURL git@github.com:holowieszek/homelab-private.git
+        name: homelab-private
+        type: git
 
     credentialTemplates:
       ssh-creds:
