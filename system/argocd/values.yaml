@@ -21,7 +21,7 @@ argo-cd:
       homelab-private:
         url: &privateRepositoryURL git@github.com:holowieszek/homelab-private.git
         name: homelab-private
-        type: git2
+        type: git
 
 argocd-apps:
   applicationsets:
