@@ -18,15 +18,10 @@ argo-cd:
         url: &publicRepositoryURL https://github.com/holowieszek/homelab
         name: homelab
         type: git
-      homelab-private:
-        url: &privateRepositoryURL git@github.com:holowieszek/homelab-private.git
-        name: homelab-private
-        type: git
-
-    # credentialTemplates:
-    #   ssh-creds:
-    #     url: *privateRepositoryURL
-    #     sshPrivateKey: test
+      # homelab-private:
+      #   url: &privateRepositoryURL git@github.com:holowieszek/homelab-private.git
+      #   name: homelab-private
+      #   type: git
 
 argocd-apps:
   applicationsets:
@@ -41,11 +36,11 @@ argocd-apps:
               - path: system/*
               - path: platform/*
               - path: databases/*
-        - git:
-            repoURL: *privateRepositoryURL
-            revision: &privateRepositoryRevision main
-            directories:
-              - path: apps/*
+        # - git:
+        #     repoURL: *privateRepositoryURL
+        #     revision: &privateRepositoryRevision main
+        #     directories:
+        #       - path: apps/*
       template:
         metadata:
           name: "{{path.basename}}"
