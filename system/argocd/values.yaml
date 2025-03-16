@@ -36,7 +36,43 @@ argocd-apps:
               - path: system/*
               - path: platform/*
               - path: databases/*
-        - git2:
+      template:
+        metadata:
+          name: "{{path.basename}}"
+        spec:
+          destination:
+            name: in-cluster
+            namespace: "{{path.basename}}"
+          project: default
+          sources:
+            - repoURL: *publicRepositoryURL
+              path: "{{path}}"
+              targetRevision: *publicRepositoryRevision
+          syncPolicy:
+            automated:
+              prune: true
+              selfHeal: true
+            retry:
+              limit: 10
+              backoff:
+                duration: 1m
+                factor: 2
+                maxDuration: 16m
+            syncOptions:
+              - CreateNamespace=true
+              - ApplyOutOfSyncOnly=true
+              - ServerSideApply=true
+            managedNamespaceMetadata:
+              annotations:
+                # Enable privileged VolSync movers by default for all namespaces
+                # TODO this may be refactored in the future for finer granularity
+                # See also https://volsync.readthedocs.io/en/stable/usage/permissionmodel.html
+                volsync.backube/privileged-movers: "true"
+  applicationsets:
+    root:
+      namespace: argocd
+      generators:
+        - git:
             repoURL: *privateRepositoryURL
             revision: &privateRepositoryRevision main
             directories:
@@ -50,9 +86,6 @@ argocd-apps:
             namespace: "{{path.basename}}"
           project: default
           sources:
-            - repoURL: *publicRepositoryURL
-              path: "{{path}}"
-              targetRevision: *publicRepositoryRevision
             - repoURL: *privateRepositoryURL
               path: "{{path}}"
               targetRevision: *privateRepositoryRevision
