@@ -52,8 +52,11 @@
       kubernetes.core.k8s:
         resource_definition: "{{ external_secrets_manifests.stdout }}"
         apply: true
-        # server_side_apply:
-        #   field_manager: external-secrets-controller
+
+    # TBC
+    - name: Wait for ExternalSecrets webhook
+      ansible.builtin.pause:
+        seconds: 180
 
     - name: Create ArgoCD manifests
       kubernetes.core.helm_template:
