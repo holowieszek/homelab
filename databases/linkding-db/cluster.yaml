@@ -48,7 +48,7 @@ spec:
   backup:
     barmanObjectStore: &barmanObjectStore
       destinationPath: s3://homelab-prod-database-backups/linkding
-      serverName: &currentCluster linkding-db-backup-v1
+      serverName: &currentCluster linkding-db-backup-v2
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -62,20 +62,20 @@ spec:
         compression: gzip
     retentionPolicy: 21d
 
-  # bootstrap:
-  #   recovery:
-  #     source: &previousCluster linkding-db-backup-v0
+  bootstrap:
+    recovery:
+      source: &previousCluster linkding-db-backup-v1
 
-  # externalClusters:
-  #   - name: *previousCluster
-  #     barmanObjectStore:
-  #       <<: *barmanObjectStore
-  #       serverName: *previousCluster
+  externalClusters:
+    - name: *previousCluster
+      barmanObjectStore:
+        <<: *barmanObjectStore
+        serverName: *previousCluster
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: linkding-db-backup-v1
+  name: linkding-db-backup-v2
   namespace: linkding
 spec:
   immediate: true
