@@ -23,10 +23,10 @@ argo-cd:
         name: homelab-private
         type: git
 
-    credentialTemplates:
-      ssh-creds:
-        url: *privateRepositoryURL
-        sshPrivateKey: test
+    # credentialTemplates:
+    #   ssh-creds:
+    #     url: *privateRepositoryURL
+    #     sshPrivateKey: test
 
 argocd-apps:
   applicationsets:
