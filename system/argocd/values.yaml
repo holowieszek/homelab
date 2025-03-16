@@ -53,9 +53,9 @@ argocd-apps:
             - repoURL: *publicRepositoryURL
               path: "{{path}}"
               targetRevision: *publicRepositoryRevision
-            - repoURL: *privateRepositoryURL
-              path: "{{path}}"
-              targetRevision: *privateRepositoryRevision
+            # - repoURL: *privateRepositoryURL
+            #   path: "{{path}}"
+            #   targetRevision: *privateRepositoryRevision
           syncPolicy:
             automated:
               prune: true
