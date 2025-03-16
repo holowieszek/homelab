@@ -5,16 +5,16 @@ argo-cd:
     params:
       server.insecure: true
       controller.diff.server.side: true
-      
+
     cm:
       timeout.reconciliation: 5m
       resource.ignoreResourceUpdatesEnabled: true
       resource.customizations.ignoreResourceUpdates.all: |
         jsonPointers:
           - /status
-      
+
     repositories:
-      test-repo:
+      homelab-public:
         url: &repoURL https://github.com/holowieszek/homelab
         name: homelab
         type: git
@@ -34,15 +34,15 @@ argocd-apps:
               - path: databases/*
       template:
         metadata:
-          name: '{{path.basename}}'
+          name: "{{path.basename}}"
         spec:
           destination:
             name: in-cluster
-            namespace: '{{path.basename}}'
+            namespace: "{{path.basename}}"
           project: default
           source:
             repoURL: *repoURL
-            path: '{{path}}'
+            path: "{{path}}"
             targetRevision: *revision
           syncPolicy:
             automated:
