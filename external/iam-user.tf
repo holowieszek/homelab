@@ -21,6 +21,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.mikrotik_app_secrets.secret_arn,
       module.linkding_app_secrets.secret_arn,
       module.kingsmith_app_secrets.secret_arn,
+      module.homelab_private_repo_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/kingsmith/credentials-*", var.region, var.aws_account_number, var.environment),

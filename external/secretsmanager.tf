@@ -57,3 +57,9 @@ module "global_config_secrets" {
   secret_name = replace(format("%s-global-config", module.default_label.id), "-", "/")
   description = "Homelab global configuration"
 }
+
+module "homelab_private_repo_secrets" {
+  source = "./modules/secrets-manager/v1"
+  secret_name = replace(format("%s-git-private-credentials", module.default_label.id), "-", "/")
+  description = "Homelab GitHub private repository credentials"
+}
