@@ -58,6 +58,6 @@ app-template:
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 1Gi
-      # existingClaim: pgadmin-data-2
+      existingClaim: pgadmin-data-recovery-1
       globalMounts:
         - path: /var/lib/pgadmin
