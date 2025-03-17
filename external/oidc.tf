@@ -1,0 +1,21 @@
+module "oidc_github" {
+  source = "./modules/iam/identity-provider/v1"
+
+  name           = format("%s-github-oidc", module.default_label.id)
+  url            = "https://token.actions.githubusercontent.com"
+  client_id_list = var.github_oidc_audiences
+  thumbprints    = ["d89e3bd43d5d909b47a18977aa9d5ce36cee184c"]
+
+  allowed_repositories = var.github_oidc_repositories
+
+  policy = data.aws_iam_policy_document.oidc_github.json
+}
+
+data "aws_iam_policy_document" "oidc_github" {
+  statement {
+    actions = [
+      "ecr:GetAuthorizationToken"
+    ]
+    resources = ["*"]
+  }
+}
