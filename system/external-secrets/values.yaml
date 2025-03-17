@@ -31,6 +31,7 @@ external-secrets:
               - "linkding"
               - "longhorn"
               - "kingsmith"
+              - "private-api"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
