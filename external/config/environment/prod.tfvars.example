@@ -2,3 +2,5 @@ aws_account_number = ""
 region = ""
 environment = ""
 hosted_zone_domain_name = ""
+github_oidc_audiences = ["audience1"]
+github_oidc_repositories = ["repo:github_user/repository_name:main"]

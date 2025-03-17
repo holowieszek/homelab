@@ -1,5 +1,5 @@
 module "service_account" {
-  source = "./modules/iam/v1"
+  source = "./modules/iam/user/v1"
 
   name = format("%s-svc", module.default_label.id)
 
