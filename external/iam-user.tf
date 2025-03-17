@@ -94,4 +94,22 @@ data "aws_iam_policy_document" "service_account_policy" {
       format("arn:aws:route53:::hostedzone/%s", module.primary_hosted_zone.zone_id)
     ]
   }
+
+  statement {
+    actions = [
+      "ecr:GetAuthorizationToken"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage"
+    ]
+    resources = [
+      format("arn:aws:ecr:%s:%s:repository/kingsmith-poc", var.region, var.aws_account_number),
+    ]
+  }
 }
