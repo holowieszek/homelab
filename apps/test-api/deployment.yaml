@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-api-nginx
+  namespace: test-api
+spec:
+  selector:
+    matchLabels:
+      app: test-api
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: test-api
+    spec:
+      containers:
+        - name: quick-test-node-api
+          image: ghcr.io/holowieszek/quick-test-node-api:main
+          ports:
+            - containerPort: 3000
+          env:
+            - name: TEST_ENV_VAR
+              valueFrom:
+                secretKeyRef:
+                  name: test-api-secret
+                  key: random_key
+            - name: LOG_LEVEl
+              valueFrom:
+                secretKeyRef:
+                  name: test-api-another-secret
+                  key: LOG_LEVEL
