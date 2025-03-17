@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-app
+  namespace: test-app
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: test-app.internal.mateuszholowieszko.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: test-app
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - test-app.internal.mateuszholowieszko.com
+      secretName: test-app-internal-mateuszholowieszko-com-tls
