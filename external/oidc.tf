@@ -12,9 +12,24 @@ module "oidc_github" {
 data "aws_iam_policy_document" "oidc_github" {
   statement {
     actions = [
-      "ecr:GetAuthorizationToken"
+      "ecr:GetAuthorizationToken",
+      "ecr-public:GetAuthorizationToken"
     ]
     resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "sts:GetServiceBearerToken"
+    ]
+
+    resources = ["*"]
+    # condition {
+    #   test = "StringEquals"
+    #   variable = "sts:AWSServiceName"
+
+    #   values = ""
+    # }
   }
 
   statement {
@@ -26,6 +41,22 @@ data "aws_iam_policy_document" "oidc_github" {
       "ecr:UploadLayerPart"
     ]
 
-    resources = [module.ecr_kingsmith.arn]
+    resources = [
+      module.ecr_kingsmith.arn
+    ]
+  }
+
+  statement {
+    actions = [
+      "ecr-public:BatchCheckLayerAvailability",
+      "ecr-public:CompleteLayerUpload",
+      "ecr-public:InitiateLayerUpload",
+      "ecr-public:PutImage",
+      "ecr-public:UploadLayerPart"
+    ]
+
+    resources = [
+      module.ecr_token_helper.arn,
+    ]
   }
 }
