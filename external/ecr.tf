@@ -3,3 +3,10 @@ module "ecr_token_helper" {
 
   name = format("%s-ecr-token-helper", module.default_label.id)
 }
+
+module "ecr_kingsmith" {
+  source = "./modules/ecr/private/v1"
+
+  name       = format("%s-kingsmith", module.default_label.id)
+  mutability = "MUTABLE"
+}
