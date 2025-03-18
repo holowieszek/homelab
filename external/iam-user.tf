@@ -109,7 +109,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      format("arn:aws:ecr:%s:%s:repository/kingsmith-poc", var.region, var.aws_account_number),
+      module.ecr_kingsmith.arn
     ]
   }
 }
