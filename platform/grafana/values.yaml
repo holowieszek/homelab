@@ -1,4 +1,6 @@
 grafana:
+  envFromSecret: postgres-datasources-config
+
   admin:
     existingSecret: "grafana"
 
@@ -14,8 +16,8 @@ grafana:
     server:
       root_url: https://grafana.internal.mateuszholowieszko.com
 
-  datasources:
-    datasources.yaml:
+  # datasources:
+  #   datasources.yaml:
 
   dashboardProviders:
     dashboardproviders.yaml:
