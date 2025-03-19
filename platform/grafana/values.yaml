@@ -1,6 +1,8 @@
 grafana:
   envFromSecrets:
     - name: kingsmith-postgres-datasource
+      prefix: prefix
+      optional: false
 
   admin:
     existingSecret: "grafana"
