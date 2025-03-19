@@ -29,6 +29,7 @@ grafana:
             database: $KINGSMITH_DB_NAME
           jsonData:
             sslmode: disable
+          editable: true
 
   dashboardProviders:
     dashboardproviders.yaml:
