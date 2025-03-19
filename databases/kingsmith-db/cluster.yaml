@@ -104,7 +104,8 @@ spec:
       password: "{{ .password }}"
       username: "{{ .username }}"
       dbname: "{{ .dbname }}"
-      jdbc-uri: "{{ .jdbc-uri }}"
+      # jdbc-uri: "{{ .jdbc-uri }}"
+      jdbc-uri: \{\{ index .data "jdbc-uri" \}\}
       host: "{{ .host }}.kingsmith:5432"
   data:
     - conversionStrategy: None
