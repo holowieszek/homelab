@@ -18,15 +18,17 @@ grafana:
 
   datasources:
     datasources.yaml:
-      - name: Kingsmith Walkingpad DB
-        type: postgres
-        secureJsonData:
-          url: $KINGSMITH_DB_HOST
-          user: KINGSMITH_DB_USER
-          password: KINGSMITH_DB_PASSWORD
-          database: $KINGSMITH_DB_NAME
-        jsonData:
-          sslmode: disable
+      apiVersion: 1
+      datasources:
+        - name: Kingsmith Walkingpad DB
+          type: postgres
+          secureJsonData:
+            url: $KINGSMITH_DB_HOST
+            user: KINGSMITH_DB_USER
+            password: KINGSMITH_DB_PASSWORD
+            database: $KINGSMITH_DB_NAME
+          jsonData:
+            sslmode: disable
 
   dashboardProviders:
     dashboardproviders.yaml:
