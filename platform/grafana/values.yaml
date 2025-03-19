@@ -1,5 +1,5 @@
 grafana:
-  envFromSecret: postgres-datasources-config
+  # envFromSecret: postgres-datasources-config
 
   admin:
     existingSecret: "grafana"
