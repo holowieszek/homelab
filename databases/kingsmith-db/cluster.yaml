@@ -104,8 +104,6 @@ spec:
       password: "{{ .password }}"
       username: "{{ .username }}"
       dbname: "{{ .dbname }}"
-      # jdbc-uri: "{{ .jdbc-uri }}"
-      jdbc-uri: \{\{ index .data "jdbc-uri" \}\}
       host: "{{ .host }}.kingsmith:5432"
   data:
     - conversionStrategy: None
@@ -130,14 +128,6 @@ spec:
         remoteRef:
           remoteKey: homelab/prod/databases/kingsmith/credentials
           property: dbname
-      metadata:
-        secretPushFormat: string
-    - conversionStrategy: None
-      match:
-        secretKey: jdbc-uri
-        remoteRef:
-          remoteKey: homelab/prod/databases/kingsmith/credentials
-          property: jdbc-uri
       metadata:
         secretPushFormat: string
     - conversionStrategy: None
