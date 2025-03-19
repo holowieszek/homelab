@@ -98,6 +98,14 @@ spec:
   selector:
     secret:
       name: kingsmith-db-app
+      template:
+        engineVersion: v2
+        data:
+          password: "{{ .password }}"
+          username: "{{ .username }}"
+          dbname: "{{ .dbname }}"
+          jdbc-uri: "{{ .jdbc-uri }}"
+          host: "{{ .host }}.kingsmith:5432"
   data:
     - conversionStrategy: None
       match:
