@@ -139,3 +139,11 @@ spec:
           property: jdbc-uri
       metadata:
         secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: host
+        remoteRef:
+          remoteKey: homelab/prod/databases/kingsmith/credentials
+          property: host
+      metadata:
+        secretPushFormat: string
