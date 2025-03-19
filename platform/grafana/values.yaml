@@ -22,12 +22,12 @@ grafana:
       datasources:
         - name: Kingsmith Walkingpad DB
           type: postgres
+          url: $KINGSMITH_DB_HOST
+          user: $KINGSMITH_DB_USER
           secureJsonData:
-            url: $KINGSMITH_DB_HOST
-            user: $KINGSMITH_DB_USER
             password: $KINGSMITH_DB_PASSWORD
-            database: $KINGSMITH_DB_NAME
           jsonData:
+            database: $KINGSMITH_DB_NAME
             sslmode: disable
           editable: true
 
