@@ -1,10 +1,10 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-dashboards
-  namespace: grafana
-  labels:
-    grafana_dashboard: "1"
-data:
-  kingsmith-walkingpad.json: |
-    {{ .Files.Get "dashboards/kingsmith-walkingpad.json" | toString }}
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: grafana-dashboards
+#   namespace: grafana
+#   labels:
+#     grafana_dashboard: "1"
+# data:
+#   kingsmith-walkingpad.json: |
+#     {{ .Files.Get "dashboards/kingsmith-walkingpad.json" | toString }}
