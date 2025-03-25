@@ -8,11 +8,11 @@ grafana:
     dashboards:
       enabled: true
       searchNamespace: monitoring
+      label: grafana_dashboard
+      labelValue: "1"
     datasources:
       enabled: true
       searchNamespace: monitoring
-      label: grafana_dashboard
-      labelValue: "1"
 
   grafana.ini:
     server:
