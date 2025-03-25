@@ -8,6 +8,10 @@ grafana:
     dashboards:
       enabled: true
       searchNamespace: grafana
+      # label: grafana_dashboard
+      # labelValue: "1"
+      # provider:
+      #   allowUiUpdates: true
     datasources:
       enabled: true
       searchNamespace: monitoring
