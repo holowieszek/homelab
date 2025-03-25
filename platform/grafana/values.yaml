@@ -64,6 +64,3 @@ grafana:
         gnetId: 20842
         revision: 3
         datasource: Prometheus
-
-      # kingsmith-walkingpad:
-      #   file: dashboards/kingsmith-walkingpad.json
