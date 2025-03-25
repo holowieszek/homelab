@@ -11,6 +11,8 @@ grafana:
     datasources:
       enabled: true
       searchNamespace: monitoring
+      label: grafana_dashboard
+      labelValue: "1"
 
   grafana.ini:
     server:
@@ -61,5 +63,5 @@ grafana:
         revision: 3
         datasource: Prometheus
 
-      kingsmith-walkingpad:
-        file: dashboards/kingsmith-walkingpad.json
+      # kingsmith-walkingpad:
+      #   file: dashboards/kingsmith-walkingpad.json
