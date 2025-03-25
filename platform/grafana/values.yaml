@@ -7,7 +7,7 @@ grafana:
   sidecar:
     dashboards:
       enabled: true
-      searchNamespace: monitoring
+      searchNamespace: grafana
       label: grafana_dashboard
       labelValue: "1"
     datasources:
