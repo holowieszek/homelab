@@ -1,1 +1,2 @@
 emqx:
+  replicaCount: 3
