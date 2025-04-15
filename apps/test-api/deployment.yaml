@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: quick-test-node-api
-          image: ghcr.io/holowieszek/quick-test-node-api:main
+          image: ghcr.io/holowieszek/quick-test-node-api:@sha256:943db196c93793186c87078119438f2216e8c8fc5afb654d2d8e03b9e3607f60
           ports:
             - containerPort: 3000
           env:
