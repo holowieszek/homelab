@@ -1,2 +1,23 @@
 emqx:
   replicaCount: 3
+  recreatePods: true
+
+  ingress:
+    dashboard:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        kubernetes.io/ingress.class: "traefik"
+      hosts:
+        - host: emqx.internal.mateuszholowieszko.com
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                name: main
+                port: http
+      tls:
+        - hosts:
+            - emqx.internal.mateuszholowieszko.com
+          secretName: emqx-internal-mateuszholowieszko-com-tls
