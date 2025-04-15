@@ -2,6 +2,9 @@ emqx:
   replicaCount: 3
   recreatePods: true
 
+  service:
+    type: LoadBalancer
+
   ingress:
     dashboard:
       enabled: true
