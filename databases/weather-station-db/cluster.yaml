@@ -1,0 +1,140 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: awssm-secret
+  namespace: weather-station
+spec:
+  refreshInterval: 10m
+  secretStoreRef:
+    name: secretstore-sample
+    kind: ClusterSecretStore
+  target:
+    name: awssm-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: access-key-id
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        key: homelab/prod/global/config
+        property: access_key_id
+    - secretKey: secret-access-key
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        key: homelab/prod/global/config
+        property: secret_access_key
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: weather-station-db
+  namespace: weather-station
+spec:
+  instances: 3
+
+  resources:
+    requests:
+      memory: 256Mi
+
+  storage:
+    size: 1Gi
+
+  monitoring:
+    enablePodMonitor: true
+
+  backup:
+    barmanObjectStore: &barmanObjectStore
+      destinationPath: s3://homelab-prod-database-backups/weather-station
+      serverName: &currentCluster weather-station-db-backup-v0
+      s3Credentials:
+        accessKeyId:
+          name: awssm-secret
+          key: access-key-id
+        secretAccessKey:
+          name: awssm-secret
+          key: secret-access-key
+      data:
+        compression: gzip
+      wal:
+        compression: gzip
+    retentionPolicy: 21d
+
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster weather-station-db-backup-v1
+
+  # externalClusters:
+  #   - name: *previousCluster
+  #     barmanObjectStore:
+  #       <<: *barmanObjectStore
+  #       serverName: *previousCluster
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: weather-station-db-backup-v0
+  namespace: weather-station
+spec:
+  immediate: true
+  schedule: "0 0 */6 * * *"
+  cluster:
+    name: weather-station-db
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: weather-station-db-app-push
+  namespace: weather-station
+spec:
+  updatePolicy: Replace
+  deletionPolicy: None
+  refreshInterval: 1h
+  secretStoreRefs:
+    - name: secretstore-sample
+      kind: ClusterSecretStore
+  selector:
+    secret:
+      name: weather-station-db-app
+  template:
+    engineVersion: v2
+    data:
+      password: "{{ .password }}"
+      username: "{{ .username }}"
+      dbname: "{{ .dbname }}"
+      host: "{{ .host }}.weather-station:5432"
+  data:
+    - conversionStrategy: None
+      match:
+        secretKey: password
+        remoteRef:
+          remoteKey: homelab/prod/databases/weather-station/credentials
+          property: password
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: username
+        remoteRef:
+          remoteKey: homelab/prod/databases/weather-station/credentials
+          property: username
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: dbname
+        remoteRef:
+          remoteKey: homelab/prod/databases/weather-station/credentials
+          property: dbname
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: host
+        remoteRef:
+          remoteKey: homelab/prod/databases/weather-station/credentials
+          property: host
+      metadata:
+        secretPushFormat: string
