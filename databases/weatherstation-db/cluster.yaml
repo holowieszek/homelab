@@ -2,7 +2,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: awssm-secret
-  namespace: weather-station
+  namespace: weatherstation
 spec:
   refreshInterval: 10m
   secretStoreRef:
@@ -30,8 +30,8 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: weather-station-db
-  namespace: weather-station
+  name: weatherstation-db
+  namespace: weatherstation
 spec:
   instances: 3
 
@@ -47,8 +47,8 @@ spec:
 
   backup:
     barmanObjectStore: &barmanObjectStore
-      destinationPath: s3://homelab-prod-database-backups/weather-station
-      serverName: &currentCluster weather-station-db-backup-v0
+      destinationPath: s3://homelab-prod-database-backups/weatherstation
+      serverName: &currentCluster weatherstation-db-backup-v0
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -64,7 +64,7 @@ spec:
 
   # bootstrap:
   #   recovery:
-  #     source: &previousCluster weather-station-db-backup-v1
+  #     source: &previousCluster weatherstation-db-backup-v1
 
   # externalClusters:
   #   - name: *previousCluster
@@ -75,19 +75,19 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: weather-station-db-backup-v0
-  namespace: weather-station
+  name: weatherstation-db-backup-v0
+  namespace: weatherstation
 spec:
   immediate: true
   schedule: "0 0 */6 * * *"
   cluster:
-    name: weather-station-db
+    name: weatherstation-db
 ---
 apiVersion: external-secrets.io/v1alpha1
 kind: PushSecret
 metadata:
-  name: weather-station-db-app-push
-  namespace: weather-station
+  name: weatherstation-db-app-push
+  namespace: weatherstation
 spec:
   updatePolicy: Replace
   deletionPolicy: None
@@ -97,20 +97,20 @@ spec:
       kind: ClusterSecretStore
   selector:
     secret:
-      name: weather-station-db-app
+      name: weatherstation-db-app
   template:
     engineVersion: v2
     data:
       password: "{{ .password }}"
       username: "{{ .username }}"
       dbname: "{{ .dbname }}"
-      host: "{{ .host }}.weather-station:5432"
+      host: "{{ .host }}.weatherstation:5432"
   data:
     - conversionStrategy: None
       match:
         secretKey: password
         remoteRef:
-          remoteKey: homelab/prod/databases/weather-station/credentials
+          remoteKey: homelab/prod/databases/weatherstation/credentials
           property: password
       metadata:
         secretPushFormat: string
@@ -118,7 +118,7 @@ spec:
       match:
         secretKey: username
         remoteRef:
-          remoteKey: homelab/prod/databases/weather-station/credentials
+          remoteKey: homelab/prod/databases/weatherstation/credentials
           property: username
       metadata:
         secretPushFormat: string
@@ -126,7 +126,7 @@ spec:
       match:
         secretKey: dbname
         remoteRef:
-          remoteKey: homelab/prod/databases/weather-station/credentials
+          remoteKey: homelab/prod/databases/weatherstation/credentials
           property: dbname
       metadata:
         secretPushFormat: string
@@ -134,7 +134,7 @@ spec:
       match:
         secretKey: host
         remoteRef:
-          remoteKey: homelab/prod/databases/weather-station/credentials
+          remoteKey: homelab/prod/databases/weatherstation/credentials
           property: host
       metadata:
         secretPushFormat: string

@@ -32,6 +32,7 @@ external-secrets:
               - "longhorn"
               - "kingsmith"
               - "private-api"
+              - "weatherstation"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
