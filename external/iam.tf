@@ -25,6 +25,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/kingsmith/credentials-*", var.region, var.aws_account_number, var.environment),
+      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/weatherstation/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 
       // resources not managed by terraform
