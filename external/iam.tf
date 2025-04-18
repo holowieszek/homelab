@@ -109,7 +109,8 @@ data "aws_iam_policy_document" "service_account_policy" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      module.ecr_kingsmith.arn
+      module.ecr_kingsmith.arn,
+      module.ecr_weather_station.arn,
     ]
   }
 }
@@ -158,7 +159,8 @@ data "aws_iam_policy_document" "oidc_github" {
     ]
 
     resources = [
-      module.ecr_kingsmith.arn
+      module.ecr_kingsmith.arn,
+      module.ecr_weather_station.arn,
     ]
   }
 
