@@ -1,0 +1,19 @@
+home-assistant:
+  ingress:
+    enabled: true
+    className: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/ingress.class: "traefik"
+    hosts:
+      - host: home-assistant.internal.mateuszholowieszko.com
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              name: main
+              port: http
+    tls:
+      - hosts:
+          - home-assistant.internal.mateuszholowieszko.com
+        secretName: home-assistant-internal-mateuszholowieszko-com-tls:
