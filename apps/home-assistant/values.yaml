@@ -4,10 +4,6 @@ home-assistant:
     trusted_proxies:
      - 10.42.0.0/16
 
-  addons:
-    codeserver:
-      enabled: true
-         
   ingress:
     enabled: true
     className: traefik
