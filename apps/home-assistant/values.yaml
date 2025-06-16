@@ -16,4 +16,4 @@ home-assistant:
     tls:
       - hosts:
           - home-assistant.internal.mateuszholowieszko.com
-        secretName: home-assistant-internal-mateuszholowieszko-com-tls:
+        secretName: home-assistant-internal-mateuszholowieszko-com-tls
