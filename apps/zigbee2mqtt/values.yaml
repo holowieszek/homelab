@@ -5,7 +5,7 @@ zigbee2mqtt:
     storage:
       enabled: true
       size: 1Gi
-      # storageClassName: longhorn #default
+      storageClassName: longhorn
       # existingVolume: ""
   zigbee2mqtt:
     serial:
