@@ -13,5 +13,7 @@ zigbee2mqtt:
       baudrate: 115200
       adapter: zstack
     permit_join: true
+    advanced:
+      transmit_power: 20
     mqtt:
       server: "mqtt://emqx.internal.mateuszholowieszko.com"
