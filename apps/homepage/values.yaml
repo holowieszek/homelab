@@ -20,10 +20,18 @@ homepage:
 
           - Router:
               - href: http://router-01.internal/
+                icon: opnsense-light.svg
+
+          - Access Point:
+              - href: http://ap-01.internal/
                 icon: mikrotik-light.svg
 
-          - Switch:
+          - Switch Main:
               - href: http://switch-01.internal/
+                icon: netgear-light.svg
+
+          - Switch Trunk WAN:
+              - href: http://switch-02.internal/
                 icon: netgear-light.svg
     services:
       - Monitoring:
