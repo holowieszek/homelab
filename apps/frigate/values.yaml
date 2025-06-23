@@ -22,10 +22,10 @@ frigate:
       - host: frigate.internal.mateuszholowieszko.com
         paths:
           - path: /
-            pathType: Prefix
-            service:
-              name: main
-              port: http
+            # pathType: Prefix
+            # service:
+              # name: main
+            port: http
     tls:
       - hosts:
           - frigate.internal.mateuszholowieszko.com
