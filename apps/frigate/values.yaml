@@ -1,13 +1,14 @@
 frigate:
-  mqtt:
+  config: |
+    mqtt:
     host: "emqx.internal.mateuszholowieszko.com"
     port: 1883
     user: ""
     password: ""
-  cameras:
-    back:
-      ffmpeg:
-        inputs:
-          - path: rtsp://192.168.88.47:8080/h264.sdp
-            roles:
-              - detect
+    cameras:
+      back:
+        ffmpeg:
+          inputs:
+            - path: rtsp://192.168.88.47:8080/h264.sdp
+              roles:
+                - detect
