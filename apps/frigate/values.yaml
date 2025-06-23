@@ -1,7 +1,7 @@
 frigate:
   config: |
     mqtt:
-      host: "emqx.internal.mateuszholowieszko.com"
+      host: "mqtt://emqx.internal.mateuszholowieszko.com"
       port: 1883
       user: ""
       password: ""
