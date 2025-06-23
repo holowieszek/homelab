@@ -3,8 +3,6 @@ frigate:
     mqtt:
       host: "mqtt://emqx.internal.mateuszholowieszko.com"
       port: 1883
-      user: ""
-      password: ""
     cameras:
       back:
         ffmpeg:
