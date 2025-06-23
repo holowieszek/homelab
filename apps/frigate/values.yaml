@@ -18,11 +18,16 @@ frigate:
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
       kubernetes.io/ingress.class: "traefik"
-    rules:
+    # rules:
+    #   - host: frigate.internal.mateuszholowieszko.com
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         portName: http
+    hosts:
       - host: frigate.internal.mateuszholowieszko.com
         paths:
           - path: /
-            pathType: Prefix
             portName: http
             # backend:
             #   service:
