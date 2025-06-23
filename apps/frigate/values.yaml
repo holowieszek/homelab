@@ -1,7 +1,7 @@
 frigate:
   config: |
     mqtt:
-      host: "mqtt://emqx.internal.mateuszholowieszko.com"
+      host: "emqx.internal.mateuszholowieszko.com"
       port: 1883
     cameras:
       back:
