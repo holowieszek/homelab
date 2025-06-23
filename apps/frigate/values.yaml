@@ -23,12 +23,9 @@ frigate:
         paths:
           - path: /
             pathType: Prefix
-            backend:
-              service:
-                name: frigate
-                port:
-                  number: 5000  # Frigate's default HTTP port
     tls:
       - hosts:
           - frigate.internal.mateuszholowieszko.com
         secretName: frigate-internal-mateuszholowieszko-com-tls
+    service:
+      port: 5000
