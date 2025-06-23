@@ -23,7 +23,8 @@ frigate:
         paths:
           - path: /
             pathType: Prefix
-            port: http
+            backend:
+              port: http
     tls:
       - hosts:
           - frigate.internal.mateuszholowieszko.com
