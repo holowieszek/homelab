@@ -23,11 +23,12 @@ frigate:
         paths:
           - path: /
             pathType: Prefix
-            backend:
-              service:
-                name: frigate
-                port:
-                  name: http
+            portName: http
+            # backend:
+            #   service:
+            #     name: frigate
+            #     port:
+            #       name: http
     tls:
       - hosts:
           - frigate.internal.mateuszholowieszko.com
