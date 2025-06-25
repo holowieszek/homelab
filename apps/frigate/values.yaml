@@ -7,13 +7,7 @@ frigate:
       back:
         ffmpeg:
           inputs:
-           - path: rtsp://192.168.88.77:8080/h264.sdp
-              roles:
-                - record
-      front:
-        ffmpeg:
-          inputs:
-            - path: rtsp://192.168.88.47:8080/h264.sdp
+            - path: rtsp://192.168.88.77:8080/h264.sdp
               roles:
                 - record
 
