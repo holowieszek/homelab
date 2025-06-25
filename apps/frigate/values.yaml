@@ -3,6 +3,10 @@ frigate:
     mqtt:
       host: "emqx.internal.mateuszholowieszko.com"
       port: 1883
+    go2rtc:
+      streams:
+        back:
+          - rtsp://192.168.88.77:8080/h264.sdp
     cameras:
       back:
         ffmpeg:
