@@ -8,8 +8,8 @@ frigate:
         ffmpeg:
           inputs:
             - path: rtsp://192.168.88.47:8080/h264.sdp
-              roles:
-                - detect
+            - path: rtsp://192.168.88.77:8080/h264.sdp
+
   ingress:
     enabled: true
     ingressClassName: traefik
