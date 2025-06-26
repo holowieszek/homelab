@@ -9,3 +9,19 @@ spec:
   concurrency: 5
   labels:
     interval: 6h
+  groups:
+    - snapshot-enabled
+---
+apiVersion: longhorn.io/v1beta1
+kind: RecurringJob
+metadata:
+  name: backup-default
+spec:
+  cron: "0 */6 * * *"
+  task: backup
+  retain: 4
+  concurrency: 5
+  labels:
+    interval: 6h
+  groups:
+    - backup-enabled
