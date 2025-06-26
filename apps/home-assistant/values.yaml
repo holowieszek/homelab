@@ -4,6 +4,10 @@ home-assistant:
     trusted_proxies:
       - 10.42.0.0/16
 
+    initScript: |-
+      #!/bin/bash
+      wget -O - https://get.hacs.xyz | bash -
+
   addons:
     codeserver:
       enabled: false
