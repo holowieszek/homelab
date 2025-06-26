@@ -10,7 +10,7 @@ spec:
   labels:
     interval: 6h
   groups:
-    - snapshot-enabled
+    - snapshot-default
 ---
 apiVersion: longhorn.io/v1beta1
 kind: RecurringJob
@@ -24,4 +24,4 @@ spec:
   labels:
     interval: 6h
   groups:
-    - backup-enabled
+    - backup-default
