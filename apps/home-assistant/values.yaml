@@ -8,7 +8,11 @@ home-assistant:
     - name: init-hacs
       image: bash
       command:
-        ["bash", "-c", "cd /config && wget -O - https://get.hacs.xyz | bash -"]
+        [
+          "bash",
+          "-c",
+          "pwd && ls -la && cd /config && wget -O - https://get.hacs.xyz | bash -",
+        ]
       volumeMounts:
         - mountPath: /config
           name: home-assistant
