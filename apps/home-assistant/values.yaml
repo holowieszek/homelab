@@ -46,7 +46,7 @@ home-assistant:
     accessMode: ReadWriteOnce
     storageClass: longhorn
     annotations:
-      longhorn.io/recurring-job-group: snapshot-default
+      longhorn.io/recurring-job-group: "backup-default"
     size: 10Gi
     #existingClaim:
     globalMounts:
