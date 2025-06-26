@@ -2,12 +2,12 @@ home-assistant:
   configuration:
     enabled: true
     trusted_proxies:
-     - 10.42.0.0/16
+      - 10.42.0.0/16
 
   addons:
     codeserver:
       enabled: false
-         
+
   ingress:
     enabled: true
     className: traefik
@@ -26,3 +26,12 @@ home-assistant:
       - hosts:
           - home-assistant.internal.mateuszholowieszko.com
         secretName: home-assistant-internal-mateuszholowieszko-com-tls
+
+  persistence:
+    data:
+      enabled: true
+      type: persistentVolumeClaim
+      accessMode: ReadWriteOnce
+      storageClass: longhorn
+      size: 10Gi
+      #existingClaim:
