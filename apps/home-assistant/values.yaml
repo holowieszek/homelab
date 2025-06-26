@@ -11,7 +11,7 @@ home-assistant:
         [
           "bash",
           "-c",
-          "pwd && ls -la && cd /config && wget -O - https://get.hacs.xyz | bash -",
+          "pwd && ls -la && cd /config && ls -la && wget -O - https://get.hacs.xyz | bash -",
         ]
       volumeMounts:
         - mountPath: /config
