@@ -11,9 +11,9 @@ home-assistant:
         - /bin/sh
         - -c
         - curl -sfSL https://get.hacs.xyz | bash -
-      #volumeMounts:
-      #  - name: pvc-fb5c79e1-2023-42a0-a62a-9d31ad27158d
-      #    mountPath: /config
+      volumeMounts:
+        - name: home-assistant
+          mountPath: /config
 
   addons:
     codeserver:
