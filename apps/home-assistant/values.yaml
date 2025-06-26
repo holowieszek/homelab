@@ -4,7 +4,7 @@ home-assistant:
     trusted_proxies:
       - 10.42.0.0/16
 
-  initcontainers:
+  initContainers:
     - name: install-hacs
       image: alpine:latest
       command:
@@ -12,10 +12,10 @@ home-assistant:
         - -c
         - |
           apk add --no-cache bash curl && \
-          bash -c "curl -sfsl https://get.hacs.xyz | bash -"
-      volumemounts:
+          bash -c "curl -sfSL https://get.hacs.xyz | bash -"
+      volumeMounts:
         - name: home-assistant
-          mountpath: /config
+          mountPath: /config
 
   addons:
     codeserver:
@@ -23,7 +23,7 @@ home-assistant:
 
   ingress:
     enabled: true
-    classname: traefik
+    className: traefik
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
       kubernetes.io/ingress.class: "traefik"
@@ -31,23 +31,23 @@ home-assistant:
       - host: home-assistant.internal.mateuszholowieszko.com
         paths:
           - path: /
-            pathtype: prefix
+            pathType: Prefix
             service:
               name: main
               port: http
     tls:
       - hosts:
           - home-assistant.internal.mateuszholowieszko.com
-        secretname: home-assistant-internal-mateuszholowieszko-com-tls
+        secretName: home-assistant-internal-mateuszholowieszko-com-tls
 
   persistence:
     enabled: true
-    type: persistentvolumeclaim
-    accessmode: readwriteonce
-    storageclass: longhorn
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    storageClass: longhorn
     annotations:
       longhorn.io/recurring-job-group: snapshot-default
-    size: 10gi
-    #existingclaim:
-    globalmounts:
+    size: 10Gi
+    #existingClaim:
+    globalMounts:
       - path: /config
