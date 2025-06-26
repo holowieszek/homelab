@@ -64,3 +64,10 @@ grafana:
         gnetId: 20842
         revision: 3
         datasource: Prometheus
+
+  persistence:
+    enabled: true
+    storageClassName: longhorn
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
