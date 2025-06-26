@@ -4,9 +4,16 @@ home-assistant:
     trusted_proxies:
       - 10.42.0.0/16
 
-    initScript: |-
-      #!/bin/bash
-      wget -O - https://get.hacs.xyz | bash -
+  initContainers:
+    - name: install-hacs
+      image: curlimages/curl
+      command:
+        - /bin/sh
+        - -c
+        - curl -sfSL https://get.hacs.xyz | bash -
+      volumeMounts:
+        - name: config
+          mountPath: /config
 
   addons:
     codeserver:
