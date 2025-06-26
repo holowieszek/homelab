@@ -45,8 +45,8 @@ home-assistant:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     storageClass: longhorn
-    annotations:
-      longhorn.io/recurring-job-group: "backup-default"
+    #annotations:
+    #  longhorn.io/recurring-job-group: "backup-default"
     size: 10Gi
     #existingClaim:
     globalMounts:
