@@ -6,11 +6,13 @@ home-assistant:
 
   initContainers:
     - name: install-hacs
-      image: curlimages/curl
+      image: alpine:latest
       command:
         - /bin/sh
         - -c
-        - curl -sfSL https://get.hacs.xyz | bash -
+        - |
+          apk add --no-cache bash curl && \
+          bash -c "curl -sfSL https://get.hacs.xyz | bash -"
       volumeMounts:
         - name: home-assistant
           mountPath: /config
