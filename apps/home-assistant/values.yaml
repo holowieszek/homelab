@@ -12,7 +12,7 @@ home-assistant:
         - -c
         - curl -sfSL https://get.hacs.xyz | bash -
       volumeMounts:
-        - name: config
+        - name: home-assistant-home-assistant-0
           mountPath: /config
 
   addons:
