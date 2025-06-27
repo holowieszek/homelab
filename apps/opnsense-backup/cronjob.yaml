@@ -50,5 +50,5 @@ spec:
                       key: OPNSENSE_SECRET_KEY
               imagePullPolicy: IfNotPresent
           restartPolicy: OnFailure
-          serviceAccountName: ecr-creds-cronjob-sa
-          serviceAccount: ecr-creds-cronjob-sa
+          serviceAccountName: opnsense-backup-cronjob-sa
+          serviceAccount: opnsense-backup-cronjob-sa
