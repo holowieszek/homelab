@@ -1,9 +1,38 @@
+module "opnsense_backups_service_account" {
+  source = "./modules/iam/user/v1"
+
+  name = format("%s-opnsense-backups-svc", module.default_label.id)
+
+  policy = data.aws_iam_policy_document.opnsense_backups_service_account_policy.json
+
+}
+
 module "service_account" {
   source = "./modules/iam/user/v1"
 
   name = format("%s-svc", module.default_label.id)
 
   policy = data.aws_iam_policy_document.service_account_policy.json
+}
+
+data "aws_iam_policy_document" "opnsense_backups_service_account_policy" {
+  statement {
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [
+      module.opnsense_backups.bucket_arn,
+    ]
+  }
+
+  statement {
+    actions = [
+      "s3:PutObject"
+    ]
+    resources = [
+      format("%s/*", module.opnsense_backups.bucket_arn)
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "service_account_policy" {
@@ -22,6 +51,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.linkding_app_secrets.secret_arn,
       module.kingsmith_app_secrets.secret_arn,
       module.homelab_private_repo_secrets.secret_arn,
+      module.opnsense_backups_app_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/kingsmith/credentials-*", var.region, var.aws_account_number, var.environment),
@@ -177,6 +207,7 @@ data "aws_iam_policy_document" "oidc_github" {
 
     resources = [
       module.ecr_token_helper.arn,
+      module.ecr_opnsense_backup_tool.arn
     ]
   }
 }
