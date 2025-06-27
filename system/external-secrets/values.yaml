@@ -33,6 +33,7 @@ external-secrets:
               - "kingsmith"
               - "private-api"
               - "weatherstation"
+              - "opnsense-backup"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
