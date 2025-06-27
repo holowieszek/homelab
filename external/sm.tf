@@ -63,3 +63,10 @@ module "homelab_private_repo_secrets" {
   secret_name = replace(format("%s-git-private-credentials", module.default_label.id), "-", "/")
   description = "Homelab GitHub private repository credentials"
 }
+
+module "opnsense_backups_app_secrets" {
+  source      = "./modules/secrets-manager/v1"
+  secret_name = replace(format("%s-applications-opnsense-backups", module.default_label.id), "-", "/")
+  description = "Homelab OPNSense App configuration"
+}
+
