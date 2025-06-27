@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: opnsense-backup-cronjob
+  namespace: opnsense-backup
+spec:
+  schedule: 0 */6 * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: opnsense-backup-tool
+              image: public.ecr.aws/h4u5l0d7/homelab-prod-ecr-opnsense-backup-tool:v1.0.0
+              env:
+                - name: BACKUP_API_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: opnsense-backup-secret
+                      key: BACKUP_API_URL
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: opnsense-backup-secret
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: opnsense-backup-secret
+                      key: AWS_SECRET_ACCESS_KEY
+                - name: AWS_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: opnsense-backup-secret
+                      key: AWS_REGION
+                - name: S3_BUCKET_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: opnsense-backup-secret
+                      key: S3_BUCKET_NAME
+                - name: OPNSENSE_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: opnsense-backup-secret
+                      key: OPNSENSE_API_KEY
+                - name: OPNSENSE_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: opnsense-backup-secret
+                      key: OPNSENSE_SECRET_KEY
+              imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
+          serviceAccountName: ecr-creds-cronjob-sa
+          serviceAccount: ecr-creds-cronjob-sa

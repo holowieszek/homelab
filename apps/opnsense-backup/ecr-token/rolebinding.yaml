@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ecr-creds-cronjob-rolebinding
+  namespace: opnsense-backup
+subjects:
+  - kind: ServiceAccount
+    name: ecr-creds-cronjob-sa
+    namespace: opnsense-backup
+roleRef:
+  kind: Role
+  name: ecr-creds-cronjob-role
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ecr-creds-refresh
+  namespace: opnsense-backup
+spec:
+  schedule: 0 */11 * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ecr-creds-refresh
+              image: public.ecr.aws/h4u5l0d7/homelab-prod-ecr-token-helper:v1.0.1
+              command:
+                - /bin/sh
+                - "-c"
+                - >-
+                  aws --version
+
+                  aws ecr get-login-password --region ${AWS_REGION}
+
+                  echo "deleting imagepull secret..."
+
+                  kubectl delete secret -n opnsense-backup --ignore-not-found ${SECRET_NAME}
+
+                  echo "recreating imagepull secret..."
+
+                  kubectl create secret -n opnsense-backup docker-registry ${SECRET_NAME} --docker-server=${AWS_ACCOUNT_NUMBER}.dkr.ecr.${AWS_REGION}.amazonaws.com --docker-username=AWS --docker-password="$(aws ecr get-login-password --region eu-central-1)"
+
+                  echo "secret recreated!!"
+              env:
+                - name: AWS_REGION
+                  value: eu-central-1
+                - name: SECRET_NAME
+                  value: aws-ecr
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-svc-user
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-svc-user
+                      key: AWS_SECRET_ACCESS_KEY
+                - name: AWS_ACCOUNT_NUMBER
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-svc-user
+                      key: AWS_ACCOUNT_NUMBER
+              imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
+          serviceAccountName: ecr-creds-cronjob-sa
+          serviceAccount: ecr-creds-cronjob-sa
