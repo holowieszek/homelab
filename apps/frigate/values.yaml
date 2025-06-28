@@ -6,12 +6,12 @@ frigate:
     go2rtc:
       streams:
         back:
-          - rtsp://192.168.88.78:554/stream1
+          - rtsp://testtest:testtest@192.168.88.78:554/stream1
     cameras:
       back:
         ffmpeg:
           inputs:
-            - path: rtsp://192.168.88.78:554/stream1
+            - path: rtsp://testtest:testtest@192.168.88.78:554/stream1
               roles:
                 - record
 
