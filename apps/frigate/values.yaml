@@ -13,8 +13,11 @@ frigate:
           inputs:
             - path: rtsp://testtest:testtest@192.168.88.78:554/stream1
               roles:
-                - record
-
+                - detect
+        detect:
+          enabled: false
+        record:
+          enabled: false
   ingress:
     enabled: true
     ingressClassName: traefik
