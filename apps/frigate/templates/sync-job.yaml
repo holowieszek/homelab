@@ -15,7 +15,6 @@ spec:
                 - /bin/sh
                 - -c
                 - >
-                  ls -la /media/frigate/recordings
                   aws s3 sync /media/frigate/recordings $AWS_FRIGATE_BACKUP_BUCKET
               envFrom:
                 - secretRef:
