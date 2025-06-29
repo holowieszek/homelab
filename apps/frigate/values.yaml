@@ -18,6 +18,9 @@ frigate:
           enabled: false
         record:
           enabled: true
+          retain:
+            days: 3
+            mode: all
   ingress:
     enabled: true
     ingressClassName: traefik
@@ -44,3 +47,9 @@ frigate:
       - hosts:
           - frigate.internal.mateuszholowieszko.com
         secretName: frigate-internal-mateuszholowieszko-com-tls
+
+  persistence:
+    media:
+      enabled: true
+      storageClass: longhorn
+      size: 10Gi
