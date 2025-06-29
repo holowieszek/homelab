@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: frigate-s3-sync
+spec:
+  schedule: "*/10 * * * *" # Every 10 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: s3sync
+              image: amazon/aws-cli
+              command:
+                - /bin/sh
+                - -c
+                - >
+                  ls -la /media/frigate/recordings
+                  # aws s3 sync /media/frigate/recordings s3://mybucket/frigate-recordings --delete
+              #envFrom:
+              #  - secretRef:
+              #      name: s3-credentials
+              volumeMounts:
+                - name: frigate-media
+                  mountPath: /media/frigate
+          restartPolicy: OnFailure
+          volumes:
+            - name: frigate-media
+              persistentVolumeClaim:
+                claimName: frigate-media
