@@ -16,10 +16,10 @@ spec:
                 - -c
                 - >
                   ls -la /media/frigate/recordings
-                  # aws s3 sync /media/frigate/recordings s3://mybucket/frigate-recordings --delete
-              #envFrom:
-              #  - secretRef:
-              #      name: s3-credentials
+                  aws s3 sync /media/frigate/recordings $AWS_FRIGATE_BACKUP_BUCKET
+              envFrom:
+                - secretRef:
+                    name: frigate-sync-job-config
               volumeMounts:
                 - name: frigate-media
                   mountPath: /media

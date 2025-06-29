@@ -4,7 +4,14 @@ module "opnsense_backups_service_account" {
   name = format("%s-opnsense-backups-svc", module.default_label.id)
 
   policy = data.aws_iam_policy_document.opnsense_backups_service_account_policy.json
+}
 
+module "frigate_syncs_service_account" {
+  source = "./modules/iam/user/v1"
+
+  name = format("%s-frigate-syncs-svc", module.default_label.id)
+
+  policy = data.aws_iam_policy_document.frigate_syncs_service_account_policy.json
 }
 
 module "service_account" {
@@ -13,6 +20,27 @@ module "service_account" {
   name = format("%s-svc", module.default_label.id)
 
   policy = data.aws_iam_policy_document.service_account_policy.json
+}
+
+data "aws_iam_policy_document" "frigate_syncs_service_account_policy" {
+  statement {
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [
+      module.frigate_syncs.bucket_arn,
+    ]
+  }
+
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+    resources = [
+      format("%s/*", module.frigate_syncs.bucket_arn)
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "opnsense_backups_service_account_policy" {
