@@ -16,7 +16,7 @@ spec:
                 - /bin/sh
                 - -c
                 - >
-                  ls -la /media/frigate/recordings
+                  ls -la /media
                   # aws s3 sync /media/frigate/recordings s3://mybucket/frigate-recordings --delete
               #envFrom:
               #  - secretRef:
