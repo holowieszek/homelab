@@ -7,6 +7,8 @@ frigate:
       streams:
         back:
           - rtsp://testtest:testtest@192.168.88.78:554/stream1
+          - rtsp://testtest:testtest@192.168.88.78:554/stream2
+
     cameras:
       back:
         ffmpeg:
@@ -18,6 +20,17 @@ frigate:
           enabled: false
         record:
           enabled: true
+      back_low:
+        ffmpeg:
+          inputs:
+            - path: rtsp://testtest:testtest@192.168.88.78:554/stream2
+              roles:
+                - detect 
+        detect:
+          enabled: true 
+        record:
+          enabled: false
+
   ingress:
     enabled: true
     ingressClassName: traefik
