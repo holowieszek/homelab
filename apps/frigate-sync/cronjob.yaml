@@ -16,14 +16,14 @@ spec:
                 - /bin/sh
                 - -c
                 - >
-                  ls -la /media/frigate
+                  ls -la /media/frigate/recordings
                   # aws s3 sync /media/frigate/recordings s3://mybucket/frigate-recordings --delete
               #envFrom:
               #  - secretRef:
               #      name: s3-credentials
               volumeMounts:
                 - name: frigate-media
-                  mountPath: /media/frigate
+                  mountPath: /media
           restartPolicy: OnFailure
           volumes:
             - name: frigate-media
