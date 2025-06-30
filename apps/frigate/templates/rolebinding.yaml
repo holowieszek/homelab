@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: frigate-cron-sync-rolebinding
+  namespace: frigate
+subjects:
+  - kind: ServiceAccount
+    name: frigate-cron-sync-sa
+    namespace: frigate
+roleRef:
+  kind: role
+  name: frigate-cron-sync-role
+  apiGroup: rbac.authorization.k8s.io
