@@ -15,7 +15,7 @@ spec:
                 - /bin/sh
                 - -c
                 - >
-                  aws s3 sync /media/frigate/recordings $AWS_FRIGATE_BACKUP_BUCKET
+                  aws s3 sync --storage-class ONEZONE_IA /media/frigate/recordings $AWS_FRIGATE_BACKUP_BUCKET
               envFrom:
                 - secretRef:
                     name: frigate-sync-job-config
