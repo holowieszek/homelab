@@ -39,5 +39,3 @@ app-template:
       storageClass: longhorn
       size: 1Gi
       # existingClaim:
-      globalMounts:
-        - path: /config
