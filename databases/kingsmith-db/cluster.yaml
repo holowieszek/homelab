@@ -75,7 +75,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: kingsmith-db-backup-v2
+  name: kingsmith-db-backup-v3
   namespace: kingsmith
 spec:
   immediate: true
