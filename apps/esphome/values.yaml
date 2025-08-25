@@ -37,5 +37,5 @@ app-template:
       type: persistentVolumeClaim
       accessMode: ReadWriteOnce
       storageClass: longhorn
-      size: 1Gi
+      size: 10Gi
       # existingClaim:
