@@ -31,3 +31,13 @@ app-template:
         - hosts:
             - esphome.internal.mateuszholowieszko.com
           secretName: esphome-internal-mateuszholowieszko-com-tls
+  persistence:
+    data:
+      enabled: true
+      type: persistentVolumeClaim
+      accessMode: ReadWriteOnce
+      storageClass: longhorn
+      size: 1Gi
+      # existingClaim:
+      globalMounts:
+        - path: /config
