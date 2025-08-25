@@ -1,0 +1,33 @@
+app-template:
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: esphome/esphome
+            tag: 2025.8
+  service:
+    main:
+      ports:
+        http:
+          port: 80
+          protocol: HTTP
+  ingress:
+    main:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        kubernetes.io/ingress.class: "traefik"
+      hosts:
+        - host: esphome.internal.mateuszholowieszko.com
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                name: main
+                port: http
+      tls:
+        - hosts:
+            - esphome.internal.mateuszholowieszko.com
+          secretName: esphome-internal-mateuszholowieszko-com-tls
