@@ -48,7 +48,7 @@ spec:
   backup:
     barmanObjectStore: &barmanObjectStore
       destinationPath: s3://homelab-prod-database-backups/kingsmith
-      serverName: &currentCluster kingsmith-db-backup-v2
+      serverName: &currentCluster kingsmith-db-backup-v3
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -64,7 +64,7 @@ spec:
 
   bootstrap:
     recovery:
-      source: &previousCluster kingsmith-db-backup-v1
+      source: &previousCluster kingsmith-db-backup-v2
 
   externalClusters:
     - name: *previousCluster
