@@ -6,6 +6,8 @@ app-template:
           image:
             repository: esphome/esphome
             tag: 2025.8
+          env:
+            ESPHOME_DASHBOARD_USE_PING: true
   service:
     main:
       ports:
