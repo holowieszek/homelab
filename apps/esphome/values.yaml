@@ -5,7 +5,7 @@ app-template:
         main:
           image:
             repository: esphome/esphome
-            tag: 2025.8
+            tag: 2025.6
           env:
             ESPHOME_DASHBOARD_USE_PING: true
   service:
