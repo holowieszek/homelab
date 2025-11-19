@@ -1,4 +1,4 @@
-recorder:
+app-template:
   controllers:
     main:
       containers:
@@ -9,12 +9,32 @@ recorder:
           env:
             OTR_HOST: emqx.internal.mateuszholowieszko.com
             OTR_PORT: 1883
+
+    frontend:
+      containers:
+        main:
+          image:
+            repository: owntracks/frontend
+            tag: 2.15.3
+          env:
+            SERVER_HOST: owntracks-recorder.internal.mateuszholowieszko.com
+            SERVER_PORT: 443
+    
   service:
     main:
+      controller: main
       ports:
         http:
           port: 8083
           protocol: HTTP
+
+    frontend:
+      controller: frontend
+      ports:
+        http:
+          port: 80
+          protocol: HTTP
+
   ingress:
     main:
       enabled: true
@@ -34,40 +54,8 @@ recorder:
         - hosts:
             - owntracks-recorder.internal.mateuszholowieszko.com
           secretName: owntracks-recorder-internal-mateuszholowieszko-com-tls
-  persistence:
-    # config:
-    #   enabled: true
-    #   type: persistentVolumeClaim
-    #   accessMode: ReadWriteOnce
-    #   storageClass: longhorn
-    #   size: 1Gi
-    store:
-      enabled: true
-      type: persistentVolumeClaim
-      accessMode: ReadWriteOnce
-      storageClass: longhorn
-      size: 5Gi
-      # existingClaim:
 
-frontend:
-  controllers:
-    main:
-      containers:
-        main:
-          image:
-            repository: owntracks/frontend
-            tag: 2.15.3
-          env:
-            SERVER_HOST: owntracks-recorder.internal.mateuszholowieszko.com
-            SERVER_PORT: 443
-  service:
-    main:
-      ports:
-        http:
-          port: 80
-          protocol: HTTP
-  ingress:
-    main:
+    frontend:
       enabled: true
       className: traefik
       annotations:
@@ -92,10 +80,61 @@ frontend:
     #   accessMode: ReadWriteOnce
     #   storageClass: longhorn
     #   size: 1Gi
-    # store:
-    #   enabled: true
-    #   type: persistentVolumeClaim
-    #   accessMode: ReadWriteOnce
-    #   storageClass: longhorn
-    #   size: 5Gi
+    store:
+      enabled: true
+      type: persistentVolumeClaim
+      accessMode: ReadWriteOnce
+      storageClass: longhorn
+      size: 5Gi
       # existingClaim:
+
+# frontend:
+#   controllers:
+#     main:
+#       containers:
+#         main:
+#           image:
+#             repository: owntracks/frontend
+#             tag: 2.15.3
+#           env:
+#             SERVER_HOST: owntracks-recorder.internal.mateuszholowieszko.com
+#             SERVER_PORT: 443
+#   service:
+#     main:
+#       ports:
+#         http:
+#           port: 80
+#           protocol: HTTP
+#   ingress:
+#     main:
+#       enabled: true
+#       className: traefik
+#       annotations:
+#         cert-manager.io/cluster-issuer: letsencrypt-prod
+#         kubernetes.io/ingress.class: "traefik"
+#       hosts:
+#         - host: owntracks.internal.mateuszholowieszko.com
+#           paths:
+#             - path: /
+#               pathType: Prefix
+#               service:
+#                 name: main
+#                 port: http
+#       tls:
+#         - hosts:
+#             - owntracks.internal.mateuszholowieszko.com
+#           secretName: owntracks-internal-mateuszholowieszko-com-tls
+#   persistence:
+#     # config:
+#     #   enabled: true
+#     #   type: persistentVolumeClaim
+#     #   accessMode: ReadWriteOnce
+#     #   storageClass: longhorn
+#     #   size: 1Gi
+#     # store:
+#     #   enabled: true
+#     #   type: persistentVolumeClaim
+#     #   accessMode: ReadWriteOnce
+#     #   storageClass: longhorn
+#     #   size: 5Gi
+#       # existingClaim:
