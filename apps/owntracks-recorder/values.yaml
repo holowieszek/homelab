@@ -67,7 +67,7 @@ app-template:
             - path: /
               pathType: Prefix
               service:
-                name: main
+                name: frontend
                 port: http
       tls:
         - hosts:
