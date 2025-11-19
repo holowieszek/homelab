@@ -34,12 +34,12 @@ app-template:
             - owntracks-recorder.internal.mateuszholowieszko.com
           secretName: owntracks-recorder-internal-mateuszholowieszko-com-tls
   persistence:
-    config:
-      enabled: true
-      type: persistentVolumeClaim
-      accessMode: ReadWriteOnce
-      storageClass: longhorn
-      size: 1Gi
+    # config:
+    #   enabled: true
+    #   type: persistentVolumeClaim
+    #   accessMode: ReadWriteOnce
+    #   storageClass: longhorn
+    #   size: 1Gi
     store:
       enabled: true
       type: persistentVolumeClaim
