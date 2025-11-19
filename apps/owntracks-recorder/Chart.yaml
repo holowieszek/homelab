@@ -1,7 +1,10 @@
 apiVersion: v2
-name: owntracks-recorder
+name: owntracks
 version: 0.0.0
 dependencies:
-  - name: app-template
+  - name: recorder
+    version: 2.6.0
+    repository: https://bjw-s-labs.github.io/helm-charts
+  - name: frontend
     version: 2.6.0
     repository: https://bjw-s-labs.github.io/helm-charts
