@@ -5,6 +5,7 @@ app-template:
         main:
           image:
             repository: owntracks/recorder
+            tag: 1.0.1
           env:
             OTR_HOST: emqx.internal.mateuszholowieszko.com
             OTR_PORT: 1883
