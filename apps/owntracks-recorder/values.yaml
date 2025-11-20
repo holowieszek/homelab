@@ -197,7 +197,7 @@ app-template:
     - path: /usr/share/nginx/html/config/config.js
       type: configMap
       readOnly: true
-      name: owntracks-frontend-config
+      name: owntracks-recorder-owntracks-frontend-config
     # config.js:
     #   enabled: true
     #   type: configMap
