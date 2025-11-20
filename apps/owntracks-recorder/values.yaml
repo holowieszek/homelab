@@ -90,7 +90,7 @@ app-template:
 
           const DEFAULT_CONFIG = {
             api: {
-              baseUrl: `${window.location.protocol}//${window.location.host}`,
+              baseUrl: 'https://owntracks-recorder.internal.mateuszholowieszko.com',
               fetchOptions: {},
             },
             endDateTime,
