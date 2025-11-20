@@ -178,47 +178,25 @@ app-template:
           // There might not be a user-defined config, default to an empty object.
           export default deepmerge(DEFAULT_CONFIG, (window.owntracks || {}).config || {});
 
-  # persistence:
-  #   # config:
-  #   #   enabled: true
-  #   #   type: persistentVolumeClaim
-  #   #   accessMode: ReadWriteOnce
-  #   #   storageClass: longhorn
-  #   #   size: 1Gi
-  #   store:
-  #     enabled: true
-  #     type: persistentVolumeClaim
-  #     accessMode: ReadWriteOnce
-  #     storageClass: longhorn
-  #     size: 5Gi
-
   persistence:
+    # config:
+    #   enabled: true
+    #   type: persistentVolumeClaim
+    #   accessMode: ReadWriteOnce
+    #   storageClass: longhorn
+    #   size: 1Gi
     store:
       enabled: true
       type: persistentVolumeClaim
-      name: owntracks-recorder-store
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 5Gi
-      advancedMounts:
-        main:
-          main:
-            - path: /store
-              readOnly: false
+      # existingClaim:
 
-    owntracks-config:
+    config.js:
       enabled: true
       type: configMap
       name: owntracks-frontend-config
-      advancedMounts:
-        frontend:
-          main:
-            - path: /usr/share/nginx/html/config/config.js
-              subPath: config.js
-              readOnly: false
-
-
-      # existingClaim:
 
 # frontend:
 #   controllers:
