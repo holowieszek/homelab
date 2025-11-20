@@ -198,7 +198,8 @@ app-template:
       type: configMap
       name: owntracks-recorder-owntracks-frontend-config
       globalMounts:
-        - path: /usr/share/nginx/html/config
+        - path: /usr/share/nginx/html/config/config.js
+          subPath: config.js
           readOnly: false
 
   # globalMounts:
