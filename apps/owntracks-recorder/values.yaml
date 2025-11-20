@@ -193,11 +193,19 @@ app-template:
       size: 5Gi
       # existingClaim:
 
-  globalMounts:
-    - path: /usr/share/nginx/html/config/config.js
+    config:
+      enabled: true
       type: configMap
-      readOnly: true
       name: owntracks-recorder-owntracks-frontend-config
+      globalMounts:
+        - path: /usr/share/nginx/html/config/config.js
+          readOnly: false
+
+  # globalMounts:
+  #   - path: /usr/share/nginx/html/config/config.js
+  #     type: configMap
+  #     readOnly: true
+  #     name: owntracks-recorder-owntracks-frontend-config
     # config.js:
     #   enabled: true
     #   type: configMap
