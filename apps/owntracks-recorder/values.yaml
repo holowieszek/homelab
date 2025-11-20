@@ -196,6 +196,7 @@ app-template:
     store:
       enabled: true
       type: persistentVolumeClaim
+      name: owntracks-recorder-store
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 5Gi
