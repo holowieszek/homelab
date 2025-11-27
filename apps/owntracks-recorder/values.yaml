@@ -79,13 +79,16 @@ app-template:
       enabled: true
       data:
         config.js: |
-          // Here you can overwrite the default configuration values
+          const startDateTime = new Date();
+          startDateTime.setTime(startDateTime.getTime() - 24 * 60 * 60 * 1000);
+
           window.owntracks = window.owntracks || {};
           window.owntracks.config = {
             api: {
               baseUrl: 'https://owntracks-recorder.internal.mateuszholowieszko.com',
               fetchOptions: {},
             },
+            startDateTime
           };
 
   persistence:
