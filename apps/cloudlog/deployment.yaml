@@ -47,7 +47,8 @@ spec:
             #   value: KO13OC
 
             - name: WEBSITE_URL
-              value: https://cloudlog.internal.mateuszholowieszko.com
+              value: http://localhost
+              # value: https://cloudlog.internal.mateuszholowieszko.com
 
             - name: DIRECTORY
               value: /var/www/html
