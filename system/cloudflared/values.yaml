@@ -1,5 +1,5 @@
 cloudflare-tunnel:
-  # cloudflare:
+  cloudflare:
   #   tunnel_token:
   #     valueFrom:
   #       secretKeyRef:
