@@ -41,7 +41,7 @@ spec:
               value: cloudlog-db-rw.cloudlog
 
             - name: MYSQL_PORT
-              value: 5432
+              value: "5432"
 
             # - name: BASE_LOCATOR
             #   value: KO13OC
