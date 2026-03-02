@@ -81,6 +81,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.homelab_private_repo_secrets.secret_arn,
       module.opnsense_backups_app_secrets.secret_arn,
       module.frigate_syncs_job_secrets.secret_arn,
+      module.cloudflare_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/kingsmith/credentials-*", var.region, var.aws_account_number, var.environment),
