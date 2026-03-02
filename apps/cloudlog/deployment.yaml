@@ -43,12 +43,11 @@ spec:
             - name: MYSQL_PORT
               value: "5432"
 
-            # - name: BASE_LOCATOR
-            #   value: KO13OC
+            - name: BASE_LOCATOR
+              value: KO13OC
 
             - name: WEBSITE_URL
-              value: http://localhost
-              # value: https://cloudlog.internal.mateuszholowieszko.com
+              value: https://cloudlog.internal.mateuszholowieszko.com
 
             - name: DIRECTORY
               value: /var/www/html
