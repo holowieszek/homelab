@@ -1,6 +1,7 @@
 cloudflare-tunnel:
-  image:
-    tag: 2026.2.0
-  # secretName: cloudflare-secrets
-  tunnelName: homelab-001
+  cloudflare:
+    image:
+      tag: 2026.2.0
+    # secretName: cloudflare-secrets
+    tunnelName: homelab-001
   # cloudflared-cloudflare-tunnel
