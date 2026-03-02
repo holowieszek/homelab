@@ -76,3 +76,8 @@ module "frigate_syncs_job_secrets" {
   description = "Homelab Frigate S3 Syncs credentials"
 }
 
+module "cloudflare_secrets" {
+  source      = "./modules/secrets-manager/v1"
+  secret_name = replace(format("%s-system-cloudflare-credentials", module.default_label.id), "-", "/")
+  description = "Homelab Cloudflare credentials"
+}
