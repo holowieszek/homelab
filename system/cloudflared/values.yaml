@@ -1,4 +1,6 @@
 cloudflare-tunnel:
   image:
     tag: 2026.2.0
-  secretName: cloudflare-secrets
+  # secretName: cloudflare-secrets
+
+  # cloudflared-cloudflare-tunnel
