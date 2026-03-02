@@ -36,6 +36,7 @@ external-secrets:
               - "opnsense-backup"
               - "frigate"
               - "cloudflared"
+              - "cloudlog"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
