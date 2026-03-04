@@ -1,6 +1,6 @@
 zigbee2mqtt:
   image:
-    tag: 2.8.0
+    tag: 2.9.1
   statefulset:
     storage:
       enabled: true
