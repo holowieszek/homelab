@@ -1,9 +1,0 @@
-cloudflare-tunnel:
-  cloudflare:
-  #   tunnel_token:
-  #     valueFrom:
-  #       secretKeyRef:
-  #         name: cloudflared-cloudflare-tunnel
-  #         key: TUNNEL_TOKEN
-    image:
-      tag: 2026.2.0
