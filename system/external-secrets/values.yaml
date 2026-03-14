@@ -34,7 +34,6 @@ external-secrets:
               - "private-api"
               - "weatherstation"
               - "opnsense-backup"
-              - "frigate"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
