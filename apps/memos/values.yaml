@@ -11,6 +11,7 @@ app-template:
             MEMOS_UID: 1000
             MEMOS_GID: 1000
             MEMOS_INSTANCE_URL: "https://memos.internal.mateuszholowieszko.com"
+          restartPolicy: Never
   service:
     main:
       ports:
