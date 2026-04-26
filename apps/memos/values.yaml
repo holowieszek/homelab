@@ -6,6 +6,8 @@ app-template:
           image:
             repository: neosmemo/memos
             tag: stable
+          env:
+            MEMOS_INSTANCE_URL: "https://memos.internal.mateuszholowieszko.com"
   service:
     main:
       ports:
