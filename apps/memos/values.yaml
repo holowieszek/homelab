@@ -7,6 +7,9 @@ app-template:
             repository: neosmemo/memos
             tag: stable
           env:
+            MEMOS_PORT: 5230
+            MEMOS_UID: 1000
+            MEMOS_GID: 1000
             MEMOS_INSTANCE_URL: "https://memos.internal.mateuszholowieszko.com"
   service:
     main:
