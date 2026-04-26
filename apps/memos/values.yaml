@@ -44,3 +44,5 @@ app-template:
       accessMode: ReadWriteOnce
       storageClass: longhorn
       size: 5Gi
+      globalMounts:
+        - path: /var/opt/memos
