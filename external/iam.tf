@@ -158,15 +158,16 @@ data "aws_iam_policy_document" "service_account_policy" {
     resources = ["*"]
   }
 
-  statement {
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage"
-    ]
-    resources = [
-    ]
-  }
+  # statement {
+  #   actions = [
+  #     "ecr:BatchCheckLayerAvailability",
+  #     "ecr:GetDownloadUrlForLayer",
+  #     "ecr:BatchGetImage"
+  #   ]
+  #   resources = [
+  #     module.ecr_weather_station.arn,
+  #   ]
+  # }
 }
 
 module "oidc_github" {
@@ -201,19 +202,6 @@ data "aws_iam_policy_document" "oidc_github" {
 
     #   values = ""
     # }
-  }
-
-  statement {
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:CompleteLayerUpload",
-      "ecr:InitiateLayerUpload",
-      "ecr:PutImage",
-      "ecr:UploadLayerPart"
-    ]
-
-    resources = [
-    ]
   }
 
   statement {
