@@ -23,14 +23,12 @@ external-secrets:
         conditions:
           - namespaces:
               - "cert-manager"
-              - "test-api"
               - "speedtest"
               - "argocd"
               - "grafana"
               - "homepage"
               - "linkding"
               - "longhorn"
-              - "private-api"
               - "opnsense-backup"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
