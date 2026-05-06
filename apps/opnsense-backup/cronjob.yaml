@@ -4,7 +4,7 @@ metadata:
   name: opnsense-backup-cronjob
   namespace: opnsense-backup
 spec:
-  schedule: 0 */6 * * *
+  schedule: 0 0 * * *
   jobTemplate:
     spec:
       template:
