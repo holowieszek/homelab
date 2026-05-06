@@ -31,7 +31,6 @@ external-secrets:
               - "linkding"
               - "longhorn"
               - "private-api"
-              - "weatherstation"
               - "opnsense-backup"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret

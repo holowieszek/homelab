@@ -15,10 +15,3 @@ module "ecr_cloudlog" {
 
   name = format("%s-ecr-cloudlog", module.default_label.id)
 }
-
-module "ecr_weather_station" {
-  source = "./modules/ecr/private/v1"
-
-  name       = format("%s-weather-station", module.default_label.id)
-  mutability = "MUTABLE"
-}

@@ -82,7 +82,6 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.frigate_syncs_job_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/weatherstation/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 
       // resources not managed by terraform
@@ -100,7 +99,6 @@ data "aws_iam_policy_document" "service_account_policy" {
     resources = [
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/weatherstation/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
     ]
   }
@@ -167,7 +165,6 @@ data "aws_iam_policy_document" "service_account_policy" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      module.ecr_weather_station.arn,
     ]
   }
 }
@@ -216,7 +213,6 @@ data "aws_iam_policy_document" "oidc_github" {
     ]
 
     resources = [
-      module.ecr_weather_station.arn,
     ]
   }
 
