@@ -30,7 +30,6 @@ external-secrets:
               - "homepage"
               - "linkding"
               - "longhorn"
-              - "kingsmith"
               - "private-api"
               - "weatherstation"
               - "opnsense-backup"

@@ -77,13 +77,11 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.pihole_app_secrets.secret_arn,
       module.mikrotik_app_secrets.secret_arn,
       module.linkding_app_secrets.secret_arn,
-      module.kingsmith_app_secrets.secret_arn,
       module.homelab_private_repo_secrets.secret_arn,
       module.opnsense_backups_app_secrets.secret_arn,
       module.frigate_syncs_job_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/kingsmith/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/weatherstation/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 
@@ -102,7 +100,6 @@ data "aws_iam_policy_document" "service_account_policy" {
     resources = [
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/kingsmith/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/weatherstation/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
     ]
@@ -170,7 +167,6 @@ data "aws_iam_policy_document" "service_account_policy" {
       "ecr:BatchGetImage"
     ]
     resources = [
-      module.ecr_kingsmith.arn,
       module.ecr_weather_station.arn,
     ]
   }
@@ -220,7 +216,6 @@ data "aws_iam_policy_document" "oidc_github" {
     ]
 
     resources = [
-      module.ecr_kingsmith.arn,
       module.ecr_weather_station.arn,
     ]
   }

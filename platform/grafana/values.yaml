@@ -1,6 +1,4 @@
 grafana:
-  envFromSecret: postgres-datasources-config
-
   admin:
     existingSecret: "grafana"
 
@@ -19,21 +17,6 @@ grafana:
   grafana.ini:
     server:
       root_url: https://grafana.internal.mateuszholowieszko.com
-
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Kingsmith Walkingpad DB
-          type: postgres
-          url: $KINGSMITH_DB_HOST
-          user: $KINGSMITH_DB_USER
-          secureJsonData:
-            password: $KINGSMITH_DB_PASSWORD
-          jsonData:
-            database: $KINGSMITH_DB_NAME
-            sslmode: disable
-          editable: true
 
   dashboardProviders:
     dashboardproviders.yaml:
