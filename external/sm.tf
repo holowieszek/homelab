@@ -50,6 +50,10 @@ module "litellm_secrets" {
   source      = "./modules/secrets-manager/v1"
   secret_name = replace(format("%s-litellm-credentials", module.default_label.id), "-", "/")
   description = "Homelab LiteLLM shared credentials"
+
+  tags = {
+    "managed-by" = "external-secrets"
+  }
 }
 
 module "global_config_secrets" {
