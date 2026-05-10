@@ -1,0 +1,63 @@
+app-template:
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: ghcr.io/berriai/litellm
+            tag: main-stable
+          args:
+            - --config
+            - /app/config.yaml
+          env:
+            DATABASE_URL:
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-app-config
+                  key: uri
+            LITELLM_MASTER_KEY:
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-app-config
+                  key: master_key
+            LITELLM_SALT_KEY:
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-app-config
+                  key: salt_key
+  service:
+    main:
+      ports:
+        http:
+          port: 4000
+          protocol: HTTP
+  ingress:
+    main:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        kubernetes.io/ingress.class: "traefik"
+      hosts:
+        - host: litellm.internal.mateuszholowieszko.com
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                name: main
+                port: http
+      tls:
+        - hosts:
+            - litellm.internal.mateuszholowieszko.com
+          secretName: litellm-internal-mateuszholowieszko-com-tls
+  persistence:
+    config:
+      enabled: true
+      type: configMap
+      name: litellm-config
+      advancedMounts:
+        main:
+          main:
+            - path: /app/config.yaml
+              subPath: config.yaml
+              readOnly: true

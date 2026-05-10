@@ -28,6 +28,7 @@ external-secrets:
               - "grafana"
               - "homepage"
               - "linkding"
+              - "litellm"
               - "longhorn"
               - "opnsense-backup"
     - apiVersion: external-secrets.io/v1alpha1
