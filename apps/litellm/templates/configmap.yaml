@@ -7,6 +7,6 @@ data:
   config.yaml: |
     general_settings:
       store_model_in_db: true
-      disable_spend_logs: true
+      disable_spend_logs: false
       disable_error_logs: true
     model_list: []
