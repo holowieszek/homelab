@@ -6,41 +6,12 @@ module "opnsense_backups_service_account" {
   policy = data.aws_iam_policy_document.opnsense_backups_service_account_policy.json
 }
 
-module "frigate_syncs_service_account" {
-  source = "./modules/iam/user/v1"
-
-  name = format("%s-frigate-syncs-svc", module.default_label.id)
-
-  policy = data.aws_iam_policy_document.frigate_syncs_service_account_policy.json
-}
-
 module "service_account" {
   source = "./modules/iam/user/v1"
 
   name = format("%s-svc", module.default_label.id)
 
   policy = data.aws_iam_policy_document.service_account_policy.json
-}
-
-data "aws_iam_policy_document" "frigate_syncs_service_account_policy" {
-  statement {
-    actions = [
-      "s3:ListBucket"
-    ]
-    resources = [
-      module.frigate_syncs.bucket_arn,
-    ]
-  }
-
-  statement {
-    actions = [
-      "s3:GetObject",
-      "s3:PutObject"
-    ]
-    resources = [
-      format("%s/*", module.frigate_syncs.bucket_arn)
-    ]
-  }
 }
 
 data "aws_iam_policy_document" "opnsense_backups_service_account_policy" {
@@ -79,7 +50,6 @@ data "aws_iam_policy_document" "service_account_policy" {
       module.linkding_app_secrets.secret_arn,
       module.homelab_private_repo_secrets.secret_arn,
       module.opnsense_backups_app_secrets.secret_arn,
-      module.frigate_syncs_job_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),

@@ -63,9 +63,3 @@ module "opnsense_backups_app_secrets" {
   secret_name = replace(format("%s-applications-opnsensebackups-credentials", module.default_label.id), "-", "/")
   description = "Homelab OPNSense App configuration"
 }
-
-module "frigate_syncs_job_secrets" {
-  source      = "./modules/secrets-manager/v1"
-  secret_name = replace(format("%s-applications-frigatesyncs-credentials", module.default_label.id), "-", "/")
-  description = "Homelab Frigate S3 Syncs credentials"
-}
