@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-config
+  namespace: litellm
+data:
+  config.yaml: |
+    general_settings:
+      store_model_in_db: true
+      disable_spend_logs: true
+      disable_error_logs: true
+    model_list: []

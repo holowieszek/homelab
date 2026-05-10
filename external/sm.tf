@@ -46,6 +46,12 @@ module "linkding_app_secrets" {
   description = "Homelab Linkding credentials"
 }
 
+module "litellm_secrets" {
+  source      = "./modules/secrets-manager/v1"
+  secret_name = replace(format("%s-litellm-credentials", module.default_label.id), "-", "/")
+  description = "Homelab LiteLLM shared credentials"
+}
+
 module "global_config_secrets" {
   source      = "./modules/secrets-manager/v1"
   secret_name = replace(format("%s-global-config", module.default_label.id), "-", "/")

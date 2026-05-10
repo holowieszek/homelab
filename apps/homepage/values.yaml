@@ -83,6 +83,11 @@ homepage:
               description: Bookmarks
               icon: linkding.svg
 
+          - LiteLLM:
+              href: https://litellm.internal.mateuszholowieszko.com/
+              description: LLM proxy
+              icon: openai.svg
+
           - Longhorn:
               href: https://longhorn.internal.mateuszholowieszko.com/
               description: Block storage management

@@ -1,0 +1,135 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: awssm-secret
+  namespace: litellm
+spec:
+  refreshInterval: 10m
+  secretStoreRef:
+    name: secretstore-sample
+    kind: ClusterSecretStore
+  target:
+    name: awssm-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: access-key-id
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        key: homelab/prod/global/config
+        property: access_key_id
+    - secretKey: secret-access-key
+      remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        key: homelab/prod/global/config
+        property: secret_access_key
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: litellm-db
+  namespace: litellm
+spec:
+  instances: 3
+
+  resources:
+    requests:
+      memory: 256Mi
+
+  storage:
+    size: 1Gi
+
+  monitoring:
+    enablePodMonitor: true
+
+  bootstrap:
+    initdb:
+      database: litellm
+
+  backup:
+    barmanObjectStore: &barmanObjectStore
+      destinationPath: s3://homelab-prod-database-backups/litellm
+      serverName: litellm-db-backup-v1
+      s3Credentials:
+        accessKeyId:
+          name: awssm-secret
+          key: access-key-id
+        secretAccessKey:
+          name: awssm-secret
+          key: secret-access-key
+      data:
+        compression: gzip
+      wal:
+        compression: gzip
+    retentionPolicy: 21d
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: litellm-db-backup-v1
+  namespace: litellm
+spec:
+  immediate: true
+  schedule: "0 0 */6 * * *"
+  cluster:
+    name: litellm-db
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: litellm-db-app-push
+  namespace: litellm
+spec:
+  updatePolicy: Replace
+  deletionPolicy: None
+  refreshInterval: 1h
+  secretStoreRefs:
+    - name: secretstore-sample
+      kind: ClusterSecretStore
+  selector:
+    secret:
+      name: litellm-db-app
+  data:
+    - conversionStrategy: None
+      match:
+        secretKey: password
+        remoteRef:
+          remoteKey: homelab/prod/litellm/credentials
+          property: password
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: username
+        remoteRef:
+          remoteKey: homelab/prod/litellm/credentials
+          property: username
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: dbname
+        remoteRef:
+          remoteKey: homelab/prod/litellm/credentials
+          property: dbname
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: uri
+        remoteRef:
+          remoteKey: homelab/prod/litellm/credentials
+          property: uri
+      metadata:
+        secretPushFormat: string
+    - conversionStrategy: None
+      match:
+        secretKey: jdbc-uri
+        remoteRef:
+          remoteKey: homelab/prod/litellm/credentials
+          property: jdbc-uri
+      metadata:
+        secretPushFormat: string
