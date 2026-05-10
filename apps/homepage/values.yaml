@@ -84,7 +84,7 @@ homepage:
               icon: linkding.svg
 
           - LiteLLM:
-              href: https://litellm.internal.mateuszholowieszko.com/
+              href: https://litellm.internal.mateuszholowieszko.com/ui
               description: LLM proxy
               icon: openai.svg
 
