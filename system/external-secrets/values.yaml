@@ -31,6 +31,7 @@ external-secrets:
               - "litellm"
               - "longhorn"
               - "opnsense-backup"
+              - "home-assistant"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
