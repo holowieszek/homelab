@@ -1,6 +1,7 @@
 grafana:
   admin:
     existingSecret: "grafana"
+  envFromSecret: grafana
 
   sidecar:
     dashboards:
@@ -47,6 +48,26 @@ grafana:
         gnetId: 20842
         revision: 3
         datasource: Prometheus
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Home Assistant Postgres
+          type: postgres
+          access: proxy
+          url: home-assistant-db-rw.home-assistant.svc.cluster.local:5432
+          user: ${HOME_ASSISTANT_DB_USERNAME}
+          database: ${HOME_ASSISTANT_DB_NAME}
+          secureJsonData:
+            password: ${HOME_ASSISTANT_DB_PASSWORD}
+          jsonData:
+            sslmode: disable
+            postgresVersion: 1500
+            timescaledb: false
+          isDefault: false
+          editable: true
+          version: 1
 
   persistence:
     enabled: true
