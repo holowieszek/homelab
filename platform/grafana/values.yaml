@@ -1,7 +1,7 @@
 grafana:
   admin:
     existingSecret: "grafana"
-  envFromSecret: grafana
+  envFromSecret: postgres-datasources-config
 
   sidecar:
     dashboards:
@@ -53,21 +53,16 @@ grafana:
     datasources.yaml:
       apiVersion: 1
       datasources:
-        - name: Home Assistant Postgres
+        - name: Home Assistant DB
           type: postgres
-          access: proxy
           url: home-assistant-db-rw.home-assistant.svc.cluster.local:5432
-          user: ${HOME_ASSISTANT_DB_USERNAME}
-          database: ${HOME_ASSISTANT_DB_NAME}
+          user: $HOME_ASSISTANT_DB_USER
           secureJsonData:
-            password: ${HOME_ASSISTANT_DB_PASSWORD}
+            password: $HOME_ASSISTANT_DB_PASSWORD
           jsonData:
+            database: $HOME_ASSISTANT_DB_NAME
             sslmode: disable
-            postgresVersion: 1500
-            timescaledb: false
-          isDefault: false
           editable: true
-          version: 1
 
   persistence:
     enabled: true
