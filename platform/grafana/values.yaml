@@ -2,6 +2,8 @@ grafana:
   admin:
     existingSecret: "grafana"
   envFromSecret: postgres-datasources-config
+  plugins:
+    - volkovlabs-echarts-panel
 
   sidecar:
     dashboards:
