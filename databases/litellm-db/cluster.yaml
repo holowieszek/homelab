@@ -33,7 +33,7 @@ metadata:
   name: litellm-db
   namespace: litellm
 spec:
-  instances: 3
+  instances: 1
 
   resources:
     requests:
