@@ -35,3 +35,6 @@ app-template:
       runAsNonRoot: true
       runAsUser: 10001
       runAsGroup: 10001
+  service:
+    main:
+      enabled: false
