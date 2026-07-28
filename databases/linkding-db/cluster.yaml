@@ -33,7 +33,7 @@ metadata:
   name: linkding-db
   namespace: linkding
 spec:
-  instances: 3
+  instances: 1
 
   resources:
     requests:
