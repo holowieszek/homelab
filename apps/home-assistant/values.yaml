@@ -38,7 +38,7 @@ home-assistant:
     storageClass: longhorn
     #annotations:
     #  longhorn.io/recurring-job-group: "backup-default"
-    size: 10Gi
+    size: 5Gi
     #existingClaim:
     globalMounts:
       - path: /config
