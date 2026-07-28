@@ -1,0 +1,37 @@
+app-template:
+  controllers:
+    main:
+      enabled: true
+      replicas: 1
+      containers:
+        main:
+          image:
+            repository: public.ecr.aws/h4u5l0d7/homelab-prod-ecr-meshcore-telemetry-processor
+            tag: latest
+          env:
+            MQTT_HOST: emqx.internal.mateuszholowieszko.com
+            MQTT_PORT: "1883"
+            MQTT_TOPIC: meshcore/telemetry/+
+            MQTT_CLIENT_ID: meshcore-telemetry-processor
+            MQTT_QOS: "1"
+            MQTT_KEEPALIVE_SECONDS: "60"
+            MQTT_TLS: "false"
+            DB_POOL_MIN_SIZE: "1"
+            DB_POOL_MAX_SIZE: "4"
+            LOG_LEVEL: INFO
+            DATABASE_URL:
+              valueFrom:
+                secretKeyRef:
+                  name: meshcore-telemetry-db-config
+                  key: uri
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+  defaultPodOptions:
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 10001
+      runAsGroup: 10001

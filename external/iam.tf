@@ -53,6 +53,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/home-assistant/credentials-*", var.region, var.aws_account_number, var.environment),
+      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/meshcore-telemetry/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/litellm/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 
@@ -72,6 +73,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/home-assistant/credentials-*", var.region, var.aws_account_number, var.environment),
+      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/meshcore-telemetry/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/litellm/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
     ]
@@ -189,7 +191,8 @@ data "aws_iam_policy_document" "oidc_github" {
 
     resources = [
       module.ecr_token_helper.arn,
-      module.ecr_opnsense_backup_tool.arn
+      module.ecr_opnsense_backup_tool.arn,
+      module.ecr_meshcore_telemetry_processor.arn
     ]
   }
 }

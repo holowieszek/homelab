@@ -15,3 +15,9 @@ module "ecr_cloudlog" {
 
   name = format("%s-ecr-cloudlog", module.default_label.id)
 }
+
+module "ecr_meshcore_telemetry_processor" {
+  source = "./modules/ecr/public/v1"
+
+  name = format("%s-ecr-meshcore-telemetry-processor", module.default_label.id)
+}

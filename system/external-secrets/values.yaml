@@ -32,6 +32,7 @@ external-secrets:
               - "longhorn"
               - "opnsense-backup"
               - "home-assistant"
+              - "meshcore-telemetry"
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
