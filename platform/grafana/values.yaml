@@ -65,6 +65,16 @@ grafana:
             database: $HOME_ASSISTANT_DB_NAME
             sslmode: disable
           editable: true
+        - name: MeshCore Telemetry DB
+          type: postgres
+          url: meshcore-telemetry-db-rw.meshcore-telemetry.svc.cluster.local:5432
+          user: $MESHCORE_TELEMETRY_DB_USER
+          secureJsonData:
+            password: $MESHCORE_TELEMETRY_DB_PASSWORD
+          jsonData:
+            database: $MESHCORE_TELEMETRY_DB_NAME
+            sslmode: disable
+          editable: true
 
   persistence:
     enabled: true
