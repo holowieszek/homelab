@@ -81,4 +81,4 @@ grafana:
     storageClassName: longhorn
     accessModes:
       - ReadWriteOnce
-    size: 10Gi
+    size: 2Gi
