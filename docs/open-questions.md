@@ -1,6 +1,6 @@
 # Open questions and operator follow-up
 
-Source snapshot: `43add6737b6c6a9d9fa45e48a451aeae5b34812a`. These questions arise from tracked configuration, not observed production faults. Resolve live-state questions only in an explicitly authorized operator environment; this documentation pass did not access production.
+Source snapshot: `004d097fe82384043520a1e43d1f085f59f0b852`. These questions arise from tracked configuration, not observed production faults. Resolve live-state questions only in an explicitly authorized operator environment; this documentation pass did not access production.
 
 ## Provisioning and credentials
 
@@ -21,3 +21,19 @@ Source snapshot: `43add6737b6c6a9d9fa45e48a451aeae5b34812a`. These questions ari
 - Are the extra directory-derived namespaces intentional when manifests explicitly target application namespaces or `kube-system`? The [ApplicationSet](../system/argocd/values.yaml) sets the destination to the directory basename and enables namespace creation, while database/CoreDNS manifests specify other namespaces. Review rendered resources and Argo CD diffs in an authorized environment.
 - Should bootstrap wait for webhook readiness instead of a fixed pause? The [bootstrap playbook](../system/bootstrap.yml) waits 180 seconds; source does not establish readiness after that interval.
 - Should privileged VolSync mover annotations be narrowed, mutable image tags pinned, and automated validation added? These source-review follow-ups are detailed in [architecture](architecture.md#findings-and-follow-up-priorities); no infrastructure changes are included in this pass.
+
+## Network, security, and storage runtime review
+
+The [networking reference](networking.md) details transport and exposure boundaries;
+[storage and backup declarations](storage.md) distinguish volume jobs, database
+recovery inputs, and object-store protections; [security declarations and trust
+boundaries](security.md) separate source-backed findings from potential risks.
+The questions below concern unverified runtime controls, not observed faults.
+The existing provisioning, recovery, and CoreDNS questions above still apply;
+resolve these only in a separately authorized operator review.
+
+- Which K3s networking components and policies are active, which nodes and networks expose services, and do ingress authentication, redirects, backend transport, proxy trust, and certificate readiness match intent?
+- Which MQTT listeners, client authentication, topic permissions, and transport modes are effective, and is device pairing limited to an intended window? Dashboard TLS does not establish MQTT encryption.
+- Do effective cloud permissions constrain DNS changes and backup access as intended, and do Kubernetes RBAC, admission controls, and encryption at rest protect shared secret-store access? Source declarations do not identify the principals behind supplied credentials.
+- Are GitOps approval and deletion controls, artifact provenance, and workload hardening effective? Did the registry helper emit authentication material into logs, and who can access those logs? Verify handling without copying credential values.
+- Which storage classes, replica placements, and shared failure domains apply to existing volumes and databases? Do backup integrity, object/version retention, and authorized recovery tests support the intended recovery objectives? Declared retention and replication are not durability guarantees.
