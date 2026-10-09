@@ -15,13 +15,12 @@
         name: external-secrets
         state: present
 
-    - name: Populate AWS secrets
-      template:
-        src: files/templates/secrets-manager-secret.yaml.j2
-        dest: files/secrets-manager-secret.yaml
-      vars:
-        access_key: "{{ lookup('env', 'HOMELAB_ESO_ACCESS_KEY') }}"
-        secret_access_key: "{{ lookup('env', 'HOMELAB_ESO_SECRET_ACCESS_KEY') }}"
+    - name: Validate AWS credentials are available
+      ansible.builtin.assert:
+        that:
+          - lookup('env', 'HOMELAB_ESO_ACCESS_KEY') | length > 0
+          - lookup('env', 'HOMELAB_ESO_SECRET_ACCESS_KEY') | length > 0
+        fail_msg: Set HOMELAB_ESO_ACCESS_KEY and HOMELAB_ESO_SECRET_ACCESS_KEY before bootstrapping.
 
     - name: Create AWS secrets
       kubernetes.core.k8s:
@@ -29,13 +28,14 @@
         definition:
           apiVersion: v1
           data:
-            access-key: "{{ (lookup('file', 'files/secrets-manager-secret.yaml')|from_yaml).access_key | b64encode }}"
-            secret-access-key: "{{ (lookup('file', 'files/secrets-manager-secret.yaml')|from_yaml).secret_access_key | b64encode }}"
+            access-key: "{{ lookup('env', 'HOMELAB_ESO_ACCESS_KEY') | b64encode }}"
+            secret-access-key: "{{ lookup('env', 'HOMELAB_ESO_SECRET_ACCESS_KEY') | b64encode }}"
           kind: Secret
           metadata:
             name: awssm-secret
             namespace: external-secrets
           type: Opaque
+      no_log: true
 
     - name: Create ExternalSecrets manifests
       kubernetes.core.helm_template:
