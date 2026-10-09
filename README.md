@@ -13,6 +13,28 @@ Infrastructure-as-code for a bare-metal Kubernetes homelab. This repository prov
 
 Start with the [documentation index](docs/index.md) for the [architecture overview](docs/architecture.md), [service and dependency catalog](docs/service-catalog.md), [provisioning reference](docs/provisioning-reference.md), [operations guide](docs/operations.md), and [open questions](docs/open-questions.md). These describe checked-in configuration, not live deployment state.
 
+Focused references describe declarations and their runtime verification boundaries:
+
+- [Networking](docs/networking.md): K3s networking defaults, ingress/TLS, DNS credential boundaries, MQTT transport, and PXE exposure.
+- [Storage](docs/storage.md): Longhorn volume jobs, PostgreSQL backup and recovery inputs, and S3 protection and retention limits.
+- [Security](docs/security.md): GitOps and credential trust boundaries, declared access controls, and potential risks requiring operator verification.
+- [Recovery first response](docs/runbooks/recovery.md): safe read-only triage and explicit approval gates; not a restore procedure.
+
+## Architecture at a glance
+
+```mermaid
+flowchart TD
+  Bare["bare/: Ansible and PXE"] --> K3s["K3s cluster"]
+  External["external/: OpenTofu"] --> AWS["AWS resources"]
+  K3s --> Bootstrap["system/: cluster bootstrap"]
+  AWS --> Bootstrap
+  Git["Public and private Git repositories"] --> Argo["Argo CD"]
+  Bootstrap --> Argo
+  Argo --> Workloads["system/, platform/, databases/, apps/"]
+```
+
+The diagram reflects repository-declared provisioning and reconciliation relationships; it does not confirm that the resources are currently deployed or healthy.
+
 ## Deployment overview
 
 The top-level `make` target runs `bare` and then `system`; `external` is intentionally separate because Terraform/OpenTofu operations are resource-creating and need configured state and credentials. Typical lifecycle:

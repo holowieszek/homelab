@@ -2,7 +2,7 @@
 
 ## Review baseline and evidence
 
-Repository snapshot reviewed: `43add6737b6c6a9d9fa45e48a451aeae5b34812a`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
+Repository snapshot reviewed: `004d097fe82384043520a1e43d1f085f59f0b852`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
 
 ## Reconciliation map
 

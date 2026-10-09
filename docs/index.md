@@ -2,7 +2,7 @@
 
 ## Scope
 
-Source snapshot: `43add6737b6c6a9d9fa45e48a451aeae5b34812a` (checked-out revision for this maintenance pass). Documentation describes tracked configuration only, not deployed versions, resource existence, health, credential validity, or backup success. No production systems or private repository were accessed.
+Source snapshot: `004d097fe82384043520a1e43d1f085f59f0b852` (checked-out revision for this maintenance pass). Documentation describes tracked configuration only, not deployed versions, resource existence, health, credential validity, or backup success. No production systems or private repository were accessed.
 
 ## Guides
 
@@ -11,6 +11,10 @@ Source snapshot: `43add6737b6c6a9d9fa45e48a451aeae5b34812a` (checked-out revisio
 - [Service and dependency catalog](service-catalog.md): applications, namespaces, PostgreSQL recovery/backup declarations, and secret-provider mappings.
 - [Provisioning reference](provisioning-reference.md): PXE/DHCP, K3s, active AWS module calls, and operator-supplied inputs.
 - [Operations guide](operations.md): prerequisites, state-changing command boundaries, validation, and recovery cautions.
+- [Networking reference](networking.md): qualified K3s defaults, ingress/TLS, DNS credential boundaries, MQTT transport, and PXE exposure.
+- [Storage and backup declarations](storage.md): Longhorn jobs, PostgreSQL backup/recovery inputs, and S3 protection and retention limits.
+- [Security declarations and trust boundaries](security.md): GitOps and credential flows, access-control declarations, potential risks, and authorized operator verification.
+- [Recovery first response](runbooks/recovery.md): safe read-only triage, evidence limits, and stop gates before any data-changing recovery.
 - [Open questions](open-questions.md): source-backed uncertainties requiring an operator decision or controlled verification.
 - [Contributor guidance](../AGENTS.md): repository safety and documentation conventions.
 

@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This reference extends the service catalog with the provisioning mechanics found in repository snapshot `43add6737b6c6a9d9fa45e48a451aeae5b34812a`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live machines, K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted.
+This reference extends the service catalog with the provisioning mechanics found in repository snapshot `004d097fe82384043520a1e43d1f085f59f0b852`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live machines, K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted.
 
 For the component map and application/database relationships, see [architecture](architecture.md) and the [service catalog](service-catalog.md). Commands that mutate infrastructure are also described in the [operations guide](operations.md).
 
