@@ -11,7 +11,7 @@ Infrastructure-as-code for a bare-metal Kubernetes homelab. This repository prov
 - `databases/` — CloudNativePG clusters and pgAdmin.
 - `apps/` — application Helm releases and the OPNsense backup Kubernetes manifests.
 
-See [the architecture and workload inventory](docs/architecture.md) and [operations guide](docs/operations.md) for the reviewed design, deployment order, prerequisites, and known operational risks.
+See [the architecture overview](docs/architecture.md), [service and dependency catalog](docs/service-catalog.md), and [operations guide](docs/operations.md) for the reviewed design, component relationships, deployment order, and operating instructions.
 
 ## Deployment overview
 
