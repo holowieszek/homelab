@@ -36,7 +36,7 @@ Create local `external/config/backend/prod.tfbackend` and `external/config/envir
 
 ### 3. Bootstrap the cluster
 
-Ensure `bare/k3s.yaml` exists and points to the intended cluster. `make -C system bootstrap` runs `ansible-playbook bootstrap.yml`. The playbook creates namespaces, writes an AWS Kubernetes Secret, installs External Secrets, waits a fixed 180 seconds, then installs Argo CD. It requires the two `HOMELAB_ESO_*` environment variables. Bootstrap writes a rendered secret manifest under `system/files/`; the path is ignored by Git but contains sensitive values and should be securely removed after use.
+Ensure `bare/k3s.yaml` exists and points to the intended cluster. `make -C system bootstrap` runs `ansible-playbook bootstrap.yml`. The playbook validates that both `HOMELAB_ESO_ACCESS_KEY` and `HOMELAB_ESO_SECRET_ACCESS_KEY` are set, creates the AWS Kubernetes Secret directly without writing a plaintext manifest, installs External Secrets, waits a fixed 180 seconds, then installs Argo CD. The Secret-creation task suppresses sensitive output with Ansible `no_log`.
 
 ### 4. GitOps operations
 
