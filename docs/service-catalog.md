@@ -2,11 +2,11 @@
 
 ## Review baseline and evidence
 
-Repository snapshot reviewed: `b3ecee50f8388015374fd8a7579ee4a2a4695cb4` (`main`, after PR #7). This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
+Repository snapshot reviewed: `43add6737b6c6a9d9fa45e48a451aeae5b34812a`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
 
 ## Reconciliation map
 
-The public ApplicationSet in [`system/argocd/values.yaml`](../system/argocd/values.yaml) scans `apps/*`, `system/*`, `platform/*`, and `databases/*` on `main`. The generated application name and destination namespace are the directory basename. The private ApplicationSet scans `apps/*` in the separately configured `homelab-private` repository. Automated sync, prune, self-heal, retry, namespace creation, and server-side apply are configured there.
+The public ApplicationSet in [`system/argocd/values.yaml`](../system/argocd/values.yaml) scans `apps/*`, `system/*`, `platform/*`, and `databases/*` on `main`. The generated application name and default destination namespace are the directory basename. This default does not override an explicit manifest `metadata.namespace`: the `databases/*-db` manifests target their application namespaces (for example, `linkding` rather than `linkding-db`), and CoreDNS targets `kube-system` rather than `coredns`. The private ApplicationSet scans `apps/*` in the separately configured `homelab-private` repository. Automated sync, prune, self-heal, retry, namespace creation, and server-side apply are configured there.
 
 Directories with a `Chart.yaml` are Helm chart sources. `apps/opnsense-backup/` instead contains a `kustomization.yaml` and raw Kubernetes manifests; its resource list is in [`apps/opnsense-backup/kustomization.yaml`](../apps/opnsense-backup/kustomization.yaml).
 
@@ -33,7 +33,7 @@ Arrows show relationships expressed in repository configuration, not observed ne
 
 ## Application catalog
 
-| Directory / namespace | Declared function and configured dependencies | Network, persistence, and source |
+| Directory / declared workload namespace | Declared function and configured dependencies | Network, persistence, and source |
 |---|---|---|
 | [`apps/esphome`](../apps/esphome/) / `esphome` | ESPHome dashboard. | HTTP service port `6052`; Traefik ingress with cert-manager TLS; Longhorn PVC `10Gi`. `app-template` chart. |
 | [`apps/home-assistant`](../apps/home-assistant/) / `home-assistant` | Home Assistant chart with an init container that installs HACS. A separate `home-assistant-db` cluster is declared, but this app chart does not show a database connection setting. | Ingress/TLS; Longhorn PVC `10Gi` at `/config`; upstream chart dependency `home-assistant` `0.3.51`. |
@@ -45,7 +45,7 @@ Arrows show relationships expressed in repository configuration, not observed ne
 | [`apps/opnsense-backup`](../apps/opnsense-backup/) / `opnsense-backup` | Kubernetes CronJob `opnsense-backup-cronjob` uses an ExternalSecret-backed environment and a repository-hosted ECR image. A second CronJob, `ecr-creds-refresh`, uses a separate service account and namespaced RBAC. | Backup schedule is `0 0 * * *`; ECR token helper schedule is `0 */11 * * *`. This directory is raw Kustomize/Kubernetes source, not a Helm chart. |
 | [`apps/speedtest`](../apps/speedtest/) / `speedtest` | Speedtest Tracker is configured with application schedule `0 * * * *` and connects to `speedtest-db-rw.speedtest`; app and database environment values are secret-backed. | HTTP port `80`; ingress/TLS. |
 | [`apps/zigbee2mqtt`](../apps/zigbee2mqtt/) / `zigbee2mqtt` | Zigbee2MQTT points at the configured EMQX MQTT URL and a TCP-attached serial coordinator using adapter `zstack`. | Longhorn PVC `1Gi`; upstream chart dependency `zigbee2mqtt` `2.12.1`. |
-| [`databases/pgadmin`](../databases/pgadmin/) / `pgadmin` | pgAdmin database UI; persistent data uses existing claim `pgadmin-data-recovery-1`. | HTTP port `80`; ingress/TLS; uses `app-template`. |
+| [`databases/pgadmin`](../databases/pgadmin/) / `pgadmin` | pgAdmin database UI; persistent data uses existing claim `pgadmin-data-recovery-1`. | HTTP port `80`; ingress/TLS; uses `app-template`. Runtime settings and the literal initial login configuration are in [`values.yaml`](../databases/pgadmin/values.yaml), not `Chart.yaml`; credential values are not repeated here. |
 
 The application connection claims above are limited to explicit values/manifests. In particular, the existence of a database Cluster in the same namespace does not itself prove that an application uses it.
 
@@ -62,6 +62,15 @@ The five database manifests also define namespace-local `awssm-secret` ExternalS
 | `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/speedtest/credentials` |
 
 CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a seconds field, not the five-field Unix crontab format; see the versioned [CloudNativePG 1.25 backup reference](https://cloudnative-pg.io/docs/1.25/backup/). The literal expression is retained above to avoid confusing it with Kubernetes CronJob schedules. A configured destination, schedule, and retention value do not establish that backups have run or can be restored.
+
+### Bootstrap recovery versus recurring backups
+
+| Cluster source | `bootstrap.recovery.source` and external source server name | Recurring backup server name / `ScheduledBackup` name |
+|---|---|---|
+| [Linkding](../databases/linkding-db/cluster.yaml) | `linkding-db-backup-v2` | `linkding-db-backup-v3` |
+| [Speedtest](../databases/speedtest-db/cluster.yaml) | `speedtest-db-backup-v5` | `speedtest-db-backup-v6` |
+
+These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Home Assistant, LiteLLM, and MeshCore Telemetry instead declare `bootstrap.initdb`.
 
 [`platform/grafana/values.yaml`](../platform/grafana/values.yaml) declares PostgreSQL data sources for `home-assistant-db-rw.home-assistant.svc.cluster.local:5432` and `meshcore-telemetry-db-rw.meshcore-telemetry.svc.cluster.local:5432`. The datasource authentication values are read from `postgres-datasources-config`.
 
@@ -99,6 +108,10 @@ These are identifiers and mappings in source, not a statement that each remote A
 | [`platform/emqx`](../platform/emqx/) | `emqx` `5.8.6` | MQTT broker with three replicas, LoadBalancer service, and dashboard ingress configuration. |
 | [`platform/grafana`](../platform/grafana/) | `grafana` `8.10.4` | Dashboards, PostgreSQL data sources, plugins, and persistent storage. |
 
+CoreDNS is an additional raw-manifest system component: [`system/coredns/upstream-dns.yaml`](../system/coredns/upstream-dns.yaml) defines `coredns-custom` in `kube-system`, with a `custom.server` block forwarding the configured internal DNS zone to a private upstream. It is discovered by the public ApplicationSet under `system/*`; actual CoreDNS custom-block loading and upstream reachability are unverified. The concrete zone and upstream address remain in source and are not duplicated here.
+
+Longhorn storage reclaim and S3 backup settings are in [`system/longhorn/values.yaml`](../system/longhorn/values.yaml); `Chart.yaml` pins the dependency only. Its [RecurringJob template](../system/longhorn/templates/recurringjob-snapshot.yaml) declares snapshot and backup jobs separately; job selection in values is commented out, so volume assignments and backup execution remain open questions.
+
 Other Helm chart dependencies and their exact versions are declared in each source `Chart.yaml`; this table records shared platform and bootstrap charts only. The Argo CD ApplicationSet directory generator behavior is described in the [official Git Generator reference](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Git/).
 
 ## Bare-metal and AWS provisioning surfaces
@@ -110,7 +123,7 @@ Other Helm chart dependencies and their exact versions are declared in each sour
 ## Relevant primary references
 
 - [Argo CD Git directory generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Git/)
-- [External Secrets Operator v0.14.2 API](https://external-secrets.io/v0.14.2/api/)
+- [External Secrets Operator v0.14.2 ExternalSecret API](https://external-secrets.io/v0.14.2/api/externalsecret/)
 - [CloudNativePG 1.25 backup API and schedule format](https://cloudnative-pg.io/docs/1.25/backup/)
 
 The repository's chart pins are the authoritative deployment inputs; upstream documentation links explain the corresponding product APIs and do not establish the deployed runtime versions.

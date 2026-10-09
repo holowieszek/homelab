@@ -6,12 +6,12 @@ Infrastructure-as-code for a bare-metal Kubernetes homelab. This repository prov
 
 - `bare/` — Ansible playbooks and roles for PXE-based machine bootstrapping and K3s cluster installation.
 - `external/` — OpenTofu configuration and reusable AWS modules (ECR, IAM/OIDC, Route 53, S3, Parameter Store, Secrets Manager).
-- `system/` — cluster bootstrap playbook and Helm releases for Argo CD, External Secrets, cert-manager, Longhorn and monitoring.
+- `system/` — cluster bootstrap playbook, Helm releases for Argo CD, External Secrets, cert-manager, Longhorn and monitoring, and the CoreDNS custom-forwarding manifest.
 - `platform/` — shared platform services: CloudNativePG, EMQX and Grafana.
 - `databases/` — CloudNativePG clusters and pgAdmin.
 - `apps/` — application Helm releases and the OPNsense backup Kubernetes manifests.
 
-See [the architecture overview](docs/architecture.md), [service and dependency catalog](docs/service-catalog.md), [provisioning reference](docs/provisioning-reference.md), and [operations guide](docs/operations.md) for the reviewed design, component relationships, provisioning layers, and operator commands.
+Start with the [documentation index](docs/index.md) for the [architecture overview](docs/architecture.md), [service and dependency catalog](docs/service-catalog.md), [provisioning reference](docs/provisioning-reference.md), [operations guide](docs/operations.md), and [open questions](docs/open-questions.md). These describe checked-in configuration, not live deployment state.
 
 ## Deployment overview
 
@@ -27,7 +27,7 @@ Do not run provisioning against a live environment without reviewing plans and c
 
 ## Secrets and configuration
 
-Credentials are expected from AWS Secrets Manager, External Secrets, and environment variables at bootstrap; do not commit populated `.tfvars`, backend configuration, kubeconfigs, credentials, or rendered secret manifests. The tracked `*.example` files are templates only. Review `docs/operations.md` before bootstrap.
+Credentials are expected from AWS Secrets Manager, External Secrets, and environment variables at bootstrap; do not commit populated `.tfvars`, backend configuration, kubeconfigs, credentials, or rendered secret manifests. The IAM user module does not create access keys, and the Secrets Manager module creates secret containers without values. Operators must supply required AWS secret/parameter values and the bootstrap environment separately; the tracked `*.example` files are templates only. Review the [operations prerequisites](docs/operations.md#prerequisites) before bootstrap.
 
 ## Validation
 
