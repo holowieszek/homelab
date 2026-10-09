@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This reference extends the service catalog with the provisioning mechanics found in repository snapshot `b36e62c3dc885ac4032a77faf9b84c7ee98c45ea` (`main`, after PR #8). It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live machines, K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted.
+This reference extends the service catalog with the provisioning mechanics found in repository snapshot `43add6737b6c6a9d9fa45e48a451aeae5b34812a`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live machines, K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted.
 
 For the component map and application/database relationships, see [architecture](architecture.md) and the [service catalog](service-catalog.md). Commands that mutate infrastructure are also described in the [operations guide](operations.md).
 
@@ -38,6 +38,14 @@ The OpenTofu lane is a separate root Make target; it is not invoked by the defau
 2. Run the `wake` role on the bare-metal group. It sends Wake-on-LAN packets and waits for Ansible connectivity (up to 1800 seconds).
 
 [`bare/cluster.yml`](../bare/cluster.yml) first applies the `k3s` role to the bare-metal group, then applies `dependencies` to the `masters` group. The dependency role installs Helm `v3.17.1` on the master group.
+
+### PXE network and ISO behavior
+
+[`bare/roles/pxe_server/files/docker-compose.yml`](../bare/roles/pxe_server/files/docker-compose.yml) runs dnsmasq with `network_mode: host` and the `NET_ADMIN` capability. It mounts boot files into `/tftp`; the HTTP container separately publishes host port `8080` for ISO/cloud-init downloads. The controller needs Docker Engine, Compose v2, and `xorriso`, which the [PXE tasks](../bare/roles/pxe_server/tasks/main.yml) call to extract the downloaded ISO.
+
+The [dnsmasq template](../bare/roles/pxe_server/templates/dnsmasq.conf.j2) disables DNS serving (`port=0`), enables DHCP logging, defines a DHCP address pool with a 12-hour lease and router option, and serves TFTP from `/tftp`. It matches client architecture options `7` and `9` to serve `grubx64.efi` for UEFI boot. This is a lease-serving DHCP configuration, **not proxy-DHCP**; starting it on a network with another DHCP server may cause conflicting offers. Review the concrete pool/router settings in source and isolate the provisioning network as appropriate.
+
+[`bare/group_vars/all.yml`](../bare/group_vars/all.yml) defines both `iso_uri` and `iso_checksum`, but the download task comments out `checksum: "{{ iso_checksum }}"`. Checksum verification is therefore disabled in that task despite the configured variable. The [GRUB template](../bare/roles/pxe_server/templates/grub.cfg.j2) also hard-codes the ISO basename in its HTTP URL; changing `iso_uri` alone does not update that boot URL.
 
 ### K3s role behavior
 
@@ -77,12 +85,23 @@ The declared root variables are `aws_account_number`, `region`, `project_name`, 
 | `external/parameters.tf` | `speedtest_app_parameters` | `modules/parameter-store/v1`; creates SSM parameters. |
 | `external/r53.tf` | `primary_hosted_zone` | `modules/route53/v1`; creates a Route 53 hosted zone. |
 | `external/s3.tf` | `database_backups`, `volume_backups`, `opnsense_backups`, `frigate_syncs` | `modules/s3/v1`; provisions S3 buckets with module resources for encryption, versioning, public-access blocking, and optional access logging. |
-| `external/sm.tf` | `speedtest_db_secrets`, `speedtest_app_secrets`, `cert_manager_app_secrets`, `argocd_app_secrets`, `grafana_app_secrets`, `pihole_app_secrets`, `mikrotik_app_secrets`, `linkding_app_secrets`, `litellm_secrets`, `global_config_secrets`, `homelab_private_repo_secrets`, `opnsense_backups_app_secrets` | `modules/secrets-manager/v1`; declares AWS Secrets Manager secret containers. Secret values are not represented in this catalog. |
+| `external/sm.tf` | `speedtest_app_secrets`, `cert_manager_app_secrets`, `grafana_app_secrets`, `pihole_app_secrets`, `mikrotik_app_secrets`, `linkding_app_secrets`, `litellm_secrets`, `global_config_secrets`, `homelab_private_repo_secrets`, `opnsense_backups_app_secrets` | `modules/secrets-manager/v1`; declares AWS Secrets Manager secret containers, without secret values. |
 | `external/global_local_vars.tf` | `default_label` | `cloudposse/label/null` `0.25.0`; common name/environment labels and tags. |
+
+Only active calls are listed above. In [`external/sm.tf`](../external/sm.tf), `speedtest_db_secrets` and `argocd_app_secrets` are commented out, so they do not create resources through this root configuration. Their corresponding PushSecret destinations are still declared in Kubernetes source; that is separate from an active OpenTofu module call.
 
 The reusable modules are under `external/modules/`. In the inspected module source, ECR private/public modules create their corresponding repository resource; IAM modules create a user or an OIDC provider/role/policy attachment; the Route 53 module creates a hosted zone; the S3 module adds encryption/versioning/public-access-block resources; Parameter Store creates an SSM parameter; and the Secrets Manager module creates a secret resource. These are code declarations, not a report of AWS resources currently present.
 
 The GitHub OIDC identity-provider module's trust document includes audience equality and an allowed-repository subject condition. The repository supplies the audiences and allowed repository patterns through variables; the actual configured values are in local `prod.tfvars` and are not reproduced here.
+
+### Operator-supplied AWS values and bootstrap environment
+
+- [`external/modules/iam/user/v1/main.tf`](../external/modules/iam/user/v1/main.tf) declares an IAM user, policy, and attachment only. It has no access-key resource; its outputs are identifiers, not credentials. Operators must arrange any required access keys separately under their credential-management process.
+- [`external/modules/secrets-manager/v1/main.tf`](../external/modules/secrets-manager/v1/main.tf) declares `aws_secretsmanager_secret` containers only, with no secret-version resource or payload. Operators must populate the values required by ExternalSecret consumers separately. PushSecrets for generated database/Argo CD credentials are a separate, declared writer flow, not proof that remote values exist.
+- [`external/parameters.tf`](../external/parameters.tf) calls the SSM module without a value override. Its [variable default](../external/modules/parameter-store/v1/variables.tf) is a placeholder, and the [resource lifecycle](../external/modules/parameter-store/v1/main.tf) uses `ignore_changes = [value]`. Operators must populate the required parameter value separately; provisioning does not provide an application credential.
+- The AWS provider/backend credential chain and the `HOMELAB_ESO_ACCESS_KEY` / `HOMELAB_ESO_SECRET_ACCESS_KEY` bootstrap environment are separate inputs. OpenTofu does not export the latter or populate them from these modules. Supply them from a trusted secret source before cluster bootstrap, without committing, logging, or documenting their values.
+
+Consult the [service catalog](service-catalog.md#secret-provider-reference-flow) for source-level consumer mappings; it lists identifiers only, not credential values.
 
 ## OpenTofu operator workflow
 

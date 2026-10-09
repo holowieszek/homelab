@@ -2,7 +2,7 @@
 
 ## Scope and method
 
-This document describes the tracked configuration at reviewed revision `b3ecee50f8388015374fd8a7579ee4a2a4695cb4` (after PR #7). It is a source-based architecture review, not a live-cluster audit: no cluster credentials or AWS state were queried. Values, resource names, IPs, hostnames, image tags and behavior below are transcribed from repository configuration; live availability and deployed versions may differ. For per-service dependencies, secret references, database declarations, and chart versions, see the [service and dependency catalog](service-catalog.md); for provisioning internals, see the [provisioning reference](provisioning-reference.md).
+This document describes the tracked configuration at reviewed revision `43add6737b6c6a9d9fa45e48a451aeae5b34812a`. It is a source-based architecture review, not a live-cluster audit: no cluster credentials or AWS state were queried. Values, resource names, IPs, hostnames, image tags and behavior below are transcribed from repository configuration; live availability and deployed versions may differ. For per-service dependencies, secret references, database declarations, and chart versions, see the [service and dependency catalog](service-catalog.md); for provisioning internals, see the [provisioning reference](provisioning-reference.md).
 
 ## System at a glance
 
@@ -16,7 +16,7 @@ The repository separates infrastructure into five operational layers:
 
 ## GitOps and reconciliation
 
-`system/argocd/values.yaml` configures two repositories: this public repository and `holowieszek/homelab-private`. The public ApplicationSet scans `apps/*`, `system/*`, `platform/*` and `databases/*`; the private ApplicationSet scans `apps/*` in the private repository. Applications target an in-cluster namespace based on the directory name, with automated sync, pruning, self-heal, retries, namespace creation and server-side apply. Therefore, changes merged to the tracked `main` branch can be reconciled automatically by the live Argo CD installation.
+`system/argocd/values.yaml` configures two repositories: this public repository and `holowieszek/homelab-private`. The public ApplicationSet scans `apps/*`, `system/*`, `platform/*` and `databases/*`; the private ApplicationSet scans `apps/*` in the private repository. The ApplicationSet destination namespace defaults to the directory basename, with automated sync, pruning, self-heal, retries, namespace creation and server-side apply. Explicit `metadata.namespace` in manifests can target a different namespace: for example, `databases/linkding-db/cluster.yaml` targets `linkding`, and `system/coredns/upstream-dns.yaml` targets `kube-system`. The configured policy permits automatic reconciliation of changes to `main`; this does not establish that an Argo CD instance is running or has reconciled them.
 
 The charts use upstream Helm dependencies declared in each `Chart.yaml`; the repository ignores `Chart.lock` and packaged charts. Chart rendering depends on fetching these external dependencies.
 
@@ -41,9 +41,13 @@ The charts use upstream Helm dependencies declared in each `Chart.yaml`; the rep
 
 CloudNativePG clusters are declared for Home Assistant, Linkding, LiteLLM, MeshCore Telemetry and Speedtest. `databases/pgadmin` defines the database UI. Platform charts install CloudNativePG, EMQX and Grafana; system charts bootstrap Argo CD and External Secrets and manage cert-manager, Longhorn and kube-prometheus-stack.
 
+### Cluster DNS
+
+[`system/coredns/upstream-dns.yaml`](../system/coredns/upstream-dns.yaml) declares the `coredns-custom` ConfigMap in `kube-system`, with a `custom.server` block forwarding the configured internal DNS zone to a private upstream on port `53`. This is a raw manifest discovered under `system/coredns`, not a Helm chart or a bootstrap-playbook task. The file does not demonstrate that the deployed CoreDNS configuration imports the custom block or that the upstream is reachable; the concrete zone and upstream address are intentionally not duplicated here.
+
 ### External modules
 
-`external/` contains AWS provider and backend configuration, root resources and versioned modules for ECR, IAM, Parameter Store, Route 53, S3 and Secrets Manager. The production backend and variable files are intentionally absent from version control; `.example` files contain placeholders.
+`external/` contains AWS provider and backend configuration, root resources and versioned modules for ECR, IAM, Parameter Store, Route 53, S3 and Secrets Manager. The production backend and variable files are intentionally absent from version control; `.example` files contain placeholders. The IAM user module creates users and policy attachments, not access keys; the Secrets Manager module creates containers, not secret values. Operators must provision required values and bootstrap credentials separately; see the [provisioning reference](provisioning-reference.md#operator-supplied-aws-values-and-bootstrap-environment).
 
 ## Configuration and trust boundaries
 
@@ -58,7 +62,7 @@ These are source-review observations, not proof of a current exploit or live mis
 
 1. **Mitigated in the follow-up remediation.** Bootstrap now validates that both AWS credential environment variables are set and constructs the Kubernetes Secret directly from those values, without writing a plaintext manifest to disk. The Secret-creation task uses Ansible `no_log` to suppress credential-bearing task output. Static AWS credentials remain a separate concern; least privilege, rotation, and workload identity are still follow-up items.
 2. **High — Static AWS credentials are bootstrapped into the cluster.** The External Secrets store authenticates via a Kubernetes Secret containing access keys. Verify the IAM principal is least-privileged, rotated, and restricted to the required Secrets Manager paths; consider workload identity/OIDC where supported.
-3. **High — pgAdmin values include a literal default password.** `databases/pgadmin/Chart.yaml` sets `PGADMIN_DEFAULT_EMAIL=test@example.com` and `PGADMIN_DEFAULT_PASSWORD=testpassword`. Replace with External Secrets and rotate any deployed credential before exposing/reusing this chart.
+3. **High — pgAdmin values include a literal default password.** [`databases/pgadmin/values.yaml`](../databases/pgadmin/values.yaml) contains literal initial login settings, including a default password; values are deliberately not repeated here. Replace with External Secrets and rotate any deployed credential before exposing/reusing this chart.
 4. **Medium — Mutable image tags reduce deployment reproducibility.** Several workloads use `latest`, `stable`, or `main-stable` (including Speedtest Tracker, pgAdmin, Memos and LiteLLM). Pin versions or digests and define an update process.
 5. **Medium — Bootstrap waits a fixed 180 seconds for the External Secrets webhook.** A fixed pause can be unnecessarily slow or fail on slower starts. Prefer a readiness/condition wait with a timeout.
 6. **Medium — External provisioning target files are local prerequisites.** The Makefile expects populated `config/backend/prod.tfbackend` and `config/environment/prod.tfvars`, while only examples are tracked. Documented safety checks are important because `make -C external` executes `tofu apply` after planning.
