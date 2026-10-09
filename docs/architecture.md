@@ -2,7 +2,7 @@
 
 ## Scope and method
 
-This document describes the tracked configuration at reviewed revision `b3ecee50f8388015374fd8a7579ee4a2a4695cb4` (after PR #7). It is a source-based architecture review, not a live-cluster audit: no cluster credentials or AWS state were queried. Values, resource names, IPs, hostnames, image tags and behavior below are transcribed from repository configuration; live availability and deployed versions may differ. For per-service dependencies, secret references, database declarations, and chart versions, see the [service and dependency catalog](service-catalog.md).
+This document describes the tracked configuration at reviewed revision `b3ecee50f8388015374fd8a7579ee4a2a4695cb4` (after PR #7). It is a source-based architecture review, not a live-cluster audit: no cluster credentials or AWS state were queried. Values, resource names, IPs, hostnames, image tags and behavior below are transcribed from repository configuration; live availability and deployed versions may differ. For per-service dependencies, secret references, database declarations, and chart versions, see the [service and dependency catalog](service-catalog.md); for provisioning internals, see the [provisioning reference](provisioning-reference.md).
 
 ## System at a glance
 

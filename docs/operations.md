@@ -1,6 +1,6 @@
 # Operations guide
 
-This guide documents the commands represented by the repository. Run them only from a trusted operator workstation with the intended inventory, cloud account, and cluster credentials. Commands that apply infrastructure or cluster changes are explicitly marked.
+For the architecture/service map see [architecture](architecture.md) and the [service catalog](service-catalog.md); for Ansible/OpenTofu provisioning roles and module calls see the [provisioning reference](provisioning-reference.md). This guide documents the commands represented by the repository. Run them only from a trusted operator workstation with the intended inventory, cloud account, and cluster credentials. Commands that apply infrastructure or cluster changes are explicitly marked.
 
 ## Prerequisites
 
