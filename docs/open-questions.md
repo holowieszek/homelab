@@ -1,6 +1,6 @@
 # Open questions and operator follow-up
 
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions concern repository configuration and do not imply a production fault. Verify runtime behavior before making changes.
+Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions concern repository configuration and runtime controls and do not imply a production fault. A separate read-only inventory on 2026-10-10 provides limited point-in-time evidence in the [K3s audit record](kubernetes-audit.md); verify current runtime behavior before making changes.
 
 ## Provisioning and credentials
 
@@ -14,7 +14,7 @@ Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions con
 ## Recovery and storage
 
 - Do the configured historical recovery sources exist and support a controlled restore? [Linkding](../databases/linkding-db/cluster.yaml) reads `linkding-db-backup-v2` but writes recurring backups under `linkding-db-backup-v3`; [Speedtest](../databases/speedtest-db/cluster.yaml) reads `speedtest-db-backup-v5` but writes under `speedtest-db-backup-v6`. Current schedules and retention do not prove historical source availability.
-- Which Longhorn volumes are assigned snapshot/backup jobs, and have restores been tested? [Values](../system/longhorn/values.yaml) configure `Retain` and an S3 target but comment out recurring-job selection; the [template](../system/longhorn/templates/recurringjob-snapshot.yaml) declares both jobs. Definitions alone do not prove assignment or successful execution.
+- Which Longhorn volumes are assigned snapshot/backup jobs, and have restores been tested? [Values](../system/longhorn/values.yaml) configure `Retain` and an S3 target but comment out recurring-job selection; the [template](../system/longhorn/templates/recurringjob-snapshot.yaml) declares both jobs. The 2026-10-10 inventory found 18 PVCs and PVs `Bound` and 18 Longhorn Volume objects, but did not establish replica health, job assignment, or successful backups/restores; see the [audit limitations](kubernetes-audit.md).
 - Is the pgAdmin existing claim available, and how will its literal initial login configuration be replaced and any deployed credential rotated? Both are declared in [pgAdmin values](../databases/pgadmin/values.yaml); neither claim existence nor credential use was verified.
 
 ## Reconciliation and cluster behavior
@@ -30,11 +30,13 @@ The [networking reference](networking.md) details transport and exposure boundar
 [storage and backup declarations](storage.md) distinguish volume jobs, database
 recovery inputs, and object-store protections; [security declarations and trust
 boundaries](security.md) separate source-backed findings from potential risks.
-The questions below concern unverified runtime controls, not observed faults.
+The questions below concern runtime controls not established by the inventory,
+not observed faults.
 The existing provisioning, recovery, and CoreDNS questions above still apply;
 resolve these only in a separately authorized operator review.
 
-- Which K3s networking components and policies are active, which nodes and networks expose services, and do ingress authentication, redirects, backend transport, proxy trust, and certificate readiness match intent?
+- Which K3s networking components are active, which nodes and networks expose services, and do ingress authentication, redirects, backend transport, proxy trust, and certificate readiness match intent? The 2026-10-10 inventory reported K3s `v1.31.6+k3s1` and zero standard NetworkPolicy objects; confirm whether that is intended and whether other isolation mechanisms are active.
+- Were the two Jobs reporting `0/1` completions in the 2026-10-10 inventory expected? The selected API columns do not distinguish pending, active, suspended, or failed states; inspect their current status during an authorized follow-up rather than infer failure from the count alone.
 - Which MQTT listeners, client authentication, topic permissions, and transport modes are effective, and is device pairing limited to an intended window? Dashboard TLS does not establish MQTT encryption.
 - Do effective cloud permissions constrain DNS changes and backup access as intended, and do Kubernetes RBAC, admission controls, and encryption at rest protect shared secret-store access? Source declarations do not identify the principals behind supplied credentials.
 - Are GitOps approval and deletion controls, artifact provenance, and workload hardening effective? Did the registry helper emit authentication material into logs, and who can access those logs? Verify handling without copying credential values.

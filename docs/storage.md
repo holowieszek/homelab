@@ -4,10 +4,12 @@ Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`.
 
 ## Scope
 
-This guide describes current tracked configuration and existing documentation,
-not deployed resources. It makes no assertions about backup execution, backup
-integrity, restore success, or achievable recovery objectives. Concrete storage
-targets and credential identifiers are intentionally omitted.
+This guide describes tracked configuration; it is not a complete runtime
+assessment. The separate [read-only K3s inventory](kubernetes-audit.md) found
+18 PVCs and 18 PVs `Bound` on 2026-10-10, with all observed PVCs using Longhorn.
+That point-in-time result does not establish backup execution, backup integrity,
+restore success, volume replica health, or achievable recovery objectives.
+Concrete storage targets and credential identifiers are intentionally omitted.
 
 ## Longhorn volumes and recurring jobs
 
@@ -16,7 +18,10 @@ The [chart declaration](../system/longhorn/Chart.yaml) pins Longhorn `1.8.1`.
 and `persistence.reclaimPolicy: Retain`: the chart declares Longhorn as a default
 StorageClass, with retained backing storage after claim deletion rather than
 automatic reclamation. Retention requires deliberate cleanup; it is not a backup.
-This does not establish which StorageClasses or volumes exist in a cluster.
+The 2026-10-10 inventory also listed 3 StorageClass objects and 18 Longhorn
+Volume objects. It records object presence and selected status columns only;
+see the [audit scope and limitations](kubernetes-audit.md) before drawing
+conclusions about replica health, free capacity, or backups.
 
 The same values declare an S3 backup target and a Kubernetes Secret reference
 for backup credentials. A configured target and reference do not establish

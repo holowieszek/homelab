@@ -4,10 +4,13 @@ Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`.
 
 ## Scope and evidence
 
-This guide describes checked-in network declarations, not deployed state. The
-K3s installer is unpinned, and no live cluster, host, AWS resource, or private
-repository was inspected. Addresses, domains, hostnames, cloud resource names,
-and credential identifiers are deliberately omitted. Links point only to safe
+This guide describes checked-in network declarations, not a comprehensive
+runtime assessment. A separate [read-only K3s inventory](kubernetes-audit.md)
+recorded version `v1.31.6+k3s1` and zero standard NetworkPolicy objects on
+2026-10-10; it did not identify the active CNI or inspect traffic, host
+firewalls, listeners, routes, or AWS resources. The K3s installer remains
+unpinned in source. Addresses, domains, hostnames, cloud resource names, and
+credential identifiers are deliberately omitted. Links point only to safe
 relative repository paths; upstream references use the assigned source ledger.
 
 Start with the [repository overview](../README.md) and
@@ -138,8 +141,11 @@ for lifecycle details, the disabled ISO checksum check, and boot-URL coupling.
 
 ## Open runtime questions
 
-- Which K3s version, CNI/backend, bundled controllers, and network policies are
-  actually active? Which nodes/ports does ServiceLB expose, and to which networks?
+- Which CNI/backend and bundled controllers are active, and which nodes/ports
+  does ServiceLB expose? The 2026-10-10 inventory reported `v1.31.6+k3s1` and
+  no standard NetworkPolicy objects. Confirm whether that absence is intended
+  and whether other network-isolation controls are active; the inventory does
+  not answer either question.
 - Do ingress classes, DNS records, redirects, certificate readiness, backend
   transport, and application/proxy access controls match the intended boundary?
 - Are DNS-01 challenge records publicly resolvable, and do the actual issuer
