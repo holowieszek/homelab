@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This reference extends the service catalog with the provisioning mechanics found in repository baseline `d7d6cbc846bb3662a6094e557358992f1c57c3b7`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for bare-metal specifications.
+This reference extends the service catalog with the provisioning mechanics found in repository baseline `4446c988b612d1c56e0703df6124d45191adf44a`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for bare-metal specifications.
 
 For the component map and application/database relationships, see [architecture](architecture.md) and the [service catalog](service-catalog.md). Commands that mutate infrastructure are also described in the [operations guide](operations.md).
 
@@ -85,7 +85,7 @@ The declared root variables are `aws_account_number`, `region`, `project_name`, 
 | `external/parameters.tf` | `speedtest_app_parameters` | `modules/parameter-store/v1`; creates SSM parameters. |
 | `external/r53.tf` | `primary_hosted_zone` | `modules/route53/v1`; creates a Route 53 hosted zone. |
 | `external/s3.tf` | `database_backups`, `volume_backups`, `opnsense_backups`, `frigate_syncs` | `modules/s3/v1`; provisions S3 buckets with module resources for encryption, versioning, public-access blocking, and optional access logging. |
-| `external/sm.tf` | `speedtest_app_secrets`, `cert_manager_app_secrets`, `grafana_app_secrets`, `pihole_app_secrets`, `mikrotik_app_secrets`, `litellm_secrets`, `global_config_secrets`, `homelab_private_repo_secrets`, `opnsense_backups_app_secrets` | `modules/secrets-manager/v1`; declares 9 AWS Secrets Manager secret containers, without secret values. Linkding app credentials now use namespaced properties in the existing LiteLLM secret; Linkding database credentials remain separate. |
+| `external/sm.tf` | `speedtest_app_secrets`, `cert_manager_app_secrets`, `grafana_app_secrets`, `pihole_app_secrets`, `mikrotik_app_secrets`, `general_credentials_secrets`, `global_config_secrets`, `homelab_private_repo_secrets`, `opnsense_backups_app_secrets` | `modules/secrets-manager/v1`; declares 9 AWS Secrets Manager secret containers, without secret values. The general secret holds prefixed LiteLLM app/database properties and Linkding app properties; Linkding database credentials remain separate. |
 | `external/global_local_vars.tf` | `default_label` | `cloudposse/label/null` `0.25.0`; common name/environment labels and tags. |
 
 Only active calls are listed above. In [`external/sm.tf`](../external/sm.tf), `speedtest_db_secrets` and `argocd_app_secrets` are commented out, so they do not create resources through this root configuration. Their corresponding PushSecret destinations are still declared in Kubernetes source; that is separate from an active OpenTofu module call.
