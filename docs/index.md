@@ -1,12 +1,9 @@
 # Documentation index
 
-## Scope
-
-Source snapshot: `004d097fe82384043520a1e43d1f085f59f0b852` (checked-out revision for this maintenance pass). Documentation describes tracked configuration only, not deployed versions, resource existence, health, credential validity, or backup success. No production systems or private repository were accessed.
-
 ## Guides
 
 - [Repository overview](../README.md): layout and lifecycle boundaries.
+- [Hardware inventory](hardware-inventory.md): hardware specifications for the bare-metal nodes.
 - [Architecture](architecture.md): layers, GitOps, DNS, and trust boundaries.
 - [Service and dependency catalog](service-catalog.md): applications, namespaces, PostgreSQL recovery/backup declarations, and secret-provider mappings.
 - [Provisioning reference](provisioning-reference.md): PXE/DHCP, K3s, active AWS module calls, and operator-supplied inputs.

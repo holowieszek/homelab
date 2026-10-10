@@ -19,6 +19,7 @@ Focused references describe declarations and their runtime verification boundari
 - [Storage](docs/storage.md): Longhorn volume jobs, PostgreSQL backup and recovery inputs, and S3 protection and retention limits.
 - [Security](docs/security.md): GitOps and credential trust boundaries, declared access controls, and potential risks requiring operator verification.
 - [Recovery first response](docs/runbooks/recovery.md): safe read-only triage and explicit approval gates; not a restore procedure.
+- [Hardware inventory](docs/hardware-inventory.md): hardware specifications for the three bare-metal nodes.
 - [OS lifecycle and maintenance](docs/maintenance/os-lifecycle.md): opt-in Linux lifecycle playbooks, audited osquery collection and deterministic drift report; no live validation is implied.
 
 ## Architecture at a glance

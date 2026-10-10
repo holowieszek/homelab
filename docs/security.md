@@ -2,13 +2,7 @@
 
 ## Scope and evidence
 
-This review describes checked-in declarations and potential risks, not runtime
-state or evidence of compromise. Source was inspected at revision
-`004d097fe82384043520a1e43d1f085f59f0b852`, alongside existing documentation and
-the networking and storage guides in this working tree. No production system,
-private repository, cloud state, credential file, or secret value was accessed.
-Concrete domains, addresses, hostnames, cloud resource names, and internal
-identifiers are deliberately omitted; source links use relative repository paths.
+This review describes checked-in declarations and potential risks, not runtime state or evidence of compromise. Source was inspected at revision `d6ba04de243fdb722145dc556bfc28a32965ca61`, alongside existing documentation and the networking and storage guides in this working tree. Concrete domains, addresses, hostnames, cloud resource names, and internal identifiers are deliberately omitted; source links use relative repository paths.
 
 Start with the [repository overview](../README.md) and
 [documentation index](index.md). Findings below establish what source declares;
