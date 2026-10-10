@@ -58,10 +58,9 @@ CloudNativePG `1.25` [10].
 | [Home Assistant](../databases/home-assistant-db/cluster.yaml) | 3 | `10Gi` | `longhorn` |
 | [Linkding](../databases/linkding-db/cluster.yaml) | 1 | `1Gi` | Not set |
 | [LiteLLM](../databases/litellm-db/cluster.yaml) | 1 | `1Gi` | Not set |
-| [MeshCore telemetry](../databases/meshcore-telemetry-db/cluster.yaml) | 3 | `1Gi` | Not set |
 | [Speedtest](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi` | Not set |
 
-All five Cluster manifests configure Barman object-store backups to S3, with
+All four Cluster manifests configure Barman object-store backups to S3, with
 Secret-backed credentials, gzip compression for data and WAL, and
 `retentionPolicy: 21d`. This is a recovery-window policy, not an S3 object
 expiration rule [10]. Their ScheduledBackup declarations set `immediate: true`
