@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "queries": {
+    "os": "SELECT name, version, platform, platform_like, arch, build FROM os_version",
+    "system": "SELECT hostname, cpu_brand, cpu_logical_cores, cpu_physical_cores, physical_memory, hardware_vendor, hardware_model FROM system_info",
+    "kernel": "SELECT version FROM kernel_info",
+    "uptime": "SELECT days, hours, minutes, seconds, total_seconds FROM uptime",
+    "packages": "SELECT name, version, source FROM deb_packages WHERE name IN ('ansible', 'containerd', 'k3s', 'k3s-agent', 'openssh-server', 'osquery', 'python3', 'systemd')",
+    "services": "SELECT id, load_state, sub_state, active_state FROM systemd_units WHERE id IN ('containerd.service', 'dnsmasq.service', 'k3s.service', 'k3s-agent.service', 'openssh-server.service', 'ssh.service', 'systemd-resolved.service', 'unbound.service')",
+    "disks": "SELECT COUNT(*) AS disk_count, SUM(size * block_size) AS capacity_bytes FROM block_devices WHERE type = 'disk'",
+    "sysctl": "SELECT name, current_value FROM system_controls WHERE name IN ('kernel.randomize_va_space', 'net.ipv4.ip_forward', 'net.ipv6.conf.all.disable_ipv6')"
+  }
+}

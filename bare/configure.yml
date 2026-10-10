@@ -1,0 +1,32 @@
+- name: Maintain declared Linux host configuration
+  hosts: bare
+  gather_facts: false
+  become: true
+  pre_tasks:
+    - name: Reject unscoped or unauthorized configuration before contacting hosts
+      ansible.builtin.assert:
+        that:
+          - (ansible_limit | default('') | length) > 0
+          - maintenance_configure_approved | default(false) | bool
+        fail_msg: "Pass an explicit --limit and configuration authorization."
+      delegate_to: localhost
+      become: false
+  tasks:
+    - name: Require explicit selection and configuration authorization
+      ansible.builtin.assert:
+        that:
+          - (ansible_limit | default('') | length) > 0
+          - maintenance_configure_approved | default(false) | bool
+        fail_msg: "Pass an explicit target and -e maintenance_configure_approved=true after operator review."
+    - name: Gather host facts after operator gates pass
+      ansible.builtin.setup:
+    - name: Limit this baseline to Debian-family hosts
+      ansible.builtin.assert:
+        that: ansible_facts.os_family == "Debian"
+        fail_msg: "Only Debian-family hosts are supported by this baseline."
+    - name: Ensure declared baseline packages
+      ansible.builtin.apt:
+        name: "{{ os_baseline_packages | default([]) }}"
+        state: present
+        update_cache: false
+      when: os_baseline_packages | default([]) | length > 0

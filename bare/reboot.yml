@@ -1,0 +1,43 @@
+- name: Reboot one explicitly selected non-cluster Debian host
+  hosts: bare
+  gather_facts: false
+  become: true
+  serial: 1
+  pre_tasks:
+    - name: Reject unscoped or unauthorized reboot before contacting hosts
+      ansible.builtin.assert:
+        that:
+          - (ansible_limit | default('') | length) > 0
+          - maintenance_authorized | default(false) | bool
+          - reboot_authorized | default(false) | bool
+        fail_msg: "Pass an explicit --limit and both reboot authorization flags."
+      delegate_to: localhost
+  tasks:
+    - name: Require singleton target and explicit authorization
+      ansible.builtin.assert:
+        that:
+          - (ansible_limit | default('') | length) > 0
+          - ansible_play_hosts_all | length == 1
+          - maintenance_authorized | default(false) | bool
+          - reboot_authorized | default(false) | bool
+          - os_maintenance.reboot_allowed | default(false) | bool
+          - inventory_hostname not in groups.get('masters', [])
+          - inventory_hostname not in groups.get('workers', [])
+        fail_msg: "Reboot blocked. Cluster nodes require a separately reviewed Kubernetes maintenance procedure; select exactly one eligible host."
+    - name: Gather host facts after reboot authorization
+      ansible.builtin.setup:
+    - name: Require Debian-family host
+      ansible.builtin.assert:
+        that: ansible_facts.os_family == "Debian"
+        fail_msg: "Only Debian-family hosts are supported."
+    - name: Confirm operator approval interactively
+      ansible.builtin.pause:
+        prompt: "Type REBOOT {{ inventory_hostname }} to proceed in the approved maintenance window"
+      register: reboot_confirmation
+    - name: Abort unless exact host-specific confirmation is entered
+      ansible.builtin.assert:
+        that: reboot_confirmation.user_input == 'REBOOT ' ~ inventory_hostname
+    - name: Reboot and verify SSH return
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+        test_command: whoami
