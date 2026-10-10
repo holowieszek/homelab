@@ -65,6 +65,9 @@ grafana:
             database: $HOME_ASSISTANT_DB_NAME
             sslmode: disable
           editable: true
+      deleteDatasources:
+        - name: MeshCore Telemetry DB
+          orgId: 1
 
   persistence:
     enabled: true
