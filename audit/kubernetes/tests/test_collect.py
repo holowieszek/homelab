@@ -59,6 +59,7 @@ class TableProjectionTests(unittest.TestCase):
         url = collector.page_url("http://127.0.0.1:8000/api/v1/pods", "a+b/c==")
         self.assertIn("continue=a%2Bb%2Fc%3D%3D", url)
         self.assertIn("limit=200", url)
+        self.assertIn("includeObject=None", url)
 
     def test_request_uses_table_only_accept_and_never_retries_as_full_json(self):
         resource = collector.RESOURCES_BY_NAME["pods"]

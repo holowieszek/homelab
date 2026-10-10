@@ -148,7 +148,7 @@ def parse_table(payload: dict[str, Any], resource: Resource) -> dict[str, Any]:
 
 
 def page_url(base_url: str, continue_token: str | None = None) -> str:
-    query = {"limit": str(PAGE_SIZE)}
+    query = {"limit": str(PAGE_SIZE), "includeObject": "None"}
     if continue_token:
         query["continue"] = continue_token
     return base_url + "?" + urllib.parse.urlencode(query)
