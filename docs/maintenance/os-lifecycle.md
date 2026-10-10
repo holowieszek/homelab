@@ -26,11 +26,77 @@ YAML profiles live in `audit/policies/host-maintenance.yml`: control-plane updat
 
 ## osquery audit and output
 
-`audit/osquery/queries/approved.json` is the allowlist; `audit/collect.py --category CATEGORY --host-alias ALIAS --host-role ROLE --output /private/path/snapshot.json [--transport local|ssh] [--commit SHA]` accepts a category ID, never arbitrary SQL. It invokes `osqueryi --json`, applies a timeout/output cap, strips disallowed field names, and reports collection errors as `UNVERIFIED`. The CLI refuses an output destination inside the repository, creates a new file with mode `0600`, and prints only a status/path summary. The runner executes locally by default and supports opt-in `--transport ssh` using the supplied SSH alias, batch mode, strict host-key checking, and no privilege escalation. The SSH process receives only a minimal environment plus `SSH_AUTH_SOCK`; query arguments are built from the allowlist. The SSH client does not send SQL. Install `audit/remote/forced-collector.py` with its approved query pack under a root-owned, non-writable-by-audit-user path on each audit target, then configure the separately created audit identity with an SSH `ForceCommand` to that script, no TTY, and no forwarding. The wrapper accepts only `homelab-audit <approved-category>` (or `version`), invokes osquery without privilege escalation, and refuses arbitrary commands. Do not create that identity or change sshd in this PR; those steps require separate operator authorization and version-specific review. Without this server-side forced-command boundary, do not enable `--transport ssh`. The collector itself has not been deployed or exercised on a remote host. Raw results belong in an operator-controlled private path, never Git. Schema and clearly synthetic fixture: `audit/schema/snapshot.schema.json`, `audit/fixtures/example-snapshot.json`.
+`audit/osquery/queries/approved.json` is the allowlist; `audit/collect.py --category CATEGORY --host-alias ALIAS --host-role ROLE --output /private/path/snapshot.json [--transport local|ssh] [--commit SHA]` accepts a category ID, never arbitrary SQL. It invokes `osqueryi --json`, applies a timeout/output cap, strips disallowed field names, and reports collection errors as `UNVERIFIED`. The CLI refuses an output destination inside the repository, creates a new file with mode `0600`, and prints only a status/path summary. The runner executes locally by default and supports opt-in `--transport ssh` using the supplied SSH alias, batch mode, strict host-key checking, and no privilege escalation. The SSH process receives only a minimal environment plus `SSH_AUTH_SOCK`; query arguments are built from the allowlist. The SSH client does not send SQL. `bare/audit-bootstrap.yml` automates osquery installation, forced collector deployment, approved query pack sync, audit user creation, controller key generation, and restricted `authorized_keys` setup (`restrict,command=...`). The wrapper accepts only `homelab-audit <approved-category>` (or `version`), invokes osquery without privilege escalation, and refuses arbitrary commands. Run bootstrap only with explicit scope and approval, for example: `make -C bare audit-bootstrap INVENTORY=inventories/staging.yml HOSTS=lab-vm APPROVED=yes`. Without this server-side forced-command boundary, do not enable `--transport ssh`. Raw results belong in an operator-controlled private path, never Git. Schema and clearly synthetic fixture: `audit/schema/snapshot.schema.json`, `audit/fixtures/example-snapshot.json`.
 
 The per-host `preflight` policy entries below are review checklists, not implemented service probes. This release does not query Kubernetes readiness, Longhorn health, DNS availability, or backup systems, and does not perform cordon/drain/uncordon.
 
-Queries rely on osquery Linux tables (`os_version`, `system_info`, `uptime`, `deb_packages`, `systemd_units`, `block_devices`, `kernel_info`, `system_controls`). Validate table/column availability against the exact deployed osquery build before use; unsupported columns/tables become `UNVERIFIED`. Package installation is intentionally not automated. Raspberry Pi architecture package availability is not asserted. See [official osquery table documentation](https://osquery.io/schema/).
+Queries rely on osquery Linux tables (`os_version`, `system_info`, `uptime`, `deb_packages`, `systemd_units`, `block_devices`, `kernel_info`, `system_controls`). Validate table/column availability against the exact deployed osquery build before use; unsupported columns/tables become `UNVERIFIED`. `bare/audit-bootstrap.yml` installs osquery from the upstream APT repository on Debian-family hosts. Raspberry Pi architecture package availability is not asserted. See [official osquery table documentation](https://osquery.io/schema/).
+
+### Operator run order
+
+1. Bootstrap maintenance and audit transport on selected hosts (explicit scope required):
+
+```sh
+make -C bare audit-bootstrap INVENTORY=inventories/prod.yml HOSTS=bare APPROVED=yes
+```
+
+2. Collect all approved categories for one host alias:
+
+```sh
+OUT_DIR=~/homelab-audit/run-$(date +%F-%H%M%S)/bare1-audit
+make -C bare osquery-audit-all ALIAS=bare1-audit ROLE=worker TRANSPORT=ssh OUT_DIR="$OUT_DIR"
+jq -s 'map({(.category): .}) | add' "$OUT_DIR"/*.json > "$OUT_DIR/observed.json"
+```
+
+3. Repeat collection for each production host alias:
+
+```sh
+OUT_ROOT=~/homelab-audit/prod-$(date +%F-%H%M%S)
+mkdir -p -m 700 "$OUT_ROOT"
+for spec in bare0-audit:master bare1-audit:worker bare2-audit:worker; do
+  ALIAS="${spec%%:*}"
+  ROLE="${spec##*:}"
+  OUT_DIR="$OUT_ROOT/$ALIAS"
+  make -C bare osquery-audit-all ALIAS="$ALIAS" ROLE="$ROLE" TRANSPORT=ssh OUT_DIR="$OUT_DIR"
+  jq -s 'map({(.category): .}) | add' "$OUT_DIR"/*.json > "$OUT_DIR/observed.json"
+done
+```
+
+4. Compare desired state for each host role:
+
+```sh
+make -C bare drift-report DESIRED=/private/desired/worker.json OBSERVED="$OUT_ROOT/bare1-audit/observed.json"
+```
+
+### Required SSH alias setup for remote audit transport
+
+`collect.py` in SSH mode expects a valid OpenSSH host alias (`ALIAS`) resolving to `homelab-audit` on each host. Example controller-side config:
+
+```sshconfig
+Host bare0-audit
+  HostName 192.168.88.166
+  User homelab-audit
+  IdentityFile ~/.ssh/homelab-audit
+  IdentitiesOnly yes
+Host bare1-audit
+  HostName 192.168.88.79
+  User homelab-audit
+  IdentityFile ~/.ssh/homelab-audit
+  IdentitiesOnly yes
+Host bare2-audit
+  HostName 192.168.88.201
+  User homelab-audit
+  IdentityFile ~/.ssh/homelab-audit
+  IdentitiesOnly yes
+```
+
+Use `ssh -T -o BatchMode=yes bare1-audit "homelab-audit version"` before collection to confirm alias resolution, key usage, and forced-command behavior.
+
+### Troubleshooting notes
+
+- `collection_status=UNVERIFIED` with `errors=["RuntimeError"]` usually means SSH transport failed or remote `osqueryi` returned an error; test the alias directly with `ssh -T`.
+- `FileExistsError` from `collect.py` means the output file already exists. Results are intentionally write-once (`O_EXCL`); use a new output directory per run.
+- `audit-bootstrap` uses explicit SSH connection arguments from `bare/Makefile` (`SSH_USER`, `SSH_KEY`) with defaults `ubuntu` and `~/.ssh/test`; override per environment when needed.
 
 ## Drift and status semantics
 

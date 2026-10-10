@@ -1,3 +1,5 @@
+__pycache__/
+
 k3s.yaml
 *.tgz
 Chart.lock
