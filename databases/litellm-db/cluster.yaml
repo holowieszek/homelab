@@ -97,39 +97,39 @@ spec:
       match:
         secretKey: password
         remoteRef:
-          remoteKey: homelab/prod/litellm/credentials
-          property: password
+          remoteKey: homelab/prod/general/credentials
+          property: litellm_password
       metadata:
         secretPushFormat: string
     - conversionStrategy: None
       match:
         secretKey: username
         remoteRef:
-          remoteKey: homelab/prod/litellm/credentials
-          property: username
+          remoteKey: homelab/prod/general/credentials
+          property: litellm_username
       metadata:
         secretPushFormat: string
     - conversionStrategy: None
       match:
         secretKey: dbname
         remoteRef:
-          remoteKey: homelab/prod/litellm/credentials
-          property: dbname
+          remoteKey: homelab/prod/general/credentials
+          property: litellm_dbname
       metadata:
         secretPushFormat: string
     - conversionStrategy: None
       match:
         secretKey: uri
         remoteRef:
-          remoteKey: homelab/prod/litellm/credentials
-          property: uri
+          remoteKey: homelab/prod/general/credentials
+          property: litellm_uri
       metadata:
         secretPushFormat: string
     - conversionStrategy: None
       match:
         secretKey: jdbc-uri
         remoteRef:
-          remoteKey: homelab/prod/litellm/credentials
-          property: jdbc-uri
+          remoteKey: homelab/prod/general/credentials
+          property: litellm_jdbc-uri
       metadata:
         secretPushFormat: string

@@ -2,7 +2,7 @@
 
 ## Review baseline and evidence
 
-Repository baseline reviewed: `d7d6cbc846bb3662a6094e557358992f1c57c3b7`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
+Repository baseline reviewed: `4446c988b612d1c56e0703df6124d45191adf44a`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
 
 ## Reconciliation map
 
@@ -36,8 +36,8 @@ Arrows show relationships expressed in repository configuration, not observed ne
 | [`apps/esphome`](../apps/esphome/) / `esphome` | ESPHome dashboard. | HTTP service port `6052`; Traefik ingress with cert-manager TLS; Longhorn PVC `10Gi`. `app-template` chart. |
 | [`apps/home-assistant`](../apps/home-assistant/) / `home-assistant` | Home Assistant chart with an init container that installs HACS. A separate `home-assistant-db` cluster is declared, but this app chart does not show a database connection setting. | Ingress/TLS; Longhorn PVC `10Gi` at `/config`; upstream chart dependency `home-assistant` `0.3.51`. |
 | [`apps/homepage`](../apps/homepage/) / `homepage` | Homepage dashboard. Configured widgets/links include Speedtest, Pi-hole, MikroTik, Grafana, Argo CD, pgAdmin, Linkding, LiteLLM, Longhorn, and cluster metrics. Its widget credentials are read from `homepage-app-config`. | Root internal ingress/TLS; upstream `homepage` chart `2.0.1`; Kubernetes service account/RBAC enabled. |
-| [`apps/linkding`](../apps/linkding/) / `linkding` | Linkding reads application username/password from `linkding-app-config`, sourced from the namespaced `linkding_username` / `linkding_password` properties in the shared `homelab/prod/litellm/credentials` secret. It connects to `linkding-db-rw.linkding` using the separate `linkding-db-config`. | HTTP port `9090`; ingress/TLS; DB and application secrets are represented by ExternalSecrets. |
-| [`apps/litellm`](../apps/litellm/) / `litellm` | LiteLLM reads `DATABASE_URL`, master key, and salt key from `litellm-app-config`; mounts `litellm-config` as `/app/config.yaml`. A `litellm-db` cluster and PushSecret use the same configured AWS credential path as the LiteLLM ExternalSecret. | HTTP port `4000`; ingress/TLS; upstream DB URL is secret-backed rather than hard-coded in the chart values. |
+| [`apps/linkding`](../apps/linkding/) / `linkding` | Linkding reads application username/password from `linkding-app-config`, sourced from `linkding_username` / `linkding_password` in `homelab/prod/general/credentials`. It connects to `linkding-db-rw.linkding` using the separate `linkding-db-config`. | HTTP port `9090`; ingress/TLS; DB and application secrets are represented by ExternalSecrets. |
+| [`apps/litellm`](../apps/litellm/) / `litellm` | LiteLLM reads its app and DB properties from the `litellm_*` fields in `homelab/prod/general/credentials`; its DB PushSecret writes generated fields to that same path. It mounts `litellm-config` as `/app/config.yaml`. | HTTP port `4000`; ingress/TLS; upstream DB URL is secret-backed rather than hard-coded in the chart values. |
 | [`apps/memos`](../apps/memos/) / `memos` | Memos with file-backed application configuration/data. | HTTP port `5230`; ingress/TLS; Longhorn PVC `5Gi` mounted at `/var/opt/memos`. |
 | [`apps/opnsense-backup`](../apps/opnsense-backup/) / `opnsense-backup` | Kubernetes CronJob `opnsense-backup-cronjob` uses an ExternalSecret-backed environment and a repository-hosted ECR image. A second CronJob, `ecr-creds-refresh`, uses a separate service account and namespaced RBAC. | Backup schedule is `0 0 * * *`; ECR token helper schedule is `0 */11 * * *`. This directory is raw Kustomize/Kubernetes source, not a Helm chart. |
 | [`apps/speedtest`](../apps/speedtest/) / `speedtest` | Speedtest Tracker is configured with application schedule `0 * * * *` and connects to `speedtest-db-rw.speedtest`; app and database environment values are secret-backed. | HTTP port `80`; ingress/TLS. |
@@ -54,7 +54,7 @@ The four database manifests also define namespace-local `awssm-secret` ExternalS
 |---|---:|---:|---|---|---|---|
 | `home-assistant` / [`home-assistant-db`](../databases/home-assistant-db/cluster.yaml) | 3 | `10Gi`, storage class explicitly `longhorn` | `s3://homelab-prod-database-backups/home-assistant` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/home-assistant/credentials` |
 | `linkding` / [`linkding-db`](../databases/linkding-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/linkding` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/linkding/credentials` |
-| `litellm` / [`litellm-db`](../databases/litellm-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/litellm` | `21d` | `0 0 */6 * * *` | `homelab/prod/litellm/credentials` |
+| `litellm` / [`litellm-db`](../databases/litellm-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/litellm` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`litellm_*` properties) |
 | `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/speedtest/credentials` |
 
 CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a seconds field, not the five-field Unix crontab format; see the versioned [CloudNativePG 1.25 backup reference](https://cloudnative-pg.io/docs/1.25/backup/). The literal expression is retained above to avoid confusing it with Kubernetes CronJob schedules. A configured destination, schedule, and retention value do not establish that backups have run or can be restored.
@@ -80,8 +80,8 @@ These clusters bootstrap by recovering from the previous server name in `externa
 | cert-manager | `cluster-issuer-r53-credentials` | `homelab/prod/applications/certmanager/credentials` |
 | External Secrets bootstrap | `awssm-secret` in `external-secrets`, seeded from the two bootstrap environment variables | No AWS remote path at bootstrap |
 | Homepage | `homepage-app-config` | `homelab/prod/applications/pihole/credentials`; `homelab/prod/applications/mikrotik/credentials` |
-| Linkding | `linkding-app-config`, `linkding-db-config` | `homelab/prod/litellm/credentials` (shared Linkding app properties); `homelab/prod/databases/linkding/credentials` (separate DB credentials) |
-| LiteLLM | `litellm-app-config` | `homelab/prod/litellm/credentials` (shared with Linkding app properties; LiteLLM DB PushSecret target) |
+| Linkding | `linkding-app-config`, `linkding-db-config` | `homelab/prod/general/credentials` (`linkding_*` app properties); `homelab/prod/databases/linkding/credentials` (separate DB credentials) |
+| LiteLLM | `litellm-app-config` | `homelab/prod/general/credentials` (`litellm_*` app and DB properties; LiteLLM DB PushSecret target) |
 | Longhorn | `longhorn-backup-credentials` | `homelab/prod/global/config` |
 | OPNsense backup | `opnsense-backup-secret`, `aws-svc-user` | `homelab/prod/applications/opnsensebackups/credentials`; `homelab/prod/global/config` |
 | Speedtest | `speedtest-app-config`, `speedtest-db-config` | `homelab/prod/applications/speedtest/credentials`; `homelab/prod/databases/speedtest/credentials` |

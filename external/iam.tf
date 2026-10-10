@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/home-assistant/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/litellm/credentials-*", var.region, var.aws_account_number, var.environment),
+      module.general_credentials_secrets.secret_arn,
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 
       // resources not managed by terraform
@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "service_account_policy" {
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/home-assistant/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/litellm/credentials-*", var.region, var.aws_account_number, var.environment),
+      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/general/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
     ]
   }
