@@ -98,14 +98,6 @@ zone delegation or workload address records.
 - [Zigbee2MQTT values](../apps/zigbee2mqtt/values.yaml) use an `mqtt://` broker
   URL, a plaintext transport declaration. Its serial coordinator uses a
   separate TCP connection on port `6638`, not the MQTT ingress.
-- [Telemetry values](../apps/meshcore-telemetry/values.yaml) point to the same
-  configured broker host on port `1883`, explicitly disable MQTT TLS, and
-  subscribe to the configured telemetry topic. Its Kubernetes Service is
-  disabled, consistent with an outbound subscriber. These settings do not
-  establish successful connections, actual broker listeners, or topic ACLs.
-  The chart dependency is pinned in [the EMQX chart](../platform/emqx/Chart.yaml);
-  the official project source is [13]. Treat documentation for a different
-  release as contextual, not proof of the behavior of this pin.
 
 ## CoreDNS customization and import uncertainty
 
@@ -160,4 +152,3 @@ for lifecycle details, the disabled ISO checksum check, and boot-URL coupling.
 [1] [K3s Networking Services](https://docs.k3s.io/networking/networking-services)
 [2] [cert-manager Route53 DNS-01](https://cert-manager.io/docs/configuration/acme/dns01/route53)
 [9] [K3s Basic Network Options](https://docs.k3s.io/networking/basic-network-options)
-[13] [EMQX source repository](https://github.com/emqx/emqx)

@@ -80,7 +80,7 @@ The declared root variables are `aws_account_number`, `region`, `project_name`, 
 
 | Root file | Module callers in source | Local module source / role |
 |---|---|---|
-| `external/ecr.tf` | `ecr_token_helper`, `ecr_opnsense_backup_tool`, `ecr_cloudlog`, `ecr_meshcore_telemetry_processor` | `modules/ecr/public/v1`; creates public ECR repositories. The separate `modules/ecr/private/v1` module exists, but is not called by this root file. |
+| `external/ecr.tf` | `ecr_token_helper`, `ecr_opnsense_backup_tool`, `ecr_cloudlog` | `modules/ecr/public/v1`; creates public ECR repositories. The separate `modules/ecr/private/v1` module exists, but is not called by this root file. |
 | `external/iam.tf` | `opnsense_backups_service_account`, `service_account`, `oidc_github` | `modules/iam/user/v1` for IAM users/policy attachments and `modules/iam/identity-provider/v1` for the GitHub OIDC provider, role, policy, and trust conditions. |
 | `external/parameters.tf` | `speedtest_app_parameters` | `modules/parameter-store/v1`; creates SSM parameters. |
 | `external/r53.tf` | `primary_hosted_zone` | `modules/route53/v1`; creates a Route 53 hosted zone. |

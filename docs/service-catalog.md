@@ -24,8 +24,6 @@ graph TD
   Git[Public and private Git repositories] --> Argo[Argo CD ApplicationSets]
   Argo --> Cluster
   Zigbee[Zigbee2MQTT] --> EMQX[EMQX]
-  Telemetry[MeshCore telemetry processor] --> EMQX
-  Telemetry --> DB
   Grafana[Grafana] --> DB
 ```
 
@@ -41,7 +39,6 @@ Arrows show relationships expressed in repository configuration, not observed ne
 | [`apps/linkding`](../apps/linkding/) / `linkding` | Linkding reads its application username/password from `linkding-app-config` and connects to `linkding-db-rw.linkding` using `linkding-db-config`. | HTTP port `9090`; ingress/TLS; DB and application secrets are represented by ExternalSecrets. |
 | [`apps/litellm`](../apps/litellm/) / `litellm` | LiteLLM reads `DATABASE_URL`, master key, and salt key from `litellm-app-config`; mounts `litellm-config` as `/app/config.yaml`. A `litellm-db` cluster and PushSecret use the same configured AWS credential path as the LiteLLM ExternalSecret. | HTTP port `4000`; ingress/TLS; upstream DB URL is secret-backed rather than hard-coded in the chart values. |
 | [`apps/memos`](../apps/memos/) / `memos` | Memos with file-backed application configuration/data. | HTTP port `5230`; ingress/TLS; Longhorn PVC `5Gi` mounted at `/var/opt/memos`. |
-| [`apps/meshcore-telemetry`](../apps/meshcore-telemetry/) / `meshcore-telemetry` | Single configured processor replica subscribes to MQTT topic `meshcore/telemetry/+` at the configured EMQX host and reads its database URL from `meshcore-telemetry-db-config`. | No Kubernetes Service is enabled in the chart; database cluster is `meshcore-telemetry-db`. MQTT TLS is configured as `false`. |
 | [`apps/opnsense-backup`](../apps/opnsense-backup/) / `opnsense-backup` | Kubernetes CronJob `opnsense-backup-cronjob` uses an ExternalSecret-backed environment and a repository-hosted ECR image. A second CronJob, `ecr-creds-refresh`, uses a separate service account and namespaced RBAC. | Backup schedule is `0 0 * * *`; ECR token helper schedule is `0 */11 * * *`. This directory is raw Kustomize/Kubernetes source, not a Helm chart. |
 | [`apps/speedtest`](../apps/speedtest/) / `speedtest` | Speedtest Tracker is configured with application schedule `0 * * * *` and connects to `speedtest-db-rw.speedtest`; app and database environment values are secret-backed. | HTTP port `80`; ingress/TLS. |
 | [`apps/zigbee2mqtt`](../apps/zigbee2mqtt/) / `zigbee2mqtt` | Zigbee2MQTT points at the configured EMQX MQTT URL and a TCP-attached serial coordinator using adapter `zstack`. | Longhorn PVC `1Gi`; upstream chart dependency `zigbee2mqtt` `2.12.1`. |
@@ -51,14 +48,13 @@ The application connection claims above are limited to explicit values/manifests
 
 ## PostgreSQL cluster and backup declarations
 
-The five database manifests also define namespace-local `awssm-secret` ExternalSecrets that read AWS access-key properties from `homelab/prod/global/config` through `secretstore-sample`; their backup configuration refers to these Secrets. The `PushSecret` paths below are the configured destinations for generated database application credentials.
+The four database manifests also define namespace-local `awssm-secret` ExternalSecrets that read AWS access-key properties from `homelab/prod/global/config` through `secretstore-sample`; their backup configuration refers to these Secrets. The `PushSecret` paths below are the configured destinations for generated database application credentials.
 
 | Namespace / cluster | Instances | Declared data size | S3 destination in manifest | Retention | `ScheduledBackup` expression | Configured PushSecret path |
 |---|---:|---:|---|---|---|---|
 | `home-assistant` / [`home-assistant-db`](../databases/home-assistant-db/cluster.yaml) | 3 | `10Gi`, storage class explicitly `longhorn` | `s3://homelab-prod-database-backups/home-assistant` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/home-assistant/credentials` |
 | `linkding` / [`linkding-db`](../databases/linkding-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/linkding` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/linkding/credentials` |
 | `litellm` / [`litellm-db`](../databases/litellm-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/litellm` | `21d` | `0 0 */6 * * *` | `homelab/prod/litellm/credentials` |
-| `meshcore-telemetry` / [`meshcore-telemetry-db`](../databases/meshcore-telemetry-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/meshcore-telemetry` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/meshcore-telemetry/credentials` |
 | `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/speedtest/credentials` |
 
 CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a seconds field, not the five-field Unix crontab format; see the versioned [CloudNativePG 1.25 backup reference](https://cloudnative-pg.io/docs/1.25/backup/). The literal expression is retained above to avoid confusing it with Kubernetes CronJob schedules. A configured destination, schedule, and retention value do not establish that backups have run or can be restored.
@@ -70,9 +66,9 @@ CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a
 | [Linkding](../databases/linkding-db/cluster.yaml) | `linkding-db-backup-v2` | `linkding-db-backup-v3` |
 | [Speedtest](../databases/speedtest-db/cluster.yaml) | `speedtest-db-backup-v5` | `speedtest-db-backup-v6` |
 
-These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Home Assistant, LiteLLM, and MeshCore Telemetry instead declare `bootstrap.initdb`.
+These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Home Assistant and LiteLLM instead declare `bootstrap.initdb`.
 
-[`platform/grafana/values.yaml`](../platform/grafana/values.yaml) declares PostgreSQL data sources for `home-assistant-db-rw.home-assistant.svc.cluster.local:5432` and `meshcore-telemetry-db-rw.meshcore-telemetry.svc.cluster.local:5432`. The datasource authentication values are read from `postgres-datasources-config`.
+[`platform/grafana/values.yaml`](../platform/grafana/values.yaml) declares a PostgreSQL data source for `home-assistant-db-rw.home-assistant.svc.cluster.local:5432`. The datasource authentication values are read from `postgres-datasources-config`.
 
 ## Secret-provider reference flow
 
@@ -87,10 +83,9 @@ These clusters bootstrap by recovering from the previous server name in `externa
 | Linkding | `linkding-app-config`, `linkding-db-config` | `homelab/prod/applications/linkding/credentials`; `homelab/prod/databases/linkding/credentials` |
 | LiteLLM | `litellm-app-config` | `homelab/prod/litellm/credentials` |
 | Longhorn | `longhorn-backup-credentials` | `homelab/prod/global/config` |
-| MeshCore Telemetry | `meshcore-telemetry-db-config` | `homelab/prod/databases/meshcore-telemetry/credentials` |
 | OPNsense backup | `opnsense-backup-secret`, `aws-svc-user` | `homelab/prod/applications/opnsensebackups/credentials`; `homelab/prod/global/config` |
 | Speedtest | `speedtest-app-config`, `speedtest-db-config` | `homelab/prod/applications/speedtest/credentials`; `homelab/prod/databases/speedtest/credentials` |
-| Grafana | `grafana`, `postgres-datasources-config` | `homelab/prod/applications/grafana/credentials`; `homelab/prod/databases/home-assistant/credentials`; `homelab/prod/databases/meshcore-telemetry/credentials` |
+| Grafana | `grafana`, `postgres-datasources-config` | `homelab/prod/applications/grafana/credentials`; `homelab/prod/databases/home-assistant/credentials` |
 | Database clusters | Namespace-local `awssm-secret` plus generated `*-db-app` Secrets | `homelab/prod/global/config`; per-database destinations shown in the database table above |
 
 These are identifiers and mappings in source, not a statement that each remote AWS object exists or currently synchronizes. Secret values are intentionally not reproduced here. External Secrets' versioned references explain the cluster-scoped store, pull-based `ExternalSecret`, and push-based `PushSecret` resources: [ClusterSecretStore v0.14.2](https://external-secrets.io/v0.14.2/api/clustersecretstore/), [ExternalSecret v0.14.2](https://external-secrets.io/v0.14.2/api/externalsecret/), and [PushSecret v0.14.2](https://external-secrets.io/v0.14.2/api/pushsecret/).

@@ -32,14 +32,13 @@ The charts use upstream Helm dependencies declared in each `Chart.yaml`; the rep
 | `linkding` | Bookmark manager with PostgreSQL credentials from External Secrets |
 | `litellm` | LiteLLM proxy with PostgreSQL and secret-backed keys/config |
 | `memos` | Notes service with persistent data |
-| `meshcore-telemetry` | MQTT telemetry processor writing to PostgreSQL; no Service enabled |
 | `opnsense-backup` | Kubernetes CronJob/RBAC manifests and ECR-token helper resources |
 | `speedtest` | Scheduled Speedtest Tracker backed by PostgreSQL |
 | `zigbee2mqtt` | Zigbee2MQTT using network-attached coordinator and EMQX |
 
 ### Databases and platform
 
-CloudNativePG clusters are declared for Home Assistant, Linkding, LiteLLM, MeshCore Telemetry and Speedtest. `databases/pgadmin` defines the database UI. Platform charts install CloudNativePG, EMQX and Grafana; system charts bootstrap Argo CD and External Secrets and manage cert-manager, Longhorn and kube-prometheus-stack.
+CloudNativePG clusters are declared for Home Assistant, Linkding, LiteLLM and Speedtest. `databases/pgadmin` defines the database UI. Platform charts install CloudNativePG, EMQX and Grafana; system charts bootstrap Argo CD and External Secrets and manage cert-manager, Longhorn and kube-prometheus-stack.
 
 ### Cluster DNS
 

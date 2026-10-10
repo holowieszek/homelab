@@ -182,28 +182,13 @@ client authentication, or topic authorization. Missing local overrides do not
 prove permissive chart defaults or anonymous access.
 [Zigbee2MQTT values](../apps/zigbee2mqtt/values.yaml) declare an `mqtt://`
 transport and `permit_join: true`.
-[MeshCore values](../apps/meshcore-telemetry/values.yaml) explicitly disable MQTT
-TLS. Dashboard HTTPS does not encrypt these MQTT client connections.
+Dashboard HTTPS does not encrypt MQTT client connections.
 
 Plaintext transport can expose messages to parties able to observe that path;
 a permit-join setting can allow device onboarding if effective and the relevant
 pairing conditions are met. These are potential operational risks, not claims
 of broker reachability, unauthorized clients, an active pairing window, or
 unwanted devices. See [networking: MQTT wiring](networking.md#mqtt-wiring-plaintext-is-distinct-from-dashboard-tls).
-
-### MeshCore declares container and pod hardening
-
-[MeshCore values](../apps/meshcore-telemetry/values.yaml) disable privilege
-escalation, set a read-only root filesystem, and drop all Linux capabilities at
-container level. Pod settings require non-root execution with explicit user and
-group IDs. Its Service is disabled. These reduce declared process privileges;
-a disabled Service does not prevent outbound access or establish isolation.
-
-The same file uses a mutable image tag and disables MQTT TLS. Hardening does not
-establish image provenance, transport protection, successful non-root startup,
-or namespace-wide policy enforcement. The
-[chart dependency](../apps/meshcore-telemetry/Chart.yaml) is pinned, but rendered
-security contexts and effective runtime restrictions were not inspected.
 
 ### Storage protections do not prove backup durability
 
@@ -254,8 +239,6 @@ values or prescribing infrastructure changes here:
 - MQTT and Zigbee: effective listeners, network reachability, client credentials,
   topic ACLs, transport modes, and the active permit-join window. Do not infer
   anonymous access or ongoing pairing from these values alone.
-- MeshCore: rendered and admitted security contexts, effective image identity,
-  non-root startup, writable-path requirements, and surrounding isolation.
 - Durability: actual volume job assignments, backup completion and integrity,
   object/version retention, credential access, failure-domain placement, and a
   separately authorized recovery test. Local documentation validation cannot

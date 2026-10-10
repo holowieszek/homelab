@@ -182,8 +182,8 @@ Bootstrap recovery is an initialization input, not a periodic restore. Current
 schedules, `immediate: true`, and declared retention do not establish existence
 or retention of the historical bootstrap source. Do not change the bootstrap
 source to match current output, recreate a Cluster, or select a restore target
-based only on these names. Home Assistant, LiteLLM, and MeshCore Telemetry
-instead declare `bootstrap.initdb`, as documented in the catalog.
+based only on these names. Home Assistant and LiteLLM instead declare
+`bootstrap.initdb`, as documented in the catalog.
 
 If the required backup and WAL availability cannot be independently confirmed
 by an authorized backup owner, stop before restoration. This runbook does not
