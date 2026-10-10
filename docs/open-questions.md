@@ -1,8 +1,10 @@
 # Open questions and operator follow-up
 
-Source snapshot: `004d097fe82384043520a1e43d1f085f59f0b852`. These questions arise from tracked configuration, not observed production faults. Resolve live-state questions only in an explicitly authorized operator environment; this documentation pass did not access production.
+Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions arise from tracked configuration, not observed production faults. The hardware inventory is the exception: its listed processor/core/memory facts were collected read-only from production hosts. No production configuration was changed; resolve other live-state questions only in an explicitly authorized operator environment.
 
 ## Provisioning and credentials
+
+- Which storage devices and capacities are installed on each production host? The inventory lists three nodes but does not record disk hardware; see the [hardware inventory](hardware-inventory.md) for currently documented host specifications.
 
 - Who supplies and rotates access keys for the IAM users, required Secrets Manager values, the SSM parameter value, and the bootstrap environment? The [IAM user module](../external/modules/iam/user/v1/main.tf) creates no keys; the [Secrets Manager module](../external/modules/secrets-manager/v1/main.tf) creates containers only; the [SSM module](../external/modules/parameter-store/v1/main.tf) ignores later value changes. Confirm ownership without recording credentials here.
 - Are the declared PushSecret writers and their IAM permissions sufficient for the intended remote destinations? `speedtest_db_secrets` and `argocd_app_secrets` are commented out in [the root module file](../external/sm.tf), while their Kubernetes push flows remain declared. Source does not establish whether the destination objects or values exist.
