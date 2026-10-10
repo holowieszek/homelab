@@ -1,4 +1,0 @@
-bare:
-  hosts:
-    lab-vm:
-      ansible_host: 10.28.207.53

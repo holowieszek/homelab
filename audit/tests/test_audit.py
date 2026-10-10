@@ -1,4 +1,7 @@
 import importlib.util
+import os
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -21,10 +24,25 @@ forced = load("forced_collector", "audit/remote/forced-collector.py")
 drift = load_drift()
 
 class AuditTests(unittest.TestCase):
+    def test_bounded_runner_terminates_on_output_limit(self):
+        command = [sys.executable, "-c", "import sys; sys.stdout.write('x' * 4096)"]
+        with self.assertRaises(collector.OutputLimitExceeded):
+            collector._run_bounded(command, os.environ.copy(), timeout=5, max_bytes=64)
+
+    def test_bounded_runner_terminates_on_timeout(self):
+        command = [sys.executable, "-c", "import time; time.sleep(2)"]
+        with self.assertRaises(subprocess.TimeoutExpired):
+            collector._run_bounded(command, os.environ.copy(), timeout=0.1, max_bytes=64)
+
+    def test_forced_collector_enforces_output_limit(self):
+        command = [sys.executable, "-c", "import sys; sys.stdout.write('x' * 4096)"]
+        with self.assertRaises(forced.OutputLimitExceeded):
+            forced.run_bounded(command, os.environ.copy(), timeout=5, max_bytes=64)
+
     def test_collect_uses_allowlisted_category_and_sanitizes_fields(self):
         fake = [SimpleNamespace(returncode=0, stdout="osqueryi version 5.x", stderr=""),
                 SimpleNamespace(returncode=0, stdout='[{"platform":"ubuntu","password":"nope","serial":"nope"}]', stderr="")]
-        with patch.object(collector.subprocess, "run", side_effect=fake) as run:
+        with patch.object(collector, "_run_bounded", side_effect=fake) as run:
             result = collector.collect("os", "fixture-host", "worker", "fixture-sha")
         self.assertEqual(result["collection_status"], "OK")
         self.assertEqual(result["observed_facts"], [{"platform": "ubuntu"}])
@@ -33,7 +51,7 @@ class AuditTests(unittest.TestCase):
     def test_schema_or_permission_errors_are_unverified(self):
         fake = [SimpleNamespace(returncode=0, stdout="osqueryi version 5.x", stderr=""),
                 SimpleNamespace(returncode=0, stdout="[]", stderr="Error: no such table: system_info")]
-        with patch.object(collector.subprocess, "run", side_effect=fake):
+        with patch.object(collector, "_run_bounded", side_effect=fake):
             result = collector.collect("system", "fixture-host", "worker", "fixture-sha")
         self.assertEqual(result["collection_status"], "UNVERIFIED")
         self.assertTrue(result["errors"])
@@ -41,7 +59,7 @@ class AuditTests(unittest.TestCase):
     def test_ssh_transport_is_batch_strict_and_allowlisted(self):
         fake = [SimpleNamespace(returncode=0, stdout="osqueryi version 5.x", stderr=""),
                 SimpleNamespace(returncode=0, stdout='[{"platform":"ubuntu"}]', stderr="")]
-        with patch.object(collector.subprocess, "run", side_effect=fake) as run:
+        with patch.object(collector, "_run_bounded", side_effect=fake) as run:
             result = collector.collect("os", "test-host", "worker", "fixture-sha", transport="ssh")
         self.assertEqual(result["collection_status"], "OK")
         args, kwargs = run.call_args_list[1].args[0], run.call_args_list[1].kwargs
@@ -58,14 +76,24 @@ class AuditTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             forced.requested_action("homelab-audit missing-category")
 
+    def test_ssh_transport_uses_explicit_config_when_requested(self):
+        fake = [SimpleNamespace(returncode=0, stdout="osqueryi version 5.x", stderr=""),
+                SimpleNamespace(returncode=0, stdout='[{"platform":"ubuntu"}]', stderr="")]
+        with patch.object(collector, "_run_bounded", side_effect=fake) as run:
+            result = collector.collect("os", "test-host", "worker", "fixture-sha",
+                                       transport="ssh", ssh_config="/private/ssh_config")
+        self.assertEqual(result["collection_status"], "OK")
+        args = run.call_args_list[1].args[0]
+        self.assertEqual(args[args.index("-F") + 1], "/private/ssh_config")
+
     def test_invalid_ssh_alias_is_rejected_before_execution(self):
-        with patch.object(collector.subprocess, "run") as run:
+        with patch.object(collector, "_run_bounded") as run:
             with self.assertRaises(ValueError):
                 collector.collect("os", "-oProxyCommand=bad", "worker", "fixture-sha", transport="ssh")
         run.assert_not_called()
 
     def test_missing_collector_is_unverified(self):
-        with patch.object(collector.subprocess, "run", side_effect=FileNotFoundError):
+        with patch.object(collector, "_run_bounded", side_effect=FileNotFoundError):
             result = collector.collect("os", "fixture-host", "worker", "fixture-sha")
         self.assertEqual(result["collection_status"], "UNVERIFIED")
         self.assertEqual(result["observed_facts"], [])
@@ -111,6 +139,20 @@ class DriftTests(unittest.TestCase):
         rows = drift.compare(desired, observed, {"os.version": "approved maintenance window"})
         self.assertEqual(rows[0]["status"], "APPROVED_EXCEPTION")
         self.assertEqual(rows[0]["exception"], "approved maintenance window")
+
+class AnsibleSafetyTests(unittest.TestCase):
+    def test_audit_bootstrap_is_scoped_and_never_generates_controller_keys(self):
+        playbook = (ROOT / "bare/audit-bootstrap.yml").read_text()
+        self.assertIn("ansible_play_hosts_all | length == 1", playbook)
+        self.assertIn("audit_bootstrap_authorized | bool", playbook)
+        self.assertIn('audit_key_files.results[0].stat.mode == "0600"', playbook)
+        self.assertNotIn("ssh-keygen", playbook)
+
+    def test_reboot_single_host_gate_runs_before_host_tasks(self):
+        playbook = (ROOT / "bare/reboot.yml").read_text()
+        pre_tasks = playbook.split("  tasks:", 1)[0]
+        self.assertIn("ansible_play_hosts_all | length == 1", pre_tasks)
+        self.assertIn("reboot_authorized | default(false) | bool", pre_tasks)
 
 if __name__ == "__main__":
     unittest.main()

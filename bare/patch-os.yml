@@ -12,6 +12,7 @@
           - maintenance_authorized | default(false) | bool
         fail_msg: "Pass an explicit --limit selecting exactly one host and maintenance authorization."
       delegate_to: localhost
+      become: false
   tasks:
     - name: Require explicit target, host policy opt-in, and operator approval
       ansible.builtin.assert:

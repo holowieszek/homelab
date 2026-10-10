@@ -15,43 +15,49 @@
     audit_repo_file: /etc/apt/sources.list.d/osquery.list
     audit_repo_url: "deb [signed-by={{ audit_keyring_path }}] https://pkg.osquery.io/deb deb main"
     audit_repo_key_url: https://pkg.osquery.io/deb/pubkey.gpg
+    audit_osquery_package_version: "5.23.1-1.linux"
+    audit_osquery_supported_architectures:
+      - x86_64
   pre_tasks:
-    - name: Reject unscoped or unauthorized audit bootstrap before contacting hosts
+    - name: Reject unscoped, multi-host, or unauthorized audit bootstrap before contacting hosts
       ansible.builtin.assert:
         that:
           - (ansible_limit | default('') | length) > 0
+          - ansible_play_hosts_all | length == 1
           - audit_bootstrap_authorized | bool
-        fail_msg: "Pass an explicit --limit and -e audit_bootstrap_authorized=true after operator review."
+        fail_msg: "Pass an explicit --limit selecting exactly one host and authorize after operator review."
       delegate_to: localhost
       become: false
-    - name: Ensure controller SSH directory exists
-      ansible.builtin.file:
-        path: "{{ audit_controller_key_path | dirname }}"
-        state: directory
-        mode: "0700"
+    - name: Inspect operator-managed audit key pair on controller
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - "{{ audit_controller_key_path }}"
+        - "{{ audit_controller_key_path }}.pub"
+      register: audit_key_files
       delegate_to: localhost
       become: false
-      run_once: true
-    - name: Generate audit SSH key pair on controller when missing
-      ansible.builtin.command:
-        cmd: >-
-          ssh-keygen -t ed25519 -N '' -C homelab-audit -f {{ audit_controller_key_path }}
-      args:
-        creates: "{{ audit_controller_key_path }}"
+    - name: Require existing protected private key and public key before bootstrap
+      ansible.builtin.assert:
+        that:
+          - audit_key_files.results | length == 2
+          - audit_key_files.results[0].stat.exists
+          - audit_key_files.results[0].stat.isreg
+          - audit_key_files.results[0].stat.mode == "0600"
+          - audit_key_files.results[1].stat.exists
+          - audit_key_files.results[1].stat.isreg
+        fail_msg: "Create an operator-managed key pair first; private key must exist with mode 0600."
       delegate_to: localhost
       become: false
-      run_once: true
-    - name: Read generated controller public key
+    - name: Read controller public key
       ansible.builtin.slurp:
         path: "{{ audit_controller_key_path }}.pub"
       register: audit_pubkey_slurp
       delegate_to: localhost
       become: false
-      run_once: true
     - name: Share controller public key with all hosts in this play
       ansible.builtin.set_fact:
         audit_controller_public_key: "{{ audit_pubkey_slurp.content | b64decode | trim }}"
-      run_once: true
   tasks:
     - name: Gather host facts after authorization checks
       ansible.builtin.setup:
@@ -59,6 +65,14 @@
       ansible.builtin.assert:
         that: ansible_facts.os_family == "Debian"
         fail_msg: "Only Debian-family hosts are supported by this bootstrap."
+    - name: Require verified osquery architecture and pinned package version
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.architecture in audit_osquery_supported_architectures
+          - audit_osquery_package_version | length > 0
+          - audit_osquery_package_version not in ["latest", "*"]
+        fail_msg: "osquery package installation is verified only for x86_64/amd64 and requires a pinned version; do not install unverified ARM packages."
+      when: audit_install_osquery | bool
     - name: Install osquery APT prerequisites
       ansible.builtin.apt:
         name:
@@ -77,6 +91,8 @@
     - name: Install osquery keyring
       ansible.builtin.command:
         cmd: gpg --dearmor --yes -o {{ audit_keyring_path }} /tmp/osquery.gpg.key
+      args:
+        creates: "{{ audit_keyring_path }}"
       when: audit_install_osquery | bool
     - name: Configure osquery APT repository
       ansible.builtin.copy:
@@ -86,9 +102,9 @@
         mode: "0644"
         content: "{{ audit_repo_url }}\n"
       when: audit_install_osquery | bool
-    - name: Install osquery package
+    - name: Install osquery package at the approved version
       ansible.builtin.apt:
-        name: osquery
+        name: "osquery={{ audit_osquery_package_version }}"
         state: present
         update_cache: true
       when: audit_install_osquery | bool

@@ -1,6 +1,0 @@
-os_maintenance:
-  enabled: true
-  approved: true
-  reboot_allowed: true
-os_maintenance_packages: [curl, openssh-server]
-os_baseline_packages: [jq]

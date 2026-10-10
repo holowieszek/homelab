@@ -8,10 +8,12 @@
       ansible.builtin.assert:
         that:
           - (ansible_limit | default('') | length) > 0
+          - ansible_play_hosts_all | length == 1
           - maintenance_authorized | default(false) | bool
           - reboot_authorized | default(false) | bool
         fail_msg: "Pass an explicit --limit and both reboot authorization flags."
       delegate_to: localhost
+      become: false
   tasks:
     - name: Require singleton target and explicit authorization
       ansible.builtin.assert:

@@ -26,25 +26,26 @@ YAML profiles live in `audit/policies/host-maintenance.yml`: control-plane updat
 
 ## osquery audit and output
 
-`audit/osquery/queries/approved.json` is the allowlist; `audit/collect.py --category CATEGORY --host-alias ALIAS --host-role ROLE --output /private/path/snapshot.json [--transport local|ssh] [--commit SHA]` accepts a category ID, never arbitrary SQL. It invokes `osqueryi --json`, applies a timeout/output cap, strips disallowed field names, and reports collection errors as `UNVERIFIED`. The CLI refuses an output destination inside the repository, creates a new file with mode `0600`, and prints only a status/path summary. The runner executes locally by default and supports opt-in `--transport ssh` using the supplied SSH alias, batch mode, strict host-key checking, and no privilege escalation. The SSH process receives only a minimal environment plus `SSH_AUTH_SOCK`; query arguments are built from the allowlist. The SSH client does not send SQL. `bare/audit-bootstrap.yml` automates osquery installation, forced collector deployment, approved query pack sync, audit user creation, controller key generation, and restricted `authorized_keys` setup (`restrict,command=...`). The wrapper accepts only `homelab-audit <approved-category>` (or `version`), invokes osquery without privilege escalation, and refuses arbitrary commands. Run bootstrap only with explicit scope and approval, for example: `make -C bare audit-bootstrap INVENTORY=inventories/staging.yml HOSTS=lab-vm APPROVED=yes`. Without this server-side forced-command boundary, do not enable `--transport ssh`. Raw results belong in an operator-controlled private path, never Git. Schema and clearly synthetic fixture: `audit/schema/snapshot.schema.json`, `audit/fixtures/example-snapshot.json`.
+`audit/osquery/queries/approved.json` is the allowlist; `audit/collect.py --category CATEGORY --host-alias ALIAS --host-role ROLE --output /private/path/snapshot.json [--transport local|ssh] [--ssh-config /private/ssh_config] [--commit SHA]` accepts a category ID, never arbitrary SQL. It invokes `osqueryi --json`, applies a timeout/output cap, strips disallowed field names, and reports collection errors as `UNVERIFIED`. The CLI refuses an output destination inside the repository, creates a new file with mode `0600`, and prints only a status/path summary. The runner executes locally by default and supports opt-in `--transport ssh` using the supplied SSH alias, batch mode, strict host-key checking, and no privilege escalation. The SSH process receives only a minimal environment plus `SSH_AUTH_SOCK`; query arguments are built from the allowlist. The SSH client does not send SQL. `bare/audit-bootstrap.yml` automates osquery installation, forced collector deployment, approved query pack sync, creation of the restricted audit user, validation of an operator-managed controller key pair, and restricted `authorized_keys` setup (`restrict,command=...`). The wrapper accepts only `homelab-audit <approved-category>` (or `version`), invokes osquery without privilege escalation, and refuses arbitrary commands. For a local staging VM, use its external inventory and explicitly supplied audit key, for example: `make -C bare audit-bootstrap INVENTORY="$HOME/.config/homelab-staging/inventory.yml" HOSTS=lab-vm APPROVED=yes AUDIT_KEY="$HOME/.ssh/homelab-audit-staging"`. The playbook rejects multiple selected hosts before contact. Without this server-side forced-command boundary, do not enable `--transport ssh`. Raw results belong in an operator-controlled private path, never Git. Schema and clearly synthetic fixture: `audit/schema/snapshot.schema.json`, `audit/fixtures/example-snapshot.json`.
 
 The per-host `preflight` policy entries below are review checklists, not implemented service probes. This release does not query Kubernetes readiness, Longhorn health, DNS availability, or backup systems, and does not perform cordon/drain/uncordon.
 
-Queries rely on osquery Linux tables (`os_version`, `system_info`, `cpu_info`, `uptime`, `deb_packages`, `systemd_units`, `block_devices`, `kernel_info`, `system_controls`). The `hardware` category combines `system_info` with aggregated CPU clock fields from `cpu_info` (model in `cpu_brand`, core counts, `physical_memory_gib`, vendor/board strings, max/current clock in MHz). Legacy `system` remains a smaller subset for drift fixtures. Validate table/column availability against the exact deployed osquery build before use; unsupported columns/tables become `UNVERIFIED`. `bare/audit-bootstrap.yml` installs osquery from the upstream APT repository on Debian-family hosts. Raspberry Pi architecture package availability is not asserted. See [official osquery table documentation](https://osquery.io/schema/).
+Queries rely on osquery Linux tables (`os_version`, `system_info`, `cpu_info`, `uptime`, `deb_packages`, `systemd_units`, `block_devices`, `kernel_info`, `system_controls`). The `hardware` category combines `system_info` with aggregated CPU clock fields from `cpu_info` (model in `cpu_brand`, core counts, `physical_memory_gib`, vendor/board strings, max/current clock in MHz). Legacy `system` remains a smaller subset for drift fixtures. Validate table/column availability against the exact deployed osquery build before use; unsupported columns/tables become `UNVERIFIED`. `bare/audit-bootstrap.yml` installs osquery from the upstream APT repository on Debian-family hosts. Installation is pinned to `5.23.1-1.linux` and guarded to Ansible architecture `x86_64` / APT `amd64`; Raspberry Pi ARM architectures are deliberately rejected until a trusted upstream `.deb` is verified. Do not use third-party binaries. See [official osquery table documentation](https://osquery.io/schema/).
 
 ### Operator run order
 
-1. Bootstrap maintenance and audit transport on selected hosts (explicit scope required):
+1. Prepare a separate operator-managed audit key pair, then bootstrap exactly one reviewed host. The playbook requires a private-key file with mode `0600`, its adjacent `.pub` file, an explicit host limit, and authorization; it never generates a private key.
 
 ```sh
-make -C bare audit-bootstrap INVENTORY=inventories/prod.yml HOSTS=bare APPROVED=yes
+ssh-keygen -t ed25519 -f "$HOME/.ssh/homelab-audit" -C homelab-audit
+make -C bare audit-bootstrap INVENTORY=inventories/prod.yml HOSTS=__ONE_APPROVED_HOST__ APPROVED=yes AUDIT_KEY="$HOME/.ssh/homelab-audit"
 ```
 
 2. Collect all approved categories for one host alias:
 
 ```sh
 OUT_DIR=~/homelab-audit/run-$(date +%F-%H%M%S)/bare1-audit
-make -C bare osquery-audit-all ALIAS=bare1-audit ROLE=worker TRANSPORT=ssh OUT_DIR="$OUT_DIR"
+make -C bare osquery-audit-all ALIAS=bare1-audit ROLE=worker TRANSPORT=ssh SSH_CONFIG=/private/ssh_config OUT_DIR="$OUT_DIR"
 jq -s 'map({(.category): .}) | add' "$OUT_DIR"/*.json > "$OUT_DIR/observed.json"
 ```
 
@@ -74,17 +75,17 @@ make -C bare drift-report DESIRED=/private/desired/worker.json OBSERVED="$OUT_RO
 
 ```sshconfig
 Host bare0-audit
-  HostName 192.168.88.166
+  HostName __REPLACE_WITH_PRIVATE_HOST_ADDRESS__
   User homelab-audit
   IdentityFile ~/.ssh/homelab-audit
   IdentitiesOnly yes
 Host bare1-audit
-  HostName 192.168.88.79
+  HostName __REPLACE_WITH_PRIVATE_HOST_ADDRESS__
   User homelab-audit
   IdentityFile ~/.ssh/homelab-audit
   IdentitiesOnly yes
 Host bare2-audit
-  HostName 192.168.88.201
+  HostName __REPLACE_WITH_PRIVATE_HOST_ADDRESS__
   User homelab-audit
   IdentityFile ~/.ssh/homelab-audit
   IdentitiesOnly yes
@@ -96,89 +97,107 @@ Use `ssh -T -o BatchMode=yes bare1-audit "homelab-audit version"` before collect
 
 - `collection_status=UNVERIFIED` with `errors=["RuntimeError"]` usually means SSH transport failed or remote `osqueryi` returned an error; test the alias directly with `ssh -T`.
 - `FileExistsError` from `collect.py` means the output file already exists. Results are intentionally write-once (`O_EXCL`); use a new output directory per run.
-- `audit-bootstrap` uses explicit SSH connection arguments from `bare/Makefile` (`SSH_USER`, `SSH_KEY`) with defaults `ubuntu` and `~/.ssh/test`; override per environment when needed.
+- `audit-bootstrap` uses explicit SSH connection arguments from `bare/Makefile` (`SSH_USER`, `SSH_KEY`; defaults `ubuntu` and `~/.ssh/test`) and requires a separate existing operator-managed controller key pair through `AUDIT_KEY` (default `~/.ssh/homelab-audit`).
 
 ### Staging VM with Multipass for runbook tests
 
-Use a disposable staging VM before production maintenance runs. Keep this inventory local and do not commit transient staging files.
+The staging VM is disposable and its inventory and host variables must remain outside the repository. The repository ignores the legacy in-tree staging paths as a defense in depth; do not commit live VM addresses or generated audit results.
 
 Prerequisites on the controller:
 
 - Multipass installed and functional (`multipass version`).
-- Hardware virtualization enabled in firmware (AMD SVM or Intel VT-x), with `/dev/kvm` available.
-- Existing maintenance key pair at `~/.ssh/test` and `~/.ssh/test.pub` (or override `SSH_KEY` in `make` targets).
+- Hardware virtualization enabled in firmware (AMD SVM or Intel VT-x), with `/dev/kvm` available when using the QEMU driver.
+- An operator-managed SSH key pair for the staging VM (default examples use `~/.ssh/test`).
 
 Quick preflight checks:
 
 ```sh
 multipass version
-test -r ~/.ssh/test.pub
+test -r "$HOME/.ssh/test.pub"
 grep -Ewc 'vmx|svm' /proc/cpuinfo
 ls -l /dev/kvm
 ```
 
-Create the VM with `ubuntu` user and your maintenance public key:
+Create a dedicated VM with the staging public key; keep the rendered cloud-init input local and never commit it.
 
 ```sh
-multipass launch 24.04 --name lab-vm --cloud-init - <<'EOF'
+multipass launch 24.04 --name lab-vm --cloud-init - <<EOF
 users:
   - name: ubuntu
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys:
-      - __REPLACE_WITH_TEST_PUBKEY__
+      - $(cat "$HOME/.ssh/test.pub")
+package_update: true
+packages:
+  - openssh-server
+  - python3
 EOF
-multipass info lab-vm | grep IPv4
+multipass info lab-vm
 ```
 
-Replace `__REPLACE_WITH_TEST_PUBKEY__` with the literal output of `cat ~/.ssh/test.pub` before running. If virtualization is disabled, Multipass launch fails and firmware settings must be corrected first.
-
-Use local staging inventory files:
+Generate a local inventory from Multipass state under the user's config directory, not in Git:
 
 ```sh
-cat > bare/inventories/staging.yml <<'EOF'
+STAGING_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/homelab-staging"
+install -d -m 700 "$STAGING_DIR/host_vars"
+VM_IP="$(multipass info lab-vm --format json | jq -r '.info["lab-vm"].ipv4[0]')"
+cat > "$STAGING_DIR/inventory.yml" <<EOF
 bare:
   hosts:
     lab-vm:
-      ansible_host: __REPLACE_WITH_VM_IP__
+      ansible_host: $VM_IP
 EOF
-```
-
-```sh
-mkdir -p bare/inventories/host_vars
-cat > bare/inventories/host_vars/lab-vm.yml <<'EOF'
+cat > "$STAGING_DIR/host_vars/lab-vm.yml" <<'EOF'
 os_maintenance:
   enabled: true
   approved: true
-  reboot_allowed: true
+  reboot_allowed: false
 os_maintenance_packages: [curl, openssh-server]
 os_baseline_packages: [jq]
 EOF
+chmod 600 "$STAGING_DIR/inventory.yml" "$STAGING_DIR/host_vars/lab-vm.yml"
 ```
 
-Runbooks on staging (controller-side):
+Run staging checks with an explicit inventory, host, and key. `patch-apply` changes only the package allowlist in this local staging profile and still requires a separate operator approval token; do not confuse it with production authorization.
 
 ```sh
-make -C bare configure-check INVENTORY=inventories/staging.yml HOSTS=lab-vm SSH_USER=ubuntu SSH_KEY=~/.ssh/test
-make -C bare patch-preview INVENTORY=inventories/staging.yml HOSTS=lab-vm SSH_USER=ubuntu SSH_KEY=~/.ssh/test
-make -C bare patch-apply INVENTORY=inventories/staging.yml HOSTS=lab-vm APPROVED=yes SSH_USER=ubuntu SSH_KEY=~/.ssh/test
-make -C bare audit-bootstrap INVENTORY=inventories/staging.yml HOSTS=lab-vm APPROVED=yes SSH_USER=ubuntu SSH_KEY=~/.ssh/test
+make -C bare configure-check INVENTORY="$STAGING_DIR/inventory.yml" HOSTS=lab-vm SSH_USER=ubuntu SSH_KEY="$HOME/.ssh/test"
+make -C bare patch-preview INVENTORY="$STAGING_DIR/inventory.yml" HOSTS=lab-vm SSH_USER=ubuntu SSH_KEY="$HOME/.ssh/test"
+make -C bare patch-apply INVENTORY="$STAGING_DIR/inventory.yml" HOSTS=lab-vm APPROVED=yes SSH_USER=ubuntu SSH_KEY="$HOME/.ssh/test"
 ```
 
-After `audit-bootstrap`, add SSH alias `lab-vm-audit` and run:
+For an isolated audit-bootstrap test, create a separate operator-managed audit key pair first and pass its path explicitly; the playbook does not generate private keys. After bootstrap, write an SSH config fragment outside the repository, then make the first version probe to accept and pin the staging host key before collection:
 
 ```sh
-OUT_DIR=~/homelab-audit/staging-$(date +%F-%H%M%S)/lab-vm-audit
-make -C bare osquery-audit-all ALIAS=lab-vm-audit ROLE=staging TRANSPORT=ssh OUT_DIR="$OUT_DIR"
+ssh-keygen -t ed25519 -f "$HOME/.ssh/homelab-audit-staging" -C homelab-staging-audit
+VM_IP="$(multipass info lab-vm --format json | jq -r '.info["lab-vm"].ipv4[0]')"
+cat > "$STAGING_DIR/ssh_config" <<EOF
+Host lab-vm-audit
+  HostName $VM_IP
+  User homelab-audit
+  IdentityFile $HOME/.ssh/homelab-audit-staging
+  IdentitiesOnly yes
+  StrictHostKeyChecking accept-new
+  UserKnownHostsFile $STAGING_DIR/known_hosts
+  BatchMode yes
+EOF
+chmod 600 "$STAGING_DIR/ssh_config"
+ssh -T -F "$STAGING_DIR/ssh_config" lab-vm-audit "homelab-audit version"
+OUT_DIR="$HOME/homelab-audit/staging-$(date +%F-%H%M%S)/lab-vm-audit"
+make -C bare osquery-audit-all ALIAS=lab-vm-audit ROLE=staging TRANSPORT=ssh SSH_CONFIG="$STAGING_DIR/ssh_config" OUT_DIR="$OUT_DIR"
 jq -s 'map({(.category): .}) | add' "$OUT_DIR"/*.json > "$OUT_DIR/observed.json"
 ```
 
-Destroy staging resources when finished:
+Do not run this bootstrap command against production as part of staging validation.
+
+Stop and permanently remove only this VM when finished:
 
 ```sh
-multipass delete lab-vm
-multipass purge
-rm -f bare/inventories/staging.yml bare/inventories/host_vars/lab-vm.yml
+multipass delete --purge lab-vm
+rm -rf "$STAGING_DIR"
 ```
+
+Do not use a global `multipass purge`; it can remove other previously deleted instances. Keep the staging VM if you still need it for further tests.
 
 ## Drift and status semantics
 
