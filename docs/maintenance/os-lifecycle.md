@@ -98,6 +98,88 @@ Use `ssh -T -o BatchMode=yes bare1-audit "homelab-audit version"` before collect
 - `FileExistsError` from `collect.py` means the output file already exists. Results are intentionally write-once (`O_EXCL`); use a new output directory per run.
 - `audit-bootstrap` uses explicit SSH connection arguments from `bare/Makefile` (`SSH_USER`, `SSH_KEY`) with defaults `ubuntu` and `~/.ssh/test`; override per environment when needed.
 
+### Staging VM with Multipass for runbook tests
+
+Use a disposable staging VM before production maintenance runs. Keep this inventory local and do not commit transient staging files.
+
+Prerequisites on the controller:
+
+- Multipass installed and functional (`multipass version`).
+- Hardware virtualization enabled in firmware (AMD SVM or Intel VT-x), with `/dev/kvm` available.
+- Existing maintenance key pair at `~/.ssh/test` and `~/.ssh/test.pub` (or override `SSH_KEY` in `make` targets).
+
+Quick preflight checks:
+
+```sh
+multipass version
+test -r ~/.ssh/test.pub
+grep -Ewc 'vmx|svm' /proc/cpuinfo
+ls -l /dev/kvm
+```
+
+Create the VM with `ubuntu` user and your maintenance public key:
+
+```sh
+multipass launch 24.04 --name lab-vm --cloud-init - <<'EOF'
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - __REPLACE_WITH_TEST_PUBKEY__
+EOF
+multipass info lab-vm | grep IPv4
+```
+
+Replace `__REPLACE_WITH_TEST_PUBKEY__` with the literal output of `cat ~/.ssh/test.pub` before running. If virtualization is disabled, Multipass launch fails and firmware settings must be corrected first.
+
+Use local staging inventory files:
+
+```sh
+cat > bare/inventories/staging.yml <<'EOF'
+bare:
+  hosts:
+    lab-vm:
+      ansible_host: __REPLACE_WITH_VM_IP__
+EOF
+```
+
+```sh
+mkdir -p bare/inventories/host_vars
+cat > bare/inventories/host_vars/lab-vm.yml <<'EOF'
+os_maintenance:
+  enabled: true
+  approved: true
+  reboot_allowed: true
+os_maintenance_packages: [curl, openssh-server]
+os_baseline_packages: [jq]
+EOF
+```
+
+Runbooks on staging (controller-side):
+
+```sh
+make -C bare configure-check INVENTORY=inventories/staging.yml HOSTS=lab-vm SSH_USER=ubuntu SSH_KEY=~/.ssh/test
+make -C bare patch-preview INVENTORY=inventories/staging.yml HOSTS=lab-vm SSH_USER=ubuntu SSH_KEY=~/.ssh/test
+make -C bare patch-apply INVENTORY=inventories/staging.yml HOSTS=lab-vm APPROVED=yes SSH_USER=ubuntu SSH_KEY=~/.ssh/test
+make -C bare audit-bootstrap INVENTORY=inventories/staging.yml HOSTS=lab-vm APPROVED=yes SSH_USER=ubuntu SSH_KEY=~/.ssh/test
+```
+
+After `audit-bootstrap`, add SSH alias `lab-vm-audit` and run:
+
+```sh
+OUT_DIR=~/homelab-audit/staging-$(date +%F-%H%M%S)/lab-vm-audit
+make -C bare osquery-audit-all ALIAS=lab-vm-audit ROLE=staging TRANSPORT=ssh OUT_DIR="$OUT_DIR"
+jq -s 'map({(.category): .}) | add' "$OUT_DIR"/*.json > "$OUT_DIR/observed.json"
+```
+
+Destroy staging resources when finished:
+
+```sh
+multipass delete lab-vm
+multipass purge
+rm -f bare/inventories/staging.yml bare/inventories/host_vars/lab-vm.yml
+```
+
 ## Drift and status semantics
 
 `audit/drift.py DESIRED.json OBSERVED.json [--exceptions EXCEPTIONS.json]` compares explicit fields only and produces sorted JSON. Unpinned/absent facts are not inferred as version drift. Statuses: MATCH (equal), DRIFT (observed value differs), REPO_ONLY (desired category absent), RUNTIME_ONLY (observed category/field absent from desired), UNVERIFIED (collection failed or field absent), APPROVED_EXCEPTION (documented exception overrides a drift). This initial implementation compares desired JSON to collected JSON; documented-state reconciliation is a human review, not automated inference. Results use synthetic fixtures in tests only.
