@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This reference extends the service catalog with the provisioning mechanics found in repository snapshot `d6ba04de243fdb722145dc556bfc28a32965ca61`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. A separate read-only hardware query verified processor/core/memory facts on the three inventory hosts. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for those results and remaining hardware unknowns.
+This reference extends the service catalog with the provisioning mechanics found in repository snapshot `d6ba04de243fdb722145dc556bfc28a32965ca61`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for bare-metal specifications.
 
 For the component map and application/database relationships, see [architecture](architecture.md) and the [service catalog](service-catalog.md). Commands that mutate infrastructure are also described in the [operations guide](operations.md).
 

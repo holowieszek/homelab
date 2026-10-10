@@ -1,13 +1,9 @@
 # Documentation index
 
-## Scope
-
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61` (reviewed `main` after PR #12). Documentation describes tracked configuration only unless explicitly noted as live-verified; it does not assert deployed versions, resource existence, health, credential validity, or backup success. The hardware inventory includes sanitized read-only facts from production hosts; no configuration was changed. AWS state and the private repository were not accessed.
-
 ## Guides
 
 - [Repository overview](../README.md): layout and lifecycle boundaries.
-- [Hardware inventory](hardware-inventory.md): per-host hardware and memory from owner records and a read-only audit.
+- [Hardware inventory](hardware-inventory.md): hardware specifications for the bare-metal nodes.
 - [Architecture](architecture.md): layers, GitOps, DNS, and trust boundaries.
 - [Service and dependency catalog](service-catalog.md): applications, namespaces, PostgreSQL recovery/backup declarations, and secret-provider mappings.
 - [Provisioning reference](provisioning-reference.md): PXE/DHCP, K3s, active AWS module calls, and operator-supplied inputs.

@@ -1,6 +1,6 @@
 # Open questions and operator follow-up
 
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions arise from tracked configuration, not observed production faults. The hardware inventory is the exception: its listed processor/core/memory facts were collected read-only from production hosts. No production configuration was changed; resolve other live-state questions only in an explicitly authorized operator environment.
+Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions concern repository configuration and do not imply a production fault. Verify runtime behavior before making changes.
 
 ## Provisioning and credentials
 
