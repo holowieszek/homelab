@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This review describes checked-in declarations and potential risks, not runtime state or evidence of compromise. Source was inspected at revision `d6ba04de243fdb722145dc556bfc28a32965ca61`, alongside existing documentation and the networking and storage guides in this working tree. Concrete domains, addresses, hostnames, cloud resource names, and internal identifiers are deliberately omitted; source links use relative repository paths.
+This review describes checked-in declarations and potential risks, not a complete runtime security assessment or evidence of compromise. A separate [read-only K3s inventory](kubernetes-audit.md) on 2026-10-10 recorded limited resource metadata and validated the inventory identity's RBAC; it found no standard NetworkPolicy objects but did not assess effective network enforcement, workload configuration, or traffic. Source was inspected at revision `d6ba04de243fdb722145dc556bfc28a32965ca61`, alongside existing documentation and the networking and storage guides in this working tree. Concrete domains, addresses, hostnames, cloud resource names, and internal identifiers are deliberately omitted; source links use relative repository paths.
 
 Start with the [repository overview](../README.md) and
 [documentation index](index.md). Findings below establish what source declares;

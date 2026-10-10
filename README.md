@@ -11,7 +11,7 @@ Infrastructure-as-code for a bare-metal Kubernetes homelab. This repository prov
 - `databases/` — CloudNativePG clusters and pgAdmin.
 - `apps/` — application Helm releases and the OPNsense backup Kubernetes manifests.
 
-Start with the [documentation index](docs/index.md) for the [architecture overview](docs/architecture.md), [service and dependency catalog](docs/service-catalog.md), [provisioning reference](docs/provisioning-reference.md), [operations guide](docs/operations.md), and [open questions](docs/open-questions.md). These describe checked-in configuration, not live deployment state.
+Start with the [documentation index](docs/index.md) for the [architecture overview](docs/architecture.md), [service and dependency catalog](docs/service-catalog.md), [provisioning reference](docs/provisioning-reference.md), [operations guide](docs/operations.md), and [open questions](docs/open-questions.md). Most guides describe checked-in configuration rather than live deployment state; the separate [K3s inventory](docs/kubernetes-audit.md) records limited, dated API state and is not a health assessment.
 
 Focused references describe declarations and their runtime verification boundaries:
 

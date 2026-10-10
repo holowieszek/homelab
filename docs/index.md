@@ -13,7 +13,7 @@
 - [Security declarations and trust boundaries](security.md): GitOps and credential flows, access-control declarations, potential risks, and authorized operator verification.
 - [Recovery first response](runbooks/recovery.md): safe read-only triage, evidence limits, and stop gates before any data-changing recovery.
 - [OS lifecycle and maintenance](maintenance/os-lifecycle.md): opt-in Ansible maintenance, host policies, local osquery snapshots, drift comparison, and production approval boundaries.
-- [K3s cluster inventory and audit](kubernetes-audit.md): read-only inventory tooling, short-lived access design, scope, and operator workflow.
+- [K3s cluster inventory and audit](kubernetes-audit.md): read-only tooling, the dated 2026-10-10 production snapshot, access design, and collection limits.
 - [Open questions](open-questions.md): source-backed uncertainties requiring an operator decision or controlled verification.
 - [Contributor guidance](../AGENTS.md): repository safety and documentation conventions.
 
