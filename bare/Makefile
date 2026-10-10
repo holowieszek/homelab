@@ -1,6 +1,6 @@
 INVENTORY ?= inventories/prod.yml
 TRANSPORT ?= local
-AUDIT_CATEGORIES ?= os system kernel uptime packages services disks sysctl
+AUDIT_CATEGORIES ?= os hardware system kernel uptime packages services disks sysctl
 SSH_USER ?= ubuntu
 SSH_KEY ?= ~/.ssh/test
 ANSIBLE_CONNECT_ARGS = --user "$(SSH_USER)" $(if $(SSH_KEY),--private-key "$(SSH_KEY)",)

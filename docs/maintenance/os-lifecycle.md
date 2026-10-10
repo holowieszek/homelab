@@ -30,7 +30,7 @@ YAML profiles live in `audit/policies/host-maintenance.yml`: control-plane updat
 
 The per-host `preflight` policy entries below are review checklists, not implemented service probes. This release does not query Kubernetes readiness, Longhorn health, DNS availability, or backup systems, and does not perform cordon/drain/uncordon.
 
-Queries rely on osquery Linux tables (`os_version`, `system_info`, `uptime`, `deb_packages`, `systemd_units`, `block_devices`, `kernel_info`, `system_controls`). Validate table/column availability against the exact deployed osquery build before use; unsupported columns/tables become `UNVERIFIED`. `bare/audit-bootstrap.yml` installs osquery from the upstream APT repository on Debian-family hosts. Raspberry Pi architecture package availability is not asserted. See [official osquery table documentation](https://osquery.io/schema/).
+Queries rely on osquery Linux tables (`os_version`, `system_info`, `cpu_info`, `uptime`, `deb_packages`, `systemd_units`, `block_devices`, `kernel_info`, `system_controls`). The `hardware` category combines `system_info` with aggregated CPU clock fields from `cpu_info` (model in `cpu_brand`, core counts, `physical_memory_gib`, vendor/board strings, max/current clock in MHz). Legacy `system` remains a smaller subset for drift fixtures. Validate table/column availability against the exact deployed osquery build before use; unsupported columns/tables become `UNVERIFIED`. `bare/audit-bootstrap.yml` installs osquery from the upstream APT repository on Debian-family hosts. Raspberry Pi architecture package availability is not asserted. See [official osquery table documentation](https://osquery.io/schema/).
 
 ### Operator run order
 

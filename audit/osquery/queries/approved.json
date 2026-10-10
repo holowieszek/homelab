@@ -2,6 +2,7 @@
   "schema_version": "1.0",
   "queries": {
     "os": "SELECT name, version, platform, platform_like, arch, build FROM os_version",
+    "hardware": "SELECT hostname, cpu_brand, cpu_type, cpu_physical_cores, cpu_logical_cores, cpu_sockets, physical_memory, ROUND(CAST(physical_memory AS REAL) / 1073741824.0, 2) AS physical_memory_gib, hardware_vendor, hardware_model, board_vendor, board_model, (SELECT MAX(max_clock_speed) FROM cpu_info) AS max_clock_speed_mhz, (SELECT MAX(current_clock_speed) FROM cpu_info) AS current_clock_speed_mhz FROM system_info",
     "system": "SELECT hostname, cpu_brand, cpu_logical_cores, cpu_physical_cores, physical_memory, hardware_vendor, hardware_model FROM system_info",
     "kernel": "SELECT version FROM kernel_info",
     "uptime": "SELECT days, hours, minutes, seconds, total_seconds FROM uptime",
