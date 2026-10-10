@@ -1,0 +1,13 @@
+os_maintenance:
+  enabled: false
+  approved: false
+  automatic_updates: false
+  reboot_allowed: false
+  manual_approval_required: true
+  max_parallel: 1
+  update_scope: explicit_package_allowlist_only
+  preflight: [operator_window, cluster_health, backup_review]
+  postflight: [ssh_reachable, control_plane_health, workload_readiness]
+  kernel_updates: manual_separate_window
+  k3s_upgrade: excluded
+  control_plane_requires_separate_approval: true

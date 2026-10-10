@@ -1,4 +1,10 @@
+__pycache__/
+
 k3s.yaml
 *.tgz
 Chart.lock
 secrets-manager-secret.yaml
+
+# Local-only disposable staging configuration
+/bare/inventories/staging.yml
+/bare/inventories/host_vars/lab-vm.yml

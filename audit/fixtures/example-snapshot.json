@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "audit_timestamp": "2026-01-01T00:00:00Z",
+  "host_alias": "example-worker",
+  "host_role": "k3s_worker",
+  "collector": {"name": "osqueryi", "version": "example-only"},
+  "git_commit_sha": "fixture-only",
+  "category": "os",
+  "observed_facts": [{"name": "Ubuntu", "version": "24.04", "platform": "ubuntu", "platform_like": "debian", "arch": "x86_64", "build": "fixture", "kernel_version": "example"}],
+  "collection_status": "OK",
+  "errors": [],
+  "source": {"query_pack": "audit/osquery/queries/approved.json", "query_id": "os"}
+}

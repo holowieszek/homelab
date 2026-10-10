@@ -1,0 +1,41 @@
+all:
+  vars:
+    os_maintenance:
+      enabled: false
+      approved: false
+      automatic_updates: false
+      reboot_allowed: false
+      manual_approval_required: true
+      max_parallel: 1
+      update_scope: explicit_package_allowlist_only
+      preflight: [operator_window, backup_review, host_health]
+      postflight: [ssh_reachable, service_health]
+      kernel_updates: manual_separate_window
+      k3s_upgrade: excluded
+masters:
+  vars:
+    os_maintenance:
+      preflight: [operator_window, cluster_health, backup_review]
+      postflight: [ssh_reachable, control_plane_health, workload_readiness]
+      control_plane_requires_separate_approval: true
+workers:
+  vars:
+    os_maintenance:
+      max_parallel: 1
+      preflight: [operator_window, cluster_health, longhorn_health, workload_disruption_review]
+      postflight: [ssh_reachable, node_ready, workload_readiness]
+      cordon_drain_uncordon: manual_operator_procedure
+raspberry_pi_dns:
+  vars:
+    os_maintenance:
+      enabled: false
+      reboot_allowed: false
+      preflight: [operator_window, dns_redundancy_review, dns_probe]
+      postflight: [dns_probe]
+opnsense:
+  vars:
+    os_maintenance:
+      supported: false
+      update_scope: vendor_supported_opnsense_workflow_only
+      reboot_allowed: false
+      manual_approval_required: true

@@ -15,6 +15,7 @@ Source snapshot: `004d097fe82384043520a1e43d1f085f59f0b852` (checked-out revisio
 - [Storage and backup declarations](storage.md): Longhorn jobs, PostgreSQL backup/recovery inputs, and S3 protection and retention limits.
 - [Security declarations and trust boundaries](security.md): GitOps and credential flows, access-control declarations, potential risks, and authorized operator verification.
 - [Recovery first response](runbooks/recovery.md): safe read-only triage, evidence limits, and stop gates before any data-changing recovery.
+- [OS lifecycle and maintenance](maintenance/os-lifecycle.md): opt-in Ansible maintenance, host policies, local osquery snapshots, drift comparison, and production approval boundaries.
 - [Open questions](open-questions.md): source-backed uncertainties requiring an operator decision or controlled verification.
 - [Contributor guidance](../AGENTS.md): repository safety and documentation conventions.
 

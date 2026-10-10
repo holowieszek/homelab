@@ -1,0 +1,71 @@
+- name: Patch Debian-family operating systems (no major upgrades/reboots)
+  hosts: bare
+  gather_facts: false
+  become: true
+  serial: 1
+  pre_tasks:
+    - name: Reject unscoped or unauthorized patching before contacting hosts
+      ansible.builtin.assert:
+        that:
+          - (ansible_limit | default('') | length) > 0
+          - ansible_play_hosts_all | length == 1
+          - maintenance_authorized | default(false) | bool
+        fail_msg: "Pass an explicit --limit selecting exactly one host and maintenance authorization."
+      delegate_to: localhost
+      become: false
+  tasks:
+    - name: Require explicit target, host policy opt-in, and operator approval
+      ansible.builtin.assert:
+        that:
+          - (ansible_limit | default('') | length) > 0
+          - os_maintenance.enabled | default(false) | bool
+          - os_maintenance.approved | default(false) | bool
+          - maintenance_authorized | default(false) | bool
+        fail_msg: "Updates are blocked unless an explicitly selected host policy and operator authorization enable them."
+    - name: Gather host facts after policy authorization
+      ansible.builtin.setup:
+    - name: Reject non-Debian hosts
+      ansible.builtin.assert:
+        that: ansible_facts.os_family == "Debian"
+    - name: Refresh apt metadata
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+    - name: Gather selected package versions before maintenance
+      ansible.builtin.package_facts:
+        manager: apt
+      register: packages_before
+    - name: Reject kernel packages from routine maintenance
+      ansible.builtin.assert:
+        that: >-
+          (os_maintenance_packages | default([])
+          | select('match', '^(linux-image|linux-headers|linux-generic|linux-modules|linux-firmware)')
+          | list | length) == 0
+        fail_msg: "Kernel package changes require a separately reviewed maintenance path."
+    - name: Install explicitly approved packages only (no distribution upgrade) # noqa: package-latest
+      ansible.builtin.apt:
+        name: "{{ os_maintenance_packages | default([]) }}"
+        state: latest
+        update_cache: false
+      register: patch_result
+      when: os_maintenance_packages | default([]) | length > 0
+    - name: Gather selected package versions after maintenance
+      ansible.builtin.package_facts:
+        manager: apt
+      register: packages_after
+      when: os_maintenance_packages | default([]) | length > 0
+    - name: Report selected package version changes
+      ansible.builtin.debug:
+        msg: >-
+          {{ item }}:
+          {{ packages_before.ansible_facts.packages[item][0].version | default('absent') }} ->
+          {{ packages_after.ansible_facts.packages[item][0].version | default('absent') }}
+      loop: "{{ os_maintenance_packages | default([]) }}"
+      when: os_maintenance_packages | default([]) | length > 0
+    - name: Check reboot-required marker
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_marker
+    - name: Report reboot requirement without rebooting
+      ansible.builtin.debug:
+        msg: "reboot_required={{ reboot_marker.stat.exists }}; use reboot.yml only with separate approval."

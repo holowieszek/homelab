@@ -1,0 +1,11 @@
+os_maintenance:
+  enabled: false
+  approved: false
+  automatic_updates: false
+  reboot_allowed: false
+  manual_approval_required: true
+  max_parallel: 1
+  update_scope: explicit_package_allowlist_only
+  preflight: [operator_window, cluster_health, longhorn_health, workload_disruption_review]
+  postflight: [ssh_reachable, node_ready, workload_readiness]
+  cordon_drain_uncordon: manual_operator_procedure
