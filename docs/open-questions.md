@@ -1,6 +1,6 @@
 # Open questions and operator follow-up
 
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions concern repository configuration and runtime controls and do not imply a production fault. A separate read-only inventory on 2026-10-10 provides limited point-in-time evidence in the [K3s audit record](kubernetes-audit.md); verify current runtime behavior before making changes.
+Source snapshot: `8ec971dd90c8732c30a88f948b1705b840d77595`. These questions concern repository configuration and runtime controls and do not imply a production fault. A separate read-only inventory on 2026-10-10 provides limited point-in-time evidence in the [K3s audit record](kubernetes-audit.md); verify current runtime behavior before making changes.
 
 ## Provisioning and credentials
 
@@ -8,6 +8,7 @@ Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. These questions con
 
 - Who supplies and rotates access keys for the IAM users, required Secrets Manager values, the SSM parameter value, and the bootstrap environment? The [IAM user module](../external/modules/iam/user/v1/main.tf) creates no keys; the [Secrets Manager module](../external/modules/secrets-manager/v1/main.tf) creates containers only; the [SSM module](../external/modules/parameter-store/v1/main.tf) ignores later value changes. Confirm ownership without recording credentials here.
 - Are the declared PushSecret writers and their IAM permissions sufficient for the intended remote destinations? `speedtest_db_secrets` and `argocd_app_secrets` are commented out in [the root module file](../external/sm.tf), while their Kubernetes push flows remain declared. Source does not establish whether the destination objects or values exist.
+- Does the shared general secret preserve all existing fields with the LiteLLM DB writer plus the new Linkding and Speedtest DB writers reconciling concurrently and across repeated refresh cycles? Verify every expected namespaced property after the pilot; do not switch DB readers or remove legacy paths until confirmed.
 - Should the ISO download enable its configured checksum, and should the GRUB ISO URL derive from `iso_uri`? The [PXE task](../bare/roles/pxe_server/tasks/main.yml) comments out verification; the [GRUB template](../bare/roles/pxe_server/templates/grub.cfg.j2) hard-codes the basename. Until changed separately, do not treat the variable as enforced verification.
 - How is PXE DHCP isolated from existing LAN DHCP services? [Compose](../bare/roles/pxe_server/files/docker-compose.yml) gives dnsmasq host networking and `NET_ADMIN`, and its [template](../bare/roles/pxe_server/templates/dnsmasq.conf.j2) serves leases rather than proxy-DHCP. Review pool, router, interfaces, and exposure before starting it.
 
