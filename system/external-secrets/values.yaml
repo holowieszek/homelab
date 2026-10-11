@@ -35,31 +35,6 @@ external-secrets:
     - apiVersion: external-secrets.io/v1alpha1
       kind: PushSecret
       metadata:
-        name: argocd-secrets-push
-        namespace: argocd
-      spec:
-        updatePolicy: Replace
-        deletionPolicy: None
-        refreshInterval: 10m
-        secretStoreRefs:
-          - name: secretstore-sample
-            kind: ClusterSecretStore
-        selector:
-          secret:
-            name: argocd-initial-admin-secret
-        data:
-          - conversionStrategy: None
-            match:
-              secretKey: password
-              remoteRef:
-                # remoteKey:
-                remoteKey: homelab/prod/applications/argocd/credentials
-                property: argocd_password
-            metadata:
-              secretPushFormat: string
-    - apiVersion: external-secrets.io/v1alpha1
-      kind: PushSecret
-      metadata:
         name: argocd-general-secrets-push
         namespace: argocd
       spec:
