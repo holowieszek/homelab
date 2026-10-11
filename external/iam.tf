@@ -42,18 +42,8 @@ data "aws_iam_policy_document" "service_account_policy" {
     ]
     resources = [
       module.global_config_secrets.secret_arn,
-      module.grafana_app_secrets.secret_arn,
-      module.cert_manager_app_secrets.secret_arn,
-      module.speedtest_app_secrets.secret_arn,
-      module.pihole_app_secrets.secret_arn,
-      module.mikrotik_app_secrets.secret_arn,
-      module.homelab_private_repo_secrets.secret_arn,
-      module.opnsense_backups_app_secrets.secret_arn,
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/home-assistant/credentials-*", var.region, var.aws_account_number, var.environment),
       module.general_credentials_secrets.secret_arn,
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
 
       // resources not managed by terraform
       format("arn:aws:secretsmanager:%s:%s:secret:k3s/test-*", var.region, var.aws_account_number),
@@ -68,11 +58,8 @@ data "aws_iam_policy_document" "service_account_policy" {
       "secretsmanager:PutSecretValue"
     ]
     resources = [
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/speedtest/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/linkding/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/databases/home-assistant/credentials-*", var.region, var.aws_account_number, var.environment),
       format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/general/credentials-*", var.region, var.aws_account_number, var.environment),
-      format("arn:aws:secretsmanager:%s:%s:secret:homelab/%s/applications/argocd/credentials-*", var.region, var.aws_account_number, var.environment),
     ]
   }
 
