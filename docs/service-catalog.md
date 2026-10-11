@@ -2,7 +2,7 @@
 
 ## Review baseline and evidence
 
-Repository baseline reviewed: `4446c988b612d1c56e0703df6124d45191adf44a`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
+Repository baseline reviewed: `8ec971dd90c8732c30a88f948b1705b840d77595`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
 
 ## Reconciliation map
 
@@ -53,9 +53,11 @@ The four database manifests also define namespace-local `awssm-secret` ExternalS
 | Namespace / cluster | Instances | Declared data size | S3 destination in manifest | Retention | `ScheduledBackup` expression | Configured PushSecret path |
 |---|---:|---:|---|---|---|---|
 | `home-assistant` / [`home-assistant-db`](../databases/home-assistant-db/cluster.yaml) | 3 | `10Gi`, storage class explicitly `longhorn` | `s3://homelab-prod-database-backups/home-assistant` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/home-assistant/credentials` |
-| `linkding` / [`linkding-db`](../databases/linkding-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/linkding` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/linkding/credentials` |
+| `linkding` / [`linkding-db`](../databases/linkding-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/linkding` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/linkding/credentials` (existing reader/writer); `homelab/prod/general/credentials` (`linkding_db_*`, additional pilot writer) |
 | `litellm` / [`litellm-db`](../databases/litellm-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/litellm` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`litellm_*` properties) |
-| `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/speedtest/credentials` |
+| `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/speedtest/credentials` (existing reader/writer); `homelab/prod/general/credentials` (`speedtest_db_*`, additional pilot writer) |
+
+These two pilot PushSecrets append namespaced Linkding and Speedtest database properties to `homelab/prod/general/credentials` while the existing PushSecrets continue writing their original paths. The applications' ExternalSecrets remain pointed at those original database paths, so this PR does not cut over database consumers. Actual field preservation and reconciliation behavior must be checked after an operator-approved rollout.
 
 CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a seconds field, not the five-field Unix crontab format; see the versioned [CloudNativePG 1.25 backup reference](https://cloudnative-pg.io/docs/1.25/backup/). The literal expression is retained above to avoid confusing it with Kubernetes CronJob schedules. A configured destination, schedule, and retention value do not establish that backups have run or can be restored.
 
@@ -80,11 +82,11 @@ These clusters bootstrap by recovering from the previous server name in `externa
 | cert-manager | `cluster-issuer-r53-credentials` | `homelab/prod/applications/certmanager/credentials` |
 | External Secrets bootstrap | `awssm-secret` in `external-secrets`, seeded from the two bootstrap environment variables | No AWS remote path at bootstrap |
 | Homepage | `homepage-app-config` | `homelab/prod/applications/pihole/credentials`; `homelab/prod/applications/mikrotik/credentials` |
-| Linkding | `linkding-app-config`, `linkding-db-config` | `homelab/prod/general/credentials` (`linkding_*` app properties); `homelab/prod/databases/linkding/credentials` (separate DB credentials) |
+| Linkding | `linkding-app-config`, `linkding-db-config` | `homelab/prod/general/credentials` (`linkding_*` app fields; pilot `linkding_db_*` writer); `homelab/prod/databases/linkding/credentials` (still read by the app and written by the original PushSecret) |
 | LiteLLM | `litellm-app-config` | `homelab/prod/general/credentials` (`litellm_*` app and DB properties; LiteLLM DB PushSecret target) |
 | Longhorn | `longhorn-backup-credentials` | `homelab/prod/global/config` |
 | OPNsense backup | `opnsense-backup-secret`, `aws-svc-user` | `homelab/prod/applications/opnsensebackups/credentials`; `homelab/prod/global/config` |
-| Speedtest | `speedtest-app-config`, `speedtest-db-config` | `homelab/prod/applications/speedtest/credentials`; `homelab/prod/databases/speedtest/credentials` |
+| Speedtest | `speedtest-app-config`, `speedtest-db-config` | `homelab/prod/applications/speedtest/credentials`; `homelab/prod/databases/speedtest/credentials` (still read by the app and written by the original PushSecret); pilot writer to `homelab/prod/general/credentials` (`speedtest_db_*`) |
 | Grafana | `grafana`, `postgres-datasources-config` | `homelab/prod/applications/grafana/credentials`; `homelab/prod/databases/home-assistant/credentials` |
 | Database clusters | Namespace-local `awssm-secret` plus generated `*-db-app` Secrets | `homelab/prod/global/config`; per-database destinations shown in the database table above |
 

@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-This reference extends the service catalog with the provisioning mechanics found in repository baseline `4446c988b612d1c56e0703df6124d45191adf44a`. It documents checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for bare-metal specifications.
+Repository baseline reviewed: `8ec971dd90c8732c30a88f948b1705b840d77595`. This reference extends the service catalog with the provisioning mechanics found in checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for bare-metal specifications.
 
 For the component map and application/database relationships, see [architecture](architecture.md) and the [service catalog](service-catalog.md). Commands that mutate infrastructure are also described in the [operations guide](operations.md).
 
@@ -85,10 +85,10 @@ The declared root variables are `aws_account_number`, `region`, `project_name`, 
 | `external/parameters.tf` | `speedtest_app_parameters` | `modules/parameter-store/v1`; creates SSM parameters. |
 | `external/r53.tf` | `primary_hosted_zone` | `modules/route53/v1`; creates a Route 53 hosted zone. |
 | `external/s3.tf` | `database_backups`, `volume_backups`, `opnsense_backups`, `frigate_syncs` | `modules/s3/v1`; provisions S3 buckets with module resources for encryption, versioning, public-access blocking, and optional access logging. |
-| `external/sm.tf` | `speedtest_app_secrets`, `cert_manager_app_secrets`, `grafana_app_secrets`, `pihole_app_secrets`, `mikrotik_app_secrets`, `general_credentials_secrets`, `global_config_secrets`, `homelab_private_repo_secrets`, `opnsense_backups_app_secrets` | `modules/secrets-manager/v1`; declares 9 AWS Secrets Manager secret containers, without secret values. The general secret holds prefixed LiteLLM app/database properties and Linkding app properties; Linkding database credentials remain separate. |
+| `external/sm.tf` | `speedtest_app_secrets`, `cert_manager_app_secrets`, `grafana_app_secrets`, `pihole_app_secrets`, `mikrotik_app_secrets`, `general_credentials_secrets`, `global_config_secrets`, `homelab_private_repo_secrets`, `opnsense_backups_app_secrets` | `modules/secrets-manager/v1`; declares 9 AWS Secrets Manager secret containers, without secret values. The general secret holds prefixed LiteLLM and Linkding app properties, LiteLLM DB properties, and pilot Linkding/Speedtest DB PushSecret writes; their application ExternalSecrets and original DB PushSecrets still use the separate legacy DB paths. |
 | `external/global_local_vars.tf` | `default_label` | `cloudposse/label/null` `0.25.0`; common name/environment labels and tags. |
 
-Only active calls are listed above. In [`external/sm.tf`](../external/sm.tf), `speedtest_db_secrets` and `argocd_app_secrets` are commented out, so they do not create resources through this root configuration. Their corresponding PushSecret destinations are still declared in Kubernetes source; that is separate from an active OpenTofu module call.
+Only active calls are listed above. In [`external/sm.tf`](../external/sm.tf), `speedtest_db_secrets` and `argocd_app_secrets` are commented out, so they do not create resources through this root configuration. Kubernetes PushSecret destinations are declared separately: the existing per-database writers remain, and the pilot adds parallel Linkding and Speedtest writers to `homelab/prod/general/credentials`.
 
 The reusable modules are under `external/modules/`. In the inspected module source, ECR private/public modules create their corresponding repository resource; IAM modules create a user or an OIDC provider/role/policy attachment; the Route 53 module creates a hosted zone; the S3 module adds encryption/versioning/public-access-block resources; Parameter Store creates an SSM parameter; and the Secrets Manager module creates a secret resource. These are code declarations, not a report of AWS resources currently present.
 
