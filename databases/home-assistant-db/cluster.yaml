@@ -46,6 +46,16 @@ spec:
   monitoring:
     enablePodMonitor: true
 
+  managed:
+    services:
+      additional:
+        - selectorType: rw
+          serviceTemplate:
+            metadata:
+              name: home-assistant-db-lb
+            spec:
+              type: LoadBalancer
+
   bootstrap:
     initdb:
       database: homeassistant

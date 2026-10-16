@@ -2,7 +2,7 @@
 
 ## Review baseline and evidence
 
-Repository baseline reviewed: `98a892208c156a133a5cf94970e9d89f5b1eb01f`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
+Repository baseline reviewed: `7f64d707fcd13987d97b027886e3bdc18a06a491`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
 
 ## Reconciliation map
 
@@ -70,7 +70,7 @@ CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a
 
 These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Home Assistant and LiteLLM instead declare `bootstrap.initdb`.
 
-[`platform/grafana/values.yaml`](../platform/grafana/values.yaml) declares a PostgreSQL data source for `home-assistant-db-rw.home-assistant.svc.cluster.local:5432`. The datasource authentication values are read from `postgres-datasources-config`.
+[`platform/grafana/values.yaml`](../platform/grafana/values.yaml) declares a PostgreSQL data source for `home-assistant-db-rw.home-assistant.svc.cluster.local:5432`. The datasource authentication values are read from `postgres-datasources-config`. The Home Assistant cluster additionally declares `home-assistant-db-lb` as a K3s `LoadBalancer` service for read/write access; creating the internal DNS record and verifying its LAN address are manual steps described in the [networking reference](networking.md#postgresql-over-the-lan).
 
 ## Secret-provider reference flow
 
