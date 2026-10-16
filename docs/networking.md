@@ -1,6 +1,6 @@
 # Networking reference
 
-Source snapshot: `7f64d707fcd13987d97b027886e3bdc18a06a491`.
+Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`.
 
 ## Scope and evidence
 
@@ -86,26 +86,6 @@ a hosted-zone ID. Review least privilege and credential rotation against [2],
 but do not assume the supplied issuer credentials use that declared policy.
 [Route 53 provisioning](../external/r53.tf) declares a hosted zone, not verified
 zone delegation or workload address records.
-
-## PostgreSQL over the LAN
-
-The [Home Assistant CloudNativePG cluster](../databases/home-assistant-db/cluster.yaml)
-declares an additional `LoadBalancer` service named
-`home-assistant-db-lb`, selected for the current read/write primary. With the
-repository's default K3s ServiceLB, the load balancer uses eligible node IPs
-rather than a separately allocated virtual IP [1]. After Argo CD reconciles the
-change, inspect the Service's `status.loadBalancer.ingress` and create a manual
-A record in the internal DNS zone, for example
-`home-assistant-db.internal.mateuszholowieszko.com`, pointing to the chosen
-reachable LAN node IP (or IPs). Clients connect using TCP port `5432`.
-
-This exposes PostgreSQL at the network layer; DNS naming does not restrict
-access to the LAN. Keep the node/service reachable only from trusted networks,
-and use the database credentials and TLS policy appropriate for the client.
-The repository does not manage the manual DNS record or verify the live
-ServiceLB address, firewall, or connectivity. The existing Home Assistant
-application chart's database connection configuration is separate and is not
-changed by this exposure.
 
 ## MQTT wiring: plaintext is distinct from dashboard TLS
 
