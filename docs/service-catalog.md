@@ -2,7 +2,7 @@
 
 ## Review baseline and evidence
 
-Repository baseline reviewed: `98a892208c156a133a5cf94970e9d89f5b1eb01f`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
+Repository baseline reviewed: `56094b5551195158bf21873221ed658dd3011f2f` (`main`, before this PR). The Plane rows below describe the proposed changes in this PR; the remaining catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
 
 ## Reconciliation map
 
@@ -39,6 +39,7 @@ Arrows show relationships expressed in repository configuration, not observed ne
 | [`apps/linkding`](../apps/linkding/) / `linkding` | Linkding reads application and database credentials from `homelab/prod/general/credentials` via `linkding-app-config` (`linkding_*`) and `linkding-db-config` (`linkding_db_*`). The database PushSecret now writes only to the general secret. | HTTP port `9090`; ingress/TLS; DB and application secrets are represented by ExternalSecrets. |
 | [`apps/litellm`](../apps/litellm/) / `litellm` | LiteLLM reads its app and DB properties from the `litellm_*` fields in `homelab/prod/general/credentials`; its DB PushSecret writes generated fields to that same path. It mounts `litellm-config` as `/app/config.yaml`. | HTTP port `4000`; ingress/TLS; upstream DB URL is secret-backed rather than hard-coded in the chart values. |
 | [`apps/memos`](../apps/memos/) / `memos` | Memos with file-backed application configuration/data. | HTTP port `5230`; ingress/TLS; Longhorn PVC `5Gi` mounted at `/var/opt/memos`. |
+| [`apps/plane`](../apps/plane/) / `plane` | Official AGPL-3.0 Plane Community Edition Helm chart `plane-ce` `1.8.5` with app image version `v1.4.2`. Traefik `IngressRoute` and cert-manager TLS secret `plane-internal-mateuszholowieszko-com-tls`. PostgreSQL is external: CNPG [`plane-db`](../databases/plane-db/cluster.yaml) creates `plane-db-app`; its generated URI is pushed to `homelab/prod/general/credentials` as `plane_db_uri` and read by `plane-app-env`. Bundled Redis, MinIO, and RabbitMQ use Longhorn PVCs. ESO-managed `plane-app-keys` reads `plane_secret_key` and `plane_live_server_secret_key`; `plane-app-env` composes DB, Redis, and AMQP settings; `plane-rabbitmq-config` supplies broker credentials; `plane-doc-store-config` supplies MinIO credentials and S3-compatible settings. RabbitMQ credentials used in the AMQP URI must be URL-safe. Signing keys must not be rotated after data is stored. | Ingress host `plane.internal.mateuszholowieszko.com`; required operator-provided properties and the generated `plane_db_uri` prerequisite are listed in [open questions](open-questions.md). |
 | [`apps/opnsense-backup`](../apps/opnsense-backup/) / `opnsense-backup` | Kubernetes CronJob `opnsense-backup-cronjob` reads its application properties from the prefixed fields in `homelab/prod/general/credentials`. The ECR token helper still reads shared AWS settings from `homelab/prod/global/config`. | Backup schedule is `0 0 * * *`; ECR token helper schedule is `0 */11 * * *`. This directory is raw Kustomize/Kubernetes source, not a Helm chart. |
 | [`apps/speedtest`](../apps/speedtest/) / `speedtest` | Speedtest Tracker is configured with application schedule `0 * * * *` and connects to `speedtest-db-rw.speedtest`; its app and DB ExternalSecrets read prefixed fields from `homelab/prod/general/credentials`, and its DB PushSecret writes there. | HTTP port `80`; ingress/TLS. |
 | [`apps/zigbee2mqtt`](../apps/zigbee2mqtt/) / `zigbee2mqtt` | Zigbee2MQTT points at the configured EMQX MQTT URL and a TCP-attached serial coordinator using adapter `zstack`. | Longhorn PVC `1Gi`; upstream chart dependency `zigbee2mqtt` `2.12.1`. |
@@ -48,7 +49,7 @@ The application connection claims above are limited to explicit values/manifests
 
 ## PostgreSQL cluster and backup declarations
 
-The four database manifests also define namespace-local `awssm-secret` ExternalSecrets that read AWS access-key properties from `homelab/prod/global/config` through `secretstore-sample`; their backup configuration refers to these Secrets. The `PushSecret` paths below are the configured destinations for generated database application credentials.
+The database manifests below define namespace-local `awssm-secret` ExternalSecrets that read AWS access-key properties from `homelab/prod/global/config` through `secretstore-sample`; their backup configuration refers to these Secrets. Where a `PushSecret` is declared, the path column is the configured destination for generated database application credentials pushed to AWS.
 
 | Namespace / cluster | Instances | Declared data size | S3 destination in manifest | Retention | `ScheduledBackup` expression | Configured PushSecret path |
 |---|---:|---:|---|---|---|---|
@@ -56,6 +57,7 @@ The four database manifests also define namespace-local `awssm-secret` ExternalS
 | `linkding` / [`linkding-db`](../databases/linkding-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/linkding` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`linkding_db_*` reader/writer) |
 | `litellm` / [`litellm-db`](../databases/litellm-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/litellm` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`litellm_*` properties) |
 | `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`speedtest_db_*` reader/writer) |
+| `plane` / [`plane-db`](../databases/plane-db/cluster.yaml) | 1 | `5Gi`, storage class explicitly `longhorn` | `s3://homelab-prod-database-backups/plane` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`plane_db_uri`; generated CNPG URI) |
 
 The Linkding and Speedtest DB PushSecrets now write only namespaced properties to `homelab/prod/general/credentials`, which their ExternalSecrets read. This repository change removes the old DB writers; because their `deletionPolicy` is `None`, it does not itself request deletion of their former remote objects. Any such AWS cleanup requires a separate reviewed operation. Do not place secret values in Git or logs.
 
@@ -68,7 +70,7 @@ CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a
 | [Linkding](../databases/linkding-db/cluster.yaml) | `linkding-db-backup-v2` | `linkding-db-backup-v3` |
 | [Speedtest](../databases/speedtest-db/cluster.yaml) | `speedtest-db-backup-v5` | `speedtest-db-backup-v6` |
 
-These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Home Assistant and LiteLLM instead declare `bootstrap.initdb`.
+These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Home Assistant, LiteLLM, and Plane instead declare `bootstrap.initdb`.
 
 [`platform/grafana/values.yaml`](../platform/grafana/values.yaml) declares a PostgreSQL data source for `home-assistant-db-rw.home-assistant.svc.cluster.local:5432`. The datasource authentication values are read from `postgres-datasources-config`.
 
@@ -87,6 +89,7 @@ These clusters bootstrap by recovering from the previous server name in `externa
 | Longhorn | `longhorn-backup-credentials` | `homelab/prod/global/config` |
 | OPNsense backup | `opnsense-backup-secret`, `aws-svc-user` | `homelab/prod/general/credentials` (`opnsensebackups_*`); `homelab/prod/global/config` for ECR token helper |
 | Speedtest | `speedtest-app-config`, `speedtest-db-config` | `homelab/prod/general/credentials` (`speedtest_*`) |
+| Plane | `plane-app-keys`, `plane-app-env`, `plane-rabbitmq-config`, `plane-doc-store-config` | `homelab/prod/general/credentials` (`plane_secret_key`, `plane_live_server_secret_key`, `plane_rabbitmq_username`, `plane_rabbitmq_password`, `plane_minio_root_user`, `plane_minio_root_password`; CNPG PushSecret writes generated `plane_db_uri`; RabbitMQ credentials in the URI must be URL-safe; never rotate signing keys after data is stored) |
 | Grafana | `grafana`, `postgres-datasources-config` | `homelab/prod/general/credentials` (`grafana_*`); `homelab/prod/databases/home-assistant/credentials` for Home Assistant datasource (unchanged) |
 | Database clusters | Namespace-local `awssm-secret` plus generated `*-db-app` Secrets | `homelab/prod/global/config`; per-database destinations shown in the database table above |
 

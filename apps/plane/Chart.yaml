@@ -1,0 +1,8 @@
+apiVersion: v2
+name: plane
+version: 0.0.0
+dependencies:
+  # Official AGPL-3.0 Community Edition chart.
+  - name: plane-ce
+    version: 1.8.5
+    repository: https://helm.plane.so

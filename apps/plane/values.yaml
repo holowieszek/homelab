@@ -1,0 +1,151 @@
+plane-ce:
+  planeVersion: v1.4.2
+
+  ingress:
+    enabled: true
+    appHost: plane.internal.mateuszholowieszko.com
+    ingressClass: traefik
+    traefik:
+      maxRequestBodyBytes: 20971520
+
+  ssl:
+    tls_secret_name: plane-internal-mateuszholowieszko-com-tls
+
+  postgres:
+    local_setup: false
+
+  redis:
+    local_setup: true
+    storageClass: longhorn
+    volumeSize: 2Gi
+
+  minio:
+    local_setup: true
+    storageClass: longhorn
+    volumeSize: 20Gi
+
+  rabbitmq:
+    local_setup: true
+    storageClass: longhorn
+    volumeSize: 2Gi
+
+  external_secrets:
+    app_keys_existingSecret: plane-app-keys
+    app_env_existingSecret: plane-app-env
+    rabbitmq_existingSecret: plane-rabbitmq-config
+    doc_store_existingSecret: plane-doc-store-config
+
+  # Prevent the upstream chart from silently rendering its public example keys.
+  env:
+    requireExplicitSecrets: true
+
+  extraObjects:
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ExternalSecret
+      metadata:
+        name: plane-app-keys
+        namespace: plane
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          name: secretstore-sample
+          kind: ClusterSecretStore
+        target:
+          name: plane-app-keys
+          creationPolicy: Owner
+        data:
+          - secretKey: SECRET_KEY
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_secret_key
+          - secretKey: LIVE_SERVER_SECRET_KEY
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_live_server_secret_key
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ExternalSecret
+      metadata:
+        name: plane-app-env
+        namespace: plane
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          name: secretstore-sample
+          kind: ClusterSecretStore
+        target:
+          name: plane-app-env
+          creationPolicy: Owner
+          template:
+            engineVersion: v2
+            data:
+              DATABASE_URL: "{{ .DATABASE_URL }}"
+              REDIS_URL: redis://plane-redis.plane.svc.cluster.local:6379/
+              AMQP_URL: "amqp://{{ .username }}:{{ .password }}@plane-rabbitmq.plane.svc.cluster.local:5672/"
+        data:
+          - secretKey: DATABASE_URL
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_db_uri
+          - secretKey: username
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_rabbitmq_username
+          - secretKey: password
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_rabbitmq_password
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ExternalSecret
+      metadata:
+        name: plane-rabbitmq-config
+        namespace: plane
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          name: secretstore-sample
+          kind: ClusterSecretStore
+        target:
+          name: plane-rabbitmq-config
+          creationPolicy: Owner
+        data:
+          - secretKey: RABBITMQ_DEFAULT_USER
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_rabbitmq_username
+          - secretKey: RABBITMQ_DEFAULT_PASS
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_rabbitmq_password
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ExternalSecret
+      metadata:
+        name: plane-doc-store-config
+        namespace: plane
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          name: secretstore-sample
+          kind: ClusterSecretStore
+        target:
+          name: plane-doc-store-config
+          creationPolicy: Owner
+          template:
+            engineVersion: v2
+            data:
+              USE_MINIO: "1"
+              AWS_S3_BUCKET_NAME: uploads
+              AWS_S3_ENDPOINT_URL: http://plane-minio:9000
+              FILE_SIZE_LIMIT: "5242880"
+              MINIO_ROOT_USER: "{{ .MINIO_ROOT_USER }}"
+              AWS_ACCESS_KEY_ID: "{{ .MINIO_ROOT_USER }}"
+              MINIO_ROOT_PASSWORD: "{{ .MINIO_ROOT_PASSWORD }}"
+              AWS_SECRET_ACCESS_KEY: "{{ .MINIO_ROOT_PASSWORD }}"
+        data:
+          - secretKey: MINIO_ROOT_USER
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_minio_root_user
+          - secretKey: MINIO_ROOT_PASSWORD
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_minio_root_password

@@ -88,6 +88,10 @@ homepage:
               description: LLM proxy
               icon: openai.svg
 
+          - Plane:
+              href: https://plane.internal.mateuszholowieszko.com/
+              description: Project management
+
           - Longhorn:
               href: https://longhorn.internal.mateuszholowieszko.com/
               description: Block storage management

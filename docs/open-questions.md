@@ -1,9 +1,10 @@
 # Open questions and operator follow-up
 
-Source snapshot: `98a892208c156a133a5cf94970e9d89f5b1eb01f`. These questions concern repository configuration and runtime controls and do not imply a production fault. A separate read-only inventory on 2026-10-10 provides limited point-in-time evidence in the [K3s audit record](kubernetes-audit.md); verify current runtime behavior before making changes.
+Source snapshot: `56094b5551195158bf21873221ed658dd3011f2f` (`main`, before this PR). These questions concern repository configuration and runtime controls and do not imply a production fault. A separate read-only inventory on 2026-10-10 provides limited point-in-time evidence in the [K3s audit record](kubernetes-audit.md); verify current runtime behavior before making changes.
 
 ## Provisioning and credentials
 
+- Before the first Plane sync, are `plane_secret_key`, `plane_live_server_secret_key`, RabbitMQ username/password, and MinIO root user/password present in `homelab/prod/general/credentials`? After CNPG creates `plane-db-app`, verify its URI is pushed to `plane_db_uri`; the `plane-app-env` ExternalSecret depends on that generated property. RabbitMQ credentials used in an AMQP URI must be URL-safe. The pinned official Plane Community Edition chart is `plane-ce` `1.8.5` (`planeVersion: v1.4.2`); see [`apps/plane/Chart.yaml`](../apps/plane/Chart.yaml) and [`values.yaml`](../apps/plane/values.yaml). After ESO refreshes credentials, restart affected Plane workloads where environment variables are consumed. Never rotate Plane's signing keys after data has been stored.
 - Which storage devices and capacities are installed on each production host? The inventory lists three nodes but does not record disk hardware; see the [hardware inventory](hardware-inventory.md) for currently documented host specifications.
 
 - Who supplies and rotates access keys for the IAM users, required Secrets Manager values, the SSM parameter value, and the bootstrap environment? The [IAM user module](../external/modules/iam/user/v1/main.tf) creates no keys; the [Secrets Manager module](../external/modules/secrets-manager/v1/main.tf) creates containers only; the [SSM module](../external/modules/parameter-store/v1/main.tf) ignores later value changes. Confirm ownership without recording credentials here.
