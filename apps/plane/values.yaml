@@ -1,0 +1,112 @@
+plane-ce:
+  planeVersion: v1.4.2
+
+  ingress:
+    enabled: true
+    appHost: plane.internal.mateuszholowieszko.com
+    ingressClass: traefik
+    traefik:
+      maxRequestBodyBytes: 20971520
+
+  ssl:
+    tls_secret_name: plane-internal-mateuszholowieszko-com-tls
+
+  postgres:
+    local_setup: false
+
+  redis:
+    local_setup: false
+
+  minio:
+    local_setup: false
+
+  rabbitmq:
+    local_setup: false
+
+  external_secrets:
+    app_keys_existingSecret: plane-app-keys
+    app_env_existingSecret: plane-app-env
+    live_env_existingSecret: plane-live-env
+    doc_store_existingSecret: plane-doc-store-config
+    storage:
+      secretName: plane-doc-store-config
+      accessKeyIdKey: AWS_ACCESS_KEY_ID
+      secretAccessKeyKey: AWS_SECRET_ACCESS_KEY
+
+  # Prevent the upstream chart from silently rendering its public example keys.
+  env:
+    requireExplicitSecrets: true
+
+  extraObjects:
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ExternalSecret
+      metadata:
+        name: plane-app-keys
+        namespace: plane
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          name: secretstore-sample
+          kind: ClusterSecretStore
+        target:
+          name: plane-app-keys
+          creationPolicy: Owner
+        data:
+          - secretKey: SECRET_KEY
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_secret_key
+          - secretKey: LIVE_SERVER_SECRET_KEY
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_live_server_secret_key
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ExternalSecret
+      metadata:
+        name: plane-app-env
+        namespace: plane
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          name: secretstore-sample
+          kind: ClusterSecretStore
+        target:
+          name: plane-app-env
+          creationPolicy: Owner
+          template:
+            engineVersion: v2
+            data:
+              DATABASE_URL: "{{ .DATABASE_URL }}"
+              REDIS_URL: "{{ .REDIS_URL }}"
+              AMQP_URL: "{{ .AMQP_URL }}"
+        data:
+          - secretKey: DATABASE_URL
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_db_uri
+          - secretKey: REDIS_URL
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_redis_url
+          - secretKey: AMQP_URL
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_amqp_url
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ExternalSecret
+      metadata:
+        name: plane-live-env
+        namespace: plane
+      spec:
+        refreshInterval: 1h
+        secretStoreRef:
+          name: secretstore-sample
+          kind: ClusterSecretStore
+        target:
+          name: plane-live-env
+          creationPolicy: Owner
+        data:
+          - secretKey: REDIS_URL
+            remoteRef:
+              key: homelab/prod/general/credentials
+              property: plane_redis_url

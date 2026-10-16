@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: plane-internal-tls
+  namespace: plane
+spec:
+  secretName: plane-internal-mateuszholowieszko-com-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - plane.internal.mateuszholowieszko.com

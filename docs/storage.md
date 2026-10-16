@@ -1,6 +1,6 @@
 # Storage and backup declarations
 
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`.
+Source snapshot: `56094b5551195158bf21873221ed658dd3011f2f` (`main`, before this PR).
 
 ## Scope
 
@@ -59,8 +59,9 @@ CloudNativePG `1.25` [10].
 | [Linkding](../databases/linkding-db/cluster.yaml) | 1 | `1Gi` | Not set |
 | [LiteLLM](../databases/litellm-db/cluster.yaml) | 1 | `1Gi` | Not set |
 | [Speedtest](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi` | Not set |
+| [Plane](../databases/plane-db/cluster.yaml) | 1 | `5Gi` | `longhorn` |
 
-All four Cluster manifests configure Barman object-store backups to S3, with
+All five Cluster manifests configure Barman object-store backups to S3, with
 Secret-backed credentials, gzip compression for data and WAL, and
 `retentionPolicy: 21d`. This is a recovery-window policy, not an S3 object
 expiration rule [10]. Their ScheduledBackup declarations set `immediate: true`
