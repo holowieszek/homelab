@@ -35,21 +35,21 @@ metadata:
   name: speedtest-db
   namespace: speedtest
 spec:
-  instances: 3
+  instances: 1
 
   resources:
     requests:
       memory: 256Mi
 
   storage:
-    size: 1Gi
+    size: 2Gi
   monitoring:
     enablePodMonitor: true
 
   backup:
     barmanObjectStore: &barmanObjectStore
       destinationPath: s3://homelab-prod-database-backups/speedtest
-      serverName: &currentCluster speedtest-db-backup-v6
+      serverName: &currentCluster speedtest-db-backup-v7
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -65,7 +65,7 @@ spec:
 
   bootstrap:
     recovery:
-      source: &previousCluster speedtest-db-backup-v5
+      source: &previousCluster speedtest-db-backup-v6
 
   externalClusters:
     - name: *previousCluster
@@ -76,7 +76,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: speedtest-db-backup-v6
+  name: speedtest-db-backup-v7
   namespace: speedtest
 spec:
   immediate: true
