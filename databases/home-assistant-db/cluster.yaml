@@ -33,7 +33,7 @@ metadata:
   name: home-assistant-db
   namespace: home-assistant
 spec:
-  instances: 3
+  instances: 1
 
   resources:
     requests:
@@ -41,7 +41,7 @@ spec:
 
   storage:
     storageClass: longhorn
-    size: 10Gi
+    size: 30Gi
 
   monitoring:
     enablePodMonitor: true
