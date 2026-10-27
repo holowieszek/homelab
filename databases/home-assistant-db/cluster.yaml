@@ -46,14 +46,10 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  bootstrap:
-    initdb:
-      database: homeassistant
-
   backup:
     barmanObjectStore: &barmanObjectStore
       destinationPath: s3://homelab-prod-database-backups/home-assistant
-      serverName: home-assistant-db-backup-v1
+      serverName: &currentCluster home-assistant-db-backup-v2
       s3Credentials:
         accessKeyId:
           name: awssm-secret
@@ -66,11 +62,21 @@ spec:
       wal:
         compression: gzip
     retentionPolicy: 21d
+
+  bootstrap:
+    recovery:
+      source: &previousCluster home-assistant-db-backup-v1
+
+  externalClusters:
+    - name: *previousCluster
+      barmanObjectStore:
+        <<: *barmanObjectStore
+        serverName: *previousCluster
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: home-assistant-db-backup-v1
+  name: home-assistant-db-backup-v2
   namespace: home-assistant
 spec:
   immediate: true
