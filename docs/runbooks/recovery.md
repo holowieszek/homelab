@@ -167,14 +167,16 @@ intact, or restorable. Missing Backup resources do not prove S3 is empty.
 
 ### Bootstrap source is not current recurring output
 
-The [Linkding manifest](../../databases/linkding-db/cluster.yaml) and
+The [Home Assistant manifest](../../databases/home-assistant-db/cluster.yaml),
+[Linkding manifest](../../databases/linkding-db/cluster.yaml) and
 [Speedtest manifest](../../databases/speedtest-db/cluster.yaml) declare different
 bootstrap recovery inputs and recurring backup outputs:
 
 | Cluster | Bootstrap recovery source | Current backup server name |
 | --- | --- | --- |
+| `home-assistant-db` | `home-assistant-db-backup-v1` | `home-assistant-db-backup-v2` |
 | `linkding-db` | `linkding-db-backup-v2` | `linkding-db-backup-v3` |
-| `speedtest-db` | `speedtest-db-backup-v5` | `speedtest-db-backup-v6` |
+| `speedtest-db` | `speedtest-db-backup-v6` | `speedtest-db-backup-v7` |
 
 See the
 [service catalog recovery table](../service-catalog.md#bootstrap-recovery-versus-recurring-backups).
@@ -182,7 +184,7 @@ Bootstrap recovery is an initialization input, not a periodic restore. Current
 schedules, `immediate: true`, and declared retention do not establish existence
 or retention of the historical bootstrap source. Do not change the bootstrap
 source to match current output, recreate a Cluster, or select a restore target
-based only on these names. Home Assistant and LiteLLM instead declare
+based only on these names. Only LiteLLM declares
 `bootstrap.initdb`, as documented in the catalog.
 
 If the required backup and WAL availability cannot be independently confirmed

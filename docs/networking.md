@@ -1,6 +1,6 @@
 # Networking reference
 
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`.
+Source snapshot: `6693a0a4029e845cca8bf4554d8a6203bf5378b7`.
 
 ## Scope and evidence
 

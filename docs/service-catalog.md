@@ -2,7 +2,7 @@
 
 ## Review baseline and evidence
 
-Repository baseline reviewed: `98a892208c156a133a5cf94970e9d89f5b1eb01f`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
+Repository baseline reviewed: `6693a0a4029e845cca8bf4554d8a6203bf5378b7`. This catalog is derived from checked-in configuration, principally the referenced `Chart.yaml`, `values.yaml`, templates, Kubernetes manifests, and `databases/*/cluster.yaml` files. It does not assert that any resource is currently installed, healthy, reachable, or successfully backing up. No Kubernetes API, AWS account, or private repository was queried.
 
 ## Reconciliation map
 
@@ -40,7 +40,7 @@ Arrows show relationships expressed in repository configuration, not observed ne
 | [`apps/litellm`](../apps/litellm/) / `litellm` | LiteLLM reads its app and DB properties from the `litellm_*` fields in `homelab/prod/general/credentials`; its DB PushSecret writes generated fields to that same path. It mounts `litellm-config` as `/app/config.yaml`. | HTTP port `4000`; ingress/TLS; upstream DB URL is secret-backed rather than hard-coded in the chart values. |
 | [`apps/memos`](../apps/memos/) / `memos` | Memos with file-backed application configuration/data. | HTTP port `5230`; ingress/TLS; Longhorn PVC `5Gi` mounted at `/var/opt/memos`. |
 | [`apps/opnsense-backup`](../apps/opnsense-backup/) / `opnsense-backup` | Kubernetes CronJob `opnsense-backup-cronjob` reads its application properties from the prefixed fields in `homelab/prod/general/credentials`. The ECR token helper still reads shared AWS settings from `homelab/prod/global/config`. | Backup schedule is `0 0 * * *`; ECR token helper schedule is `0 */11 * * *`. This directory is raw Kustomize/Kubernetes source, not a Helm chart. |
-| [`apps/speedtest`](../apps/speedtest/) / `speedtest` | Speedtest Tracker is configured with application schedule `0 * * * *` and connects to `speedtest-db-rw.speedtest`; its app and DB ExternalSecrets read prefixed fields from `homelab/prod/general/credentials`, and its DB PushSecret writes there. | HTTP port `80`; ingress/TLS. |
+| [`apps/speedtest`](../apps/speedtest/) / `speedtest` | Speedtest Tracker is configured with application schedule `0 * * * *` and connects to `speedtest-db-rw.speedtest`; its database name, username, and password reference the CNPG-generated `speedtest-db-app` Secret. Its app and DB ExternalSecrets still read prefixed fields from `homelab/prod/general/credentials`, and its DB PushSecret writes there. | HTTP port `80`; ingress/TLS. |
 | [`apps/zigbee2mqtt`](../apps/zigbee2mqtt/) / `zigbee2mqtt` | Zigbee2MQTT points at the configured EMQX MQTT URL and a TCP-attached serial coordinator using adapter `zstack`. | Longhorn PVC `1Gi`; upstream chart dependency `zigbee2mqtt` `2.12.1`. |
 | [`databases/pgadmin`](../databases/pgadmin/) / `pgadmin` | pgAdmin database UI; persistent data uses existing claim `pgadmin-data-recovery-1`. | HTTP port `80`; ingress/TLS; uses `app-template`. Runtime settings and the literal initial login configuration are in [`values.yaml`](../databases/pgadmin/values.yaml), not `Chart.yaml`; credential values are not repeated here. |
 
@@ -52,10 +52,10 @@ The four database manifests also define namespace-local `awssm-secret` ExternalS
 
 | Namespace / cluster | Instances | Declared data size | S3 destination in manifest | Retention | `ScheduledBackup` expression | Configured PushSecret path |
 |---|---:|---:|---|---|---|---|
-| `home-assistant` / [`home-assistant-db`](../databases/home-assistant-db/cluster.yaml) | 3 | `10Gi`, storage class explicitly `longhorn` | `s3://homelab-prod-database-backups/home-assistant` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/home-assistant/credentials` |
+| `home-assistant` / [`home-assistant-db`](../databases/home-assistant-db/cluster.yaml) | 1 | `30Gi`, storage class explicitly `longhorn` | `s3://homelab-prod-database-backups/home-assistant` | `21d` | `0 0 */6 * * *` | `homelab/prod/databases/home-assistant/credentials` |
 | `linkding` / [`linkding-db`](../databases/linkding-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/linkding` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`linkding_db_*` reader/writer) |
 | `litellm` / [`litellm-db`](../databases/litellm-db/cluster.yaml) | 1 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/litellm` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`litellm_*` properties) |
-| `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`speedtest_db_*` reader/writer) |
+| `speedtest` / [`speedtest-db`](../databases/speedtest-db/cluster.yaml) | 1 | `2Gi`; no storage class field in this cluster manifest | `s3://homelab-prod-database-backups/speedtest` | `21d` | `0 0 */6 * * *` | `homelab/prod/general/credentials` (`speedtest_db_*` reader/writer) |
 
 The Linkding and Speedtest DB PushSecrets now write only namespaced properties to `homelab/prod/general/credentials`, which their ExternalSecrets read. This repository change removes the old DB writers; because their `deletionPolicy` is `None`, it does not itself request deletion of their former remote objects. Any such AWS cleanup requires a separate reviewed operation. Do not place secret values in Git or logs.
 
@@ -66,9 +66,10 @@ CloudNativePG's `ScheduledBackup.schedule` is a six-field cron expression with a
 | Cluster source | `bootstrap.recovery.source` and external source server name | Recurring backup server name / `ScheduledBackup` name |
 |---|---|---|
 | [Linkding](../databases/linkding-db/cluster.yaml) | `linkding-db-backup-v2` | `linkding-db-backup-v3` |
-| [Speedtest](../databases/speedtest-db/cluster.yaml) | `speedtest-db-backup-v5` | `speedtest-db-backup-v6` |
+| [Home Assistant](../databases/home-assistant-db/cluster.yaml) | `home-assistant-db-backup-v1` | `home-assistant-db-backup-v2` |
+| [Speedtest](../databases/speedtest-db/cluster.yaml) | `speedtest-db-backup-v6` | `speedtest-db-backup-v7` |
 
-These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Home Assistant and LiteLLM instead declare `bootstrap.initdb`.
+These clusters bootstrap by recovering from the previous server name in `externalClusters`, using the same configured S3 destination but a different `serverName` from the recurring backup output. Recovery is an initialization input, not a recurring restore operation or evidence of a successful restore. Their `ScheduledBackup` resources have `immediate: true` and the schedule/retention shown above; those declarations concern new backups of the current cluster, not the existence or retention of the historical recovery source. Only LiteLLM declares `bootstrap.initdb`.
 
 [`platform/grafana/values.yaml`](../platform/grafana/values.yaml) declares a PostgreSQL data source for `home-assistant-db-rw.home-assistant.svc.cluster.local:5432`. The datasource authentication values are read from `postgres-datasources-config`.
 
@@ -86,7 +87,7 @@ These clusters bootstrap by recovering from the previous server name in `externa
 | LiteLLM | `litellm-app-config` | `homelab/prod/general/credentials` (`litellm_*` app and DB properties; LiteLLM DB PushSecret target) |
 | Longhorn | `longhorn-backup-credentials` | `homelab/prod/global/config` |
 | OPNsense backup | `opnsense-backup-secret`, `aws-svc-user` | `homelab/prod/general/credentials` (`opnsensebackups_*`); `homelab/prod/global/config` for ECR token helper |
-| Speedtest | `speedtest-app-config`, `speedtest-db-config` | `homelab/prod/general/credentials` (`speedtest_*`) |
+| Speedtest | `speedtest-app-config`, `speedtest-db-config`; DB connection consumes generated `speedtest-db-app` instead | `homelab/prod/general/credentials` (`speedtest_*`) |
 | Grafana | `grafana`, `postgres-datasources-config` | `homelab/prod/general/credentials` (`grafana_*`); `homelab/prod/databases/home-assistant/credentials` for Home Assistant datasource (unchanged) |
 | Database clusters | Namespace-local `awssm-secret` plus generated `*-db-app` Secrets | `homelab/prod/global/config`; per-database destinations shown in the database table above |
 

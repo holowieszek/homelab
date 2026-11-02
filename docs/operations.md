@@ -2,7 +2,7 @@
 
 For the architecture/service map see [architecture](architecture.md) and the [service catalog](service-catalog.md); for Ansible/OpenTofu provisioning roles and module calls see the [provisioning reference](provisioning-reference.md). This guide documents the commands represented by the repository. Run them only from a trusted operator workstation with the intended inventory, cloud account, and cluster credentials. Commands that apply infrastructure or cluster changes are explicitly marked.
 
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`. This guide makes no assertions about live hosts, AWS resources, cluster health, or backup success.
+Source snapshot: `6693a0a4029e845cca8bf4554d8a6203bf5378b7`. This guide makes no assertions about live hosts, AWS resources, cluster health, or backup success.
 
 ## Prerequisites
 
@@ -78,7 +78,7 @@ The Helm loop writes dependency artifacts (for example `charts/`) into chart dir
 ## Recovery and safety notes
 
 - Longhorn has `reclaimPolicy: Retain` and an S3 backup target configured in [`system/longhorn/values.yaml`](../system/longhorn/values.yaml), not `Chart.yaml`; validate backup credentials and restoration procedures independently. The [RecurringJob template](../system/longhorn/templates/recurringjob-snapshot.yaml) declares separate snapshot and backup jobs, but the recurring-job selector in values is commented out. Job definitions or a configured target do not prove volume assignment or successful backups.
-- Linkding bootstrap recovery reads `linkding-db-backup-v2`, whereas recurring backups use `linkding-db-backup-v3`; Speedtest bootstrap recovery reads `speedtest-db-backup-v5`, whereas recurring backups use `speedtest-db-backup-v6`. These are distinct source/output server names, not interchangeable recovery instructions. See the [database recovery table](service-catalog.md#bootstrap-recovery-versus-recurring-backups) and verify source backup availability in an operator-controlled recovery test.
+- Home Assistant bootstrap recovery reads `home-assistant-db-backup-v1`, whereas recurring backups use `home-assistant-db-backup-v2`; Linkding bootstrap recovery reads `linkding-db-backup-v2`, whereas recurring backups use `linkding-db-backup-v3`; Speedtest bootstrap recovery reads `speedtest-db-backup-v6`, whereas recurring backups use `speedtest-db-backup-v7`. These are distinct source/output server names, not interchangeable recovery instructions. See the [database recovery table](service-catalog.md#bootstrap-recovery-versus-recurring-backups) and verify source backup availability in an operator-controlled recovery test.
 - Database clusters are separately declared under `databases/`; coordinate schema/application rollouts and verify backups before storage or PVC changes.
 - Argo CD automated pruning can delete resources removed from Git. Review diffs for deletions and data-bearing PVC changes carefully.
 - Never paste secret values, kubeconfigs, state files, plan files, or rendered Secret manifests into issues, logs, or pull requests.
