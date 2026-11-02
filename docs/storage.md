@@ -1,6 +1,6 @@
 # Storage and backup declarations
 
-Source snapshot: `d6ba04de243fdb722145dc556bfc28a32965ca61`.
+Source snapshot: `6693a0a4029e845cca8bf4554d8a6203bf5378b7`.
 
 ## Scope
 
@@ -55,10 +55,10 @@ CloudNativePG `1.25` [10].
 
 | Cluster manifest | Instances | Data PVC size per instance | Explicit storage class |
 | --- | ---: | --- | --- |
-| [Home Assistant](../databases/home-assistant-db/cluster.yaml) | 3 | `10Gi` | `longhorn` |
+| [Home Assistant](../databases/home-assistant-db/cluster.yaml) | 1 | `30Gi` | `longhorn` |
 | [Linkding](../databases/linkding-db/cluster.yaml) | 1 | `1Gi` | Not set |
 | [LiteLLM](../databases/litellm-db/cluster.yaml) | 1 | `1Gi` | Not set |
-| [Speedtest](../databases/speedtest-db/cluster.yaml) | 3 | `1Gi` | Not set |
+| [Speedtest](../databases/speedtest-db/cluster.yaml) | 1 | `2Gi` | Not set |
 
 All four Cluster manifests configure Barman object-store backups to S3, with
 Secret-backed credentials, gzip compression for data and WAL, and
@@ -68,7 +68,7 @@ and `schedule: "0 0 */6 * * *"`: a six-field expression including seconds,
 requesting a backup every six hours at second and minute zero [10]. These are
 PostgreSQL backup declarations, separate from Longhorn volume backups.
 
-Linkding and Speedtest declare bootstrap recovery from historical external
+Home Assistant, Linkding, and Speedtest declare bootstrap recovery from historical external
 sources whose backup server names differ from their recurring backup outputs.
 Recovery is an initialization input, not a scheduled restore. See
 [historical recovery versus recurring backups](service-catalog.md#bootstrap-recovery-versus-recurring-backups)
@@ -78,8 +78,8 @@ success is implied.
 
 Without an explicit storage class, CNPG relies on the Kubernetes default [11];
 Longhorn being declared default does not prove the effective class of existing
-PVCs. One PostgreSQL instance provides no standby; three instances declare a
-primary with two standbys [12], not a proven failure-tolerance guarantee. The cluster
+PVCs. All four clusters now declare one PostgreSQL instance each, with no standby
+[12]; this does not provide database-level failover redundancy. The cluster
 manifests do not specify synchronous replication or placement constraints, and
 Longhorn values do not explicitly override volume replica counts. PostgreSQL
 replicas and storage replicas are different layers. Effective defaults, replica

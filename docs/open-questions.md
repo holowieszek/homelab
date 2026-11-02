@@ -1,6 +1,6 @@
 # Open questions and operator follow-up
 
-Source snapshot: `98a892208c156a133a5cf94970e9d89f5b1eb01f`. These questions concern repository configuration and runtime controls and do not imply a production fault. A separate read-only inventory on 2026-10-10 provides limited point-in-time evidence in the [K3s audit record](kubernetes-audit.md); verify current runtime behavior before making changes.
+Source snapshot: `6693a0a4029e845cca8bf4554d8a6203bf5378b7`. These questions concern repository configuration and runtime controls and do not imply a production fault. A separate read-only inventory on 2026-10-10 provides limited point-in-time evidence in the [K3s audit record](kubernetes-audit.md); verify current runtime behavior before making changes.
 
 ## Provisioning and credentials
 
@@ -13,7 +13,7 @@ Source snapshot: `98a892208c156a133a5cf94970e9d89f5b1eb01f`. These questions con
 
 ## Recovery and storage
 
-- Do the configured historical recovery sources exist and support a controlled restore? [Linkding](../databases/linkding-db/cluster.yaml) reads `linkding-db-backup-v2` but writes recurring backups under `linkding-db-backup-v3`; [Speedtest](../databases/speedtest-db/cluster.yaml) reads `speedtest-db-backup-v5` but writes under `speedtest-db-backup-v6`. Current schedules and retention do not prove historical source availability.
+- Do the configured historical recovery sources exist and support a controlled restore? [Linkding](../databases/linkding-db/cluster.yaml) reads `linkding-db-backup-v2` but writes recurring backups under `linkding-db-backup-v3`; [Speedtest](../databases/speedtest-db/cluster.yaml) reads `speedtest-db-backup-v6` but writes under `speedtest-db-backup-v7`. [Home Assistant](../databases/home-assistant-db/cluster.yaml) reads `home-assistant-db-backup-v1` but writes under `home-assistant-db-backup-v2`. Current schedules and retention do not prove historical source availability.
 - Which Longhorn volumes are assigned snapshot/backup jobs, and have restores been tested? [Values](../system/longhorn/values.yaml) configure `Retain` and an S3 target but comment out recurring-job selection; the [template](../system/longhorn/templates/recurringjob-snapshot.yaml) declares both jobs. The 2026-10-10 inventory found 18 PVCs and PVs `Bound` and 18 Longhorn Volume objects, but did not establish replica health, job assignment, or successful backups/restores; see the [audit limitations](kubernetes-audit.md).
 - Is the pgAdmin existing claim available, and how will its literal initial login configuration be replaced and any deployed credential rotated? Both are declared in [pgAdmin values](../databases/pgadmin/values.yaml); neither claim existence nor credential use was verified.
 

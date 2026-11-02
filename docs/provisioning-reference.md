@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-Repository baseline reviewed: `98a892208c156a133a5cf94970e9d89f5b1eb01f`. This reference extends the service catalog with the provisioning mechanics found in checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for bare-metal specifications.
+Repository baseline reviewed: `6693a0a4029e845cca8bf4554d8a6203bf5378b7`. This reference extends the service catalog with the provisioning mechanics found in checked-in playbooks, module calls, Makefiles, and variables; it does not verify the live K3s cluster, AWS resources, remote state, or credentials. Secret values, host addresses, MAC addresses, and per-environment values are deliberately omitted. See the [hardware inventory](hardware-inventory.md) for bare-metal specifications.
 
 For the component map and application/database relationships, see [architecture](architecture.md) and the [service catalog](service-catalog.md). Commands that mutate infrastructure are also described in the [operations guide](operations.md).
 
