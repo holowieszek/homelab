@@ -73,7 +73,7 @@ metadata:
   namespace: litellm
 spec:
   immediate: true
-  schedule: "0 0 */6 * * *"
+  schedule: "0 0 3 * * *"
   cluster:
     name: litellm-db
 ---

@@ -79,7 +79,7 @@ metadata:
   namespace: linkding
 spec:
   immediate: true
-  schedule: "0 0 */6 * * *"
+  schedule: "0 0 2 * * *"
   cluster:
     name: linkding-db
 ---

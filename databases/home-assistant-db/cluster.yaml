@@ -80,7 +80,7 @@ metadata:
   namespace: home-assistant
 spec:
   immediate: true
-  schedule: "0 0 */6 * * *"
+  schedule: "0 0 1 * * *"
   cluster:
     name: home-assistant-db
 ---
